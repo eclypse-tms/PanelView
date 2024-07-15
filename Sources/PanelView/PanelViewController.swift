@@ -46,6 +46,7 @@ public class PanelViewController: UIViewController {
         
         configurePrimaryStackView()
         configureEmptyView()
+        configureInitialPanels()
         
         splitViewReady.send()
         isAttachedToWindow = true
@@ -83,6 +84,15 @@ public class PanelViewController: UIViewController {
             //pendingWidthFraction.removeAll()
         }
         */
+    }
+    
+    private func configureInitialPanels() {
+        for index in -5...5 {
+            let onTheFlyPanelIndex = PanelViewIndex(index: index)
+            let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
+            mainStackView.addArrangedSubview(newlyCreatedPanel)
+            newlyCreatedPanel.isHidden = true
+        }
     }
     
     /// adds the stackview to the view hierarchy
@@ -214,7 +224,6 @@ public class PanelViewController: UIViewController {
             
             // configure width
             applyPrefferredWidthConstraint()
-            
         }
         return aNewPanel
     }
@@ -390,9 +399,24 @@ public class PanelViewController: UIViewController {
     private func _hide(column: PanelViewIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
         func hideAppropriateColumn() {
             columnToViewMappings[column]?.isHidden = true
+            var atLeastOnePanelVisible = false
+            for eachPanel in mainStackView.subviews {
+                if !eachPanel.isHidden {
+                    // at least one panel is visible
+                    atLeastOnePanelVisible = true
+                    break
+                }
+            }
+            
+            if !atLeastOnePanelVisible {
+                // all panels are hidden, show the empty view
+                self.view.bringSubviewToFront(emptyViewStack)
+                emptyViewStack.isHidden = false
+            }
         }
         
-        if animated {
+        if column.index != 0, animated {
+            // we shouldn't animate hiding of the main panel
             UIView.animate(withDuration: animationDuration, animations: {
                 hideAppropriateColumn()
             }, completion: { _ in
@@ -432,12 +456,12 @@ public class PanelViewController: UIViewController {
                 viewControllers.removeValue(forKey: column)
             }
             
-            if mainStackView.subviews.isEmpty {
-                // we are about to insert the first panel
-                // hide the empty view
-                self.view.sendSubviewToBack(emptyViewStack)
-                emptyViewStack.isHidden = true
-            }
+            
+            // since there is at least one panel that is will be visible
+            // we should hide the empty view stack
+            self.view.sendSubviewToBack(emptyViewStack)
+            emptyViewStack.isHidden = true
+            
             
             let newlyCreatedPanel: UIView
             if let alreadyEmbeddedInNavController = viewController as? UINavigationController {
@@ -447,10 +471,7 @@ public class PanelViewController: UIViewController {
                 newlyCreatedPanel = add(childNavController: navController, on: column)
             }
             
-            //let subViewIndex = calculateAppropriateIndex(for: column)
-            //mainStackView.insertArrangedSubview(newlyCreatedPanel, at: subViewIndex)
-            
-            if animated {
+            if column.index != 0, animated {
                 UIView.animate(withDuration: animationDuration, animations: {
                     animationBlock()
                 })
@@ -552,6 +573,7 @@ public class PanelViewController: UIViewController {
             parentView.topAnchor.constraint(equalTo: childNavController.view.topAnchor),
             parentView.bottomAnchor.constraint(equalTo: childNavController.view.bottomAnchor)]
         )
+        
         
         childNavController.didMove(toParent: self)
         
