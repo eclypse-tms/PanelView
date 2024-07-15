@@ -14,13 +14,18 @@ import Foundation
 // public typealias PanelViewIndex = Int
 
 open class PanelViewIndex: Hashable, Comparable {
+    /// Tag is used to identify or name this panel for the benefit of developers.
+    /// The value of tag member is not used to test for equality.
     let tag: String
+    
+    /// The primary thing that separates one panel from another is its index value.
     let index: Int
     
     public init(index: Int, tag: String = "") {
         self.tag = tag
         self.index = index
     }
+    
     
     public static func == (lhs: PanelViewIndex, rhs: PanelViewIndex) -> Bool {
         return lhs.index == rhs.index

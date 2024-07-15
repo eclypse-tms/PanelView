@@ -11,7 +11,7 @@ import Combine
 public class PanelViewController: UIViewController {
     private var mainStackView: UIStackView!
     
-    private var emptyViewStack: UIStackView!
+    private var emptyView: UIView?
     
     private var columnToViewMappings = [PanelViewIndex: UIView]()
     private var columnWidthMappings = [PanelViewIndex: NSLayoutConstraint]()
@@ -30,11 +30,14 @@ public class PanelViewController: UIViewController {
     private var resizerToPanelMappings = [UIView: PanelViewIndex]()
     
     private let animationDuration = 0.3333
+    private let panelResizerWidth: CGFloat = 20
     
     var splitViewReady = PassthroughSubject<Void, Error>()
     private var isAttachedToWindow = false
     
     private var didDisplayInitialColumn = false
+    
+    private var _resizerConstraintIdentifier = "constraint that needs to be reattached"
     
     // MARK: Public Members
     public var configuration = PanelViewConfiguration()
@@ -92,6 +95,7 @@ public class PanelViewController: UIViewController {
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
             newlyCreatedPanel.isHidden = true
+            hideViewResizer(column: onTheFlyPanelIndex)
         }
     }
     
@@ -119,35 +123,20 @@ public class PanelViewController: UIViewController {
     }
     
     private func configureEmptyView() {
-        let emptyViewContainer = UIStackView()
-        emptyViewContainer.spacing = 4
-        emptyViewContainer.axis = .vertical
-        emptyViewContainer.alignment = .center
-        
-        if let validEmptyViewImage = configuration.emptyViewImage {
-            let emptyViewImage = UIImageView(image: validEmptyViewImage)
-            emptyViewContainer.addArrangedSubview(emptyViewImage)
+        if let validEmptyStateView = configuration.emptyStateView {
+            let emptyViewContainer = UIStackView()
             
-            if let validSize = configuration.emptyViewImageDimensions {
-                NSLayoutConstraint.activate([
-                    emptyViewImage.widthAnchor.constraint(equalToConstant: validSize.width),
-                    emptyViewImage.heightAnchor.constraint(equalToConstant: validSize.height)
-                ])
-            }
+            emptyViewContainer.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(emptyViewContainer)
+            NSLayoutConstraint.activate([
+                emptyViewContainer.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                emptyViewContainer.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            ])
+            
+            emptyViewContainer.addArrangedSubview(validEmptyStateView)
+            
+            emptyView = emptyViewContainer
         }
-        
-        if let validEmptyViewLabel = configuration.emptyViewLabel {
-            emptyViewContainer.addArrangedSubview(validEmptyViewLabel)
-        }
-
-        emptyViewContainer.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(emptyViewContainer)
-        NSLayoutConstraint.activate([
-            emptyViewContainer.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            emptyViewContainer.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
-        ])
-        
-        emptyViewStack = emptyViewContainer
     }
     
     private func createPanel(for panelIndex: PanelViewIndex) -> UIView {
@@ -212,9 +201,67 @@ public class PanelViewController: UIViewController {
             columnWidthMappings[panelIndex] = widthConstraint
         }
         
+        // view resizer needs to be added to the main view above the stackview.
+        
+        func createViewResizer(newlyCreatedPanel: UIView) {
+            let viewResizer = UIView()
+            viewResizer.tag = panelIndex.index
+            viewResizer.backgroundColor = .purple
+            viewResizer.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(viewResizer)
+            
+            if mainStackView.axis == .horizontal {
+                // the panels are laid out side by side
+                var layoutConstraints = [NSLayoutConstraint]()
+                layoutConstraints.append(viewResizer.topAnchor.constraint(equalTo: self.view.topAnchor))
+                layoutConstraints.append(viewResizer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
+                layoutConstraints.append(viewResizer.widthAnchor.constraint(equalToConstant: panelResizerWidth))
+                if panelIndex.index < 0 {
+                    // this is a leading side panel, we need to place the resizer view on the trailing edge of the panel
+                    let tempConstraint = viewResizer.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: panelResizerWidth/2.0)
+                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    layoutConstraints.append(tempConstraint)
+                } else {
+                    // this is a trailing side panel, we need to place the resizer on the leading edge of the panel
+                    let tempConstraint = viewResizer.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: -panelResizerWidth/2.0)
+                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    layoutConstraints.append(tempConstraint)
+                }
+                NSLayoutConstraint.activate(layoutConstraints)
+                
+            } else {
+                // the panels are laid out top to bottom
+                var layoutConstraints = [NSLayoutConstraint]()
+                layoutConstraints.append(viewResizer.leadingAnchor.constraint(equalTo: self.view.leadingAnchor))
+                layoutConstraints.append(viewResizer.trailingAnchor.constraint(equalTo: self.view.trailingAnchor))
+                layoutConstraints.append(viewResizer.heightAnchor.constraint(equalToConstant: panelResizerWidth))
+                
+                if panelIndex.index < 0 {
+                    // this is a top panel that appears above the central panel. we need to place the resizer view on the
+                    // bottom edge of the panel
+                    let tempConstraint = viewResizer.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: panelResizerWidth/2.0)
+                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    layoutConstraints.append(tempConstraint)
+                } else {
+                    // this is a bottom panel that appears below the central panel. we need to place the resizer view
+                    // on the top edge of the panel
+                    let tempConstraint = viewResizer.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: panelResizerWidth/2.0)
+                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    layoutConstraints.append(tempConstraint)
+                }
+                
+                NSLayoutConstraint.activate(layoutConstraints)
+            }
+            
+            columnResizerMappings[panelIndex] = viewResizer
+        }
+        
+        
         let aNewPanel = UIView()
+        aNewPanel.isHidden = true
         columnToViewMappings[panelIndex] = aNewPanel
-        // mainStackView.addArrangedSubview(aNewPanel)
+        mainStackView.addArrangedSubview(aNewPanel)
+        
         if panelIndex.index != 0 {
             // Configure min width
             applyMinWidthConstraint()
@@ -224,6 +271,11 @@ public class PanelViewController: UIViewController {
             
             // configure width
             applyPrefferredWidthConstraint()
+            
+            // attach its accompanying view resizer
+            if panelIndex.index != 0 {
+                createViewResizer(newlyCreatedPanel: aNewPanel)
+            }
         }
         return aNewPanel
     }
@@ -380,6 +432,14 @@ public class PanelViewController: UIViewController {
         return vcPresentedIn
     }
     
+    private func hideViewResizer(column: PanelViewIndex) {
+        if let associatedResizer = columnResizerMappings[column] {
+            if let constraintThatNeedToAltered = associatedResizer.constraints.first(where: { $0.identifier == _resizerConstraintIdentifier }) {
+                constraintThatNeedToAltered.constant = -1.0 * panelResizerWidth
+            }
+        }
+    }
+    
     public func hide(index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
         let onTheFlyIndex = PanelViewIndex(index: index)
         hide(column: onTheFlyIndex, animated: animated, completion: completion)
@@ -399,19 +459,24 @@ public class PanelViewController: UIViewController {
     private func _hide(column: PanelViewIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
         func hideAppropriateColumn() {
             columnToViewMappings[column]?.isHidden = true
-            var atLeastOnePanelVisible = false
-            for eachPanel in mainStackView.subviews {
-                if !eachPanel.isHidden {
-                    // at least one panel is visible
-                    atLeastOnePanelVisible = true
-                    break
-                }
-            }
             
-            if !atLeastOnePanelVisible {
-                // all panels are hidden, show the empty view
-                self.view.bringSubviewToFront(emptyViewStack)
-                emptyViewStack.isHidden = false
+            // hideViewResizer(column: colu)
+            
+            if let validEmptyStateView = emptyView {
+                var atLeastOnePanelVisible = false
+                for eachPanel in mainStackView.subviews {
+                    if !eachPanel.isHidden {
+                        // at least one panel is visible
+                        atLeastOnePanelVisible = true
+                        break
+                    }
+                }
+                
+                if !atLeastOnePanelVisible {
+                    // all panels are hidden, show the empty view
+                    self.view.bringSubviewToFront(validEmptyStateView)
+                    validEmptyStateView.isHidden = false
+                }
             }
         }
         
@@ -442,11 +507,35 @@ public class PanelViewController: UIViewController {
                 let subViewIndex = calculateAppropriateIndex(for: column)
                 mainStackView.insertArrangedSubview(aColumn, at: subViewIndex)
                 aColumn.isHidden = false
-                //}
-                //self.mainStackView.layoutIfNeeded()
-                // we need to re-establish the constraints
-                //let reestablishedConstraint = inspectorColumnResizer.leftAnchor.constraint(equalTo: forthColumn.leftAnchor, constant: -1.5)
-                //reestablishedConstraint.isActive = true
+                
+                
+                // we need to re-establish the constraints for column resizers
+                if let associatedResizer = columnResizerMappings[column] {
+                    let reestablishedConstraint: NSLayoutConstraint
+                    if mainStackView.axis == .horizontal {
+                        if column.index < 0 {
+                            // this is a horizonal layout and the panel is on the left hand side (leading side)
+                            // resizer needs to be aligned to the trailing side of the panel
+                            reestablishedConstraint = associatedResizer.trailingAnchor.constraint(equalTo: aColumn.trailingAnchor, constant: panelResizerWidth/2.0)
+                        } else {
+                            // this is a horizonal layout and the panel is on the right hand side (trailing side)
+                            // resizer needs to be aligned to the leading side of the panel
+                            reestablishedConstraint = associatedResizer.leadingAnchor.constraint(equalTo: aColumn.leadingAnchor, constant: -panelResizerWidth/2.0)
+                        }
+                    } else {
+                        if column.index < 0 {
+                            // this is a vertical layout and the panel is on the top side
+                            // resizer needs to be aligned to the bottom side of the panel
+                            reestablishedConstraint = associatedResizer.bottomAnchor.constraint(equalTo: aColumn.bottomAnchor, constant: panelResizerWidth/2.0)
+                        } else {
+                            // this is a vertical layout and the panel is on the bottom
+                            // resizer needs to be aligned to the top side of the panel
+                            reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aColumn.topAnchor, constant: panelResizerWidth/2.0)
+                        }
+                    }
+                    reestablishedConstraint.isActive = true
+                }
+                
             }
         }
         
@@ -459,9 +548,10 @@ public class PanelViewController: UIViewController {
             
             // since there is at least one panel that is will be visible
             // we should hide the empty view stack
-            self.view.sendSubviewToBack(emptyViewStack)
-            emptyViewStack.isHidden = true
-            
+            if let validEmptyStateView = emptyView {
+                self.view.sendSubviewToBack(validEmptyStateView)
+                validEmptyStateView.isHidden = true
+            }
             
             let newlyCreatedPanel: UIView
             if let alreadyEmbeddedInNavController = viewController as? UINavigationController {

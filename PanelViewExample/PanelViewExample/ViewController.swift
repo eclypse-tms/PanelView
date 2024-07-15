@@ -33,13 +33,31 @@ class ViewController: UIViewController {
 
     private func addPanelView() {
         panelView = PanelViewController()
+        
         var customConfig = PanelViewConfiguration()
-        customConfig.emptyViewImage = UIImage(systemName: "macpro.gen3")
-        customConfig.emptyViewImageDimensions = CGSize(width: 60, height: 60)
+        
+        let emptyStackView = UIStackView()
+        emptyStackView.axis = .vertical
+        emptyStackView.alignment = .center
+        emptyStackView.spacing = 8
+        
+        // image for the empty state
+        let emptyViewImage = UIImageView(image: UIImage(systemName: "macpro.gen3"))
+        NSLayoutConstraint.activate([
+            emptyViewImage.widthAnchor.constraint(equalToConstant: 60),
+            emptyViewImage.heightAnchor.constraint(equalToConstant: 60)
+        ])
+        
+        emptyStackView.addArrangedSubview(emptyViewImage)
+        
+        
         let customLabel = UILabel()
         customLabel.text = "Bonanza"
         customLabel.font = UIFont.preferredFont(forTextStyle: .title1)
-        customConfig.emptyViewLabel = customLabel
+        emptyStackView.addArrangedSubview(customLabel)
+        
+        
+        customConfig.emptyStateView = emptyStackView
         
         panelView.configuration = customConfig
         

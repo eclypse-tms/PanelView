@@ -10,18 +10,15 @@ import UIKit
 public struct PanelViewConfiguration {
     public var orientation: PanelOrientation
     
-    public var emptyViewImage: UIImage?
+    public var emptyStateView: UIView?
     
-    public var emptyViewImageDimensions: CGSize?
-    
-    public var emptyViewLabel: UILabel?
+    public var preferredEmptyStateViewSize: CGSize?
 }
 
 public extension PanelViewConfiguration {
     init() {
         self.orientation = .horizontal
-        self.emptyViewImage = nil
-        self.emptyViewImageDimensions = nil
-        self.emptyViewLabel = nil
+        self.emptyStateView = nil
+        self.preferredEmptyStateViewSize = nil
     }
 }
