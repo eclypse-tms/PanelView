@@ -51,6 +51,7 @@ public class PanelViewController: UIViewController {
         configureEmptyView()
         configureInitialPanels()
         
+        
         splitViewReady.send()
         isAttachedToWindow = true
         
@@ -95,7 +96,7 @@ public class PanelViewController: UIViewController {
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
             newlyCreatedPanel.isHidden = true
-            hideViewResizer(column: onTheFlyPanelIndex)
+            // hideViewResizer(column: onTheFlyPanelIndex)
         }
     }
     
@@ -216,17 +217,19 @@ public class PanelViewController: UIViewController {
                 layoutConstraints.append(viewResizer.topAnchor.constraint(equalTo: self.view.topAnchor))
                 layoutConstraints.append(viewResizer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
                 layoutConstraints.append(viewResizer.widthAnchor.constraint(equalToConstant: panelResizerWidth))
+                
                 if panelIndex.index < 0 {
                     // this is a leading side panel, we need to place the resizer view on the trailing edge of the panel
-                    let tempConstraint = viewResizer.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: panelResizerWidth/2.0)
+                    let tempConstraint = viewResizer.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: 0)
                     tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 } else {
                     // this is a trailing side panel, we need to place the resizer on the leading edge of the panel
-                    let tempConstraint = viewResizer.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: -panelResizerWidth/2.0)
+                    let tempConstraint = viewResizer.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: 0)
                     tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 }
+                
                 NSLayoutConstraint.activate(layoutConstraints)
                 
             } else {
@@ -239,13 +242,13 @@ public class PanelViewController: UIViewController {
                 if panelIndex.index < 0 {
                     // this is a top panel that appears above the central panel. we need to place the resizer view on the
                     // bottom edge of the panel
-                    let tempConstraint = viewResizer.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: -panelResizerWidth/2.0)
+                    let tempConstraint = viewResizer.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: 0)
                     tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 } else {
                     // this is a bottom panel that appears below the central panel. we need to place the resizer view
                     // on the top edge of the panel
-                    let tempConstraint = viewResizer.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: panelResizerWidth/2.0)
+                    let tempConstraint = viewResizer.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: 0)
                     tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 }
@@ -254,10 +257,12 @@ public class PanelViewController: UIViewController {
             }
             
             resizerMappings[panelIndex] = viewResizer
+            viewResizer.isHidden = true
         }
         
         
         let aNewPanel = UIView()
+        aNewPanel.tag = panelIndex.index
         aNewPanel.isHidden = true
         panelMappings[panelIndex] = aNewPanel
         mainStackView.addArrangedSubview(aNewPanel)
@@ -536,6 +541,7 @@ public class PanelViewController: UIViewController {
                     }
                     reestablishedConstraint.identifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
                     reestablishedConstraint.isActive = true
+                    associatedResizer.isHidden = false
                 }
                 
             }
