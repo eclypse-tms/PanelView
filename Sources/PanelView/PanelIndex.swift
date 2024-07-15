@@ -11,9 +11,8 @@ import Foundation
 /// negative values indicate those panels that are above the center panel. when
 /// the panels are split horizontally, negative values indicate those panels
 /// that are to the left of the center panel.
-// public typealias PanelViewIndex = Int
 
-open class PanelViewIndex: Hashable, Comparable {
+open class PanelIndex: Hashable, Comparable {
     /// Tag is used to identify or name this panel for the benefit of developers.
     /// The value of tag member is not used to test for equality.
     let tag: String
@@ -27,11 +26,11 @@ open class PanelViewIndex: Hashable, Comparable {
     }
     
     
-    public static func == (lhs: PanelViewIndex, rhs: PanelViewIndex) -> Bool {
+    public static func == (lhs: PanelIndex, rhs: PanelIndex) -> Bool {
         return lhs.index == rhs.index
     }
     
-    public static func < (lhs: PanelViewIndex, rhs: PanelViewIndex) -> Bool {
+    public static func < (lhs: PanelIndex, rhs: PanelIndex) -> Bool {
         return lhs.index < rhs.index
     }
     
@@ -39,29 +38,29 @@ open class PanelViewIndex: Hashable, Comparable {
         hasher.combine(index)
     }
     
-    public static var navigationPanel: PanelViewIndex {
-        return PanelViewIndex(index: -2, tag: "navigation")
+    public static var navigationPanel: PanelIndex {
+        return PanelIndex(index: -2, tag: "navigation")
     }
     
-    public static var navigationDetailPanel: PanelViewIndex {
-        return PanelViewIndex(index: -1, tag: "navigationDetail")
+    public static var navigationDetailPanel: PanelIndex {
+        return PanelIndex(index: -1, tag: "navigationDetail")
     }
     
-    public static var centerPanel: PanelViewIndex {
-        return PanelViewIndex(index: 0, tag: "mainScreen")
+    public static var centerPanel: PanelIndex {
+        return PanelIndex(index: 0, tag: "mainScreen")
     }
     
-    public static var inspectorPanel: PanelViewIndex {
-        return PanelViewIndex(index: 1, tag: "inspector")
+    public static var inspectorPanel: PanelIndex {
+        return PanelIndex(index: 1, tag: "inspector")
     }
     
-    public static var inspectorDetailPanel: PanelViewIndex {
-        return PanelViewIndex(index: 2, tag: "inspectorDetail")
+    public static var inspectorDetailPanel: PanelIndex {
+        return PanelIndex(index: 2, tag: "inspectorDetail")
     }
 }
 
-open class Turker: PanelViewIndex {
-    public static var hola: PanelViewIndex {
-        return PanelViewIndex(index: 2, tag: "hola")
+open class Turker: PanelIndex {
+    public static var hola: PanelIndex {
+        return PanelIndex(index: 2, tag: "hola")
     }
 }

@@ -66,7 +66,7 @@ class ViewController: UIViewController {
             if index == 0 {
                 continue
             }
-            let onTheFlyPanelIndex = PanelViewIndex(index: index)
+            let onTheFlyPanelIndex = PanelIndex(index: index)
             panelView.minimumWidth(200, for: onTheFlyPanelIndex)
             panelView.maximumWidth(600, for: onTheFlyPanelIndex)
             panelView.preferredWidthFraction(0.225, at: index)
