@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet private var leadingMinusButton: UIButton!
     @IBOutlet private var trailingMinusButton: UIButton!
     
-    private var clickCount = 0
+    var panelIndexes = [Int]()
     
     private var panelView: PanelViewController!
 
@@ -42,6 +42,19 @@ class ViewController: UIViewController {
         customConfig.emptyViewLabel = customLabel
         
         panelView.configuration = customConfig
+        
+        
+        for index in -10...11 {
+            if index == 0 {
+                continue
+            }
+            let onTheFlyPanelIndex = PanelViewIndex(index: index)
+            panelView.minimumWidth(200, for: onTheFlyPanelIndex)
+            panelView.maximumWidth(600, for: onTheFlyPanelIndex)
+            panelView.preferredWidthFraction(0.225, at: index)
+        }
+        
+        
         addFullScreen(childViewController: panelView)
     }
        
@@ -68,37 +81,80 @@ class ViewController: UIViewController {
     
     @IBAction
     private func didClickOnAdd(_ sender: UIButton) {
-        if clickCount == 0 {
-            clickCount += 1
-            let initial = UIViewController()
-            initial.view.backgroundColor = .systemBackground
-            
-            let centerViewIndicator = UILabel()
-            centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
-            centerViewIndicator.text = "Main"
-            centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-            
-            initial.view.addSubview(centerViewIndicator)
-            NSLayoutConstraint.activate([
-                centerViewIndicator.centerXAnchor.constraint(equalTo: initial.view.centerXAnchor),
-                centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
-            ])
-            
-            panelView.show(viewController: initial, for: .centerPanel)
-        } else {
-            if sender.tag == -1 {
-                // left side buttons are clicked
-                clickCount += 1
+        if sender.tag == -1 {
+            if panelIndexes.contains(0) {
                 let leftSideVC = UIViewController()
                 leftSideVC.view.backgroundColor = randomSystemColor()
-                panelView.show(viewController: leftSideVC, for: .navigationPanel)
+                
+                
+                let newIndex = (panelIndexes.min() ?? 0) - 1
+                panelIndexes.append(newIndex)
+                panelView.show(viewController: leftSideVC, at: newIndex)
+            } else {
+                panelIndexes.append(0)
+                // add the main panel
+                let initial = UIViewController()
+                initial.view.backgroundColor = .systemBackground
+                
+                let centerViewIndicator = UILabel()
+                centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
+                centerViewIndicator.text = "Main"
+                centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+                
+                initial.view.addSubview(centerViewIndicator)
+                NSLayoutConstraint.activate([
+                    centerViewIndicator.centerXAnchor.constraint(equalTo: initial.view.centerXAnchor),
+                    centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
+                ])
+                
+                panelView.show(viewController: initial, for: .centerPanel)
+            }
+        } else {
+            if panelIndexes.contains(0) {
+                let rightSideVC = UIViewController()
+                rightSideVC.view.backgroundColor = randomSystemColor()
+                
+                
+                let newIndex = (panelIndexes.max() ?? 0) + 1
+                panelIndexes.append(newIndex)
+                panelView.show(viewController: rightSideVC, at: newIndex)
+            } else {
+                panelIndexes.append(0)
+                // add the main panel
+                let initial = UIViewController()
+                initial.view.backgroundColor = .systemBackground
+                
+                let centerViewIndicator = UILabel()
+                centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
+                centerViewIndicator.text = "Main"
+                centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+                
+                initial.view.addSubview(centerViewIndicator)
+                NSLayoutConstraint.activate([
+                    centerViewIndicator.centerXAnchor.constraint(equalTo: initial.view.centerXAnchor),
+                    centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
+                ])
+                
+                panelView.show(viewController: initial, for: .centerPanel)
             }
         }
     }
     
     @IBAction
     private func didClickOnRemove(_ sender: UIButton) {
-        
+        if sender.tag == -1 {
+            if let indexToRemove = panelIndexes.min() {
+                panelView.hide(index: indexToRemove)
+                panelIndexes.sort()
+                panelIndexes.remove(at: 0)
+            }
+        } else {
+            if let indexToRemove = panelIndexes.max() {
+                panelView.hide(index: indexToRemove)
+                panelIndexes.sort()
+                panelIndexes.remove(at: (panelIndexes.endIndex - 1))
+            }
+        }
     }
     
     private func randomSystemColor() -> UIColor {
@@ -116,8 +172,7 @@ class ViewController: UIViewController {
         .systemIndigo,
         .systemMint,
         .systemTeal,
-        .black,
-        .white,
+        .black
       ]
       
       let randomIndex = Int.random(in: 0..<systemColors.count)

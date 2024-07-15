@@ -19,6 +19,11 @@ public class PanelViewController: UIViewController {
     private var columnMaxWidthMappings = [PanelViewIndex: NSLayoutConstraint]()
     private var columnCenterMappings = [PanelViewIndex: CGPoint]()
     
+    private var pendingViewControllers = [PanelViewIndex: UIViewController]()
+    private var pendingMinimumWidth = [PanelViewIndex: CGFloat]()
+    private var pendingMaximumWidth = [PanelViewIndex: CGFloat]()
+    private var pendingWidthFraction = [PanelViewIndex: CGFloat]()
+    
     private var columnResizerMappings = [PanelViewIndex: UIView]()
     private var hoverGestureMappings = [PanelViewIndex: UIHoverGestureRecognizer]()
     private var dragGestureMappings = [PanelViewIndex: UIHoverGestureRecognizer]()
@@ -45,6 +50,7 @@ public class PanelViewController: UIViewController {
         splitViewReady.send()
         isAttachedToWindow = true
         
+        /*
         if !pendingViewControllers.isEmpty {
             let sortedColumns = pendingViewControllers.sorted(by: { lhs, rhs in
                 return lhs.key.index < rhs.key.index
@@ -53,29 +59,30 @@ public class PanelViewController: UIViewController {
             for (eachColumn, eachVC) in sortedColumns {
                 self.show(viewController: eachVC, for: eachColumn, animated: false)
             }
-            pendingViewControllers.removeAll()
+            //pendingViewControllers.removeAll()
         }
         
         if !pendingMinimumWidth.isEmpty {
             for (eachColumn, eachMinWidth) in pendingMinimumWidth {
                 self.minimumWidth(eachMinWidth, for: eachColumn)
             }
-            pendingMinimumWidth.removeAll()
+            //pendingMinimumWidth.removeAll()
         }
         
         if !pendingMaximumWidth.isEmpty {
             for (eachColumn, eachMaxWidth) in pendingMaximumWidth {
                 self.maximumWidth(eachMaxWidth, for: eachColumn)
             }
-            pendingMaximumWidth.removeAll()
+            //pendingMaximumWidth.removeAll()
         }
         
         if !pendingWidthFraction.isEmpty {
             for (eachColumn, widthFraction) in pendingWidthFraction {
                 self.preferredWidthFraction(widthFraction, for: eachColumn)
             }
-            pendingWidthFraction.removeAll()
+            //pendingWidthFraction.removeAll()
         }
+        */
     }
     
     /// adds the stackview to the view hierarchy
@@ -88,7 +95,7 @@ public class PanelViewController: UIViewController {
             primaryStackView.axis = .vertical
         }
         
-        primaryStackView.spacing = 1.5
+        primaryStackView.spacing = 1
         primaryStackView.translatesAutoresizingMaskIntoConstraints = false
         
         self.view.addSubview(primaryStackView)
@@ -133,10 +140,82 @@ public class PanelViewController: UIViewController {
         emptyViewStack = emptyViewContainer
     }
     
-    private func createPanel(for index: PanelViewIndex) -> UIView {
+    private func createPanel(for panelIndex: PanelViewIndex) -> UIView {
+        func applyMinWidthConstraint() {
+            var effectiveMinWidthConstantForPanel: CGFloat = 320
+            if let existingMinWidthConstraint = columnMinWidthMappings[panelIndex] {
+                effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
+            } else if let pendingMinWidthConstraint = pendingMinimumWidth[panelIndex] {
+                effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
+            }
+            
+            let minWidthConstraint = NSLayoutConstraint(item: aNewPanel,
+                                                        attribute: .width,
+                                                        relatedBy: .greaterThanOrEqual,
+                                                        toItem: nil,
+                                                        attribute: .notAnAttribute,
+                                                        multiplier: 1.0,
+                                                        constant: effectiveMinWidthConstantForPanel)
+            minWidthConstraint.isActive = true
+            
+            columnMinWidthMappings[panelIndex] = minWidthConstraint
+        }
+        
+        func applyMaxWidthConstraint() {
+            var effectiveMaxWidthConstantForPanel: CGFloat = 768
+            if let existingMaxWidthConstraint = columnMaxWidthMappings[panelIndex] {
+                effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
+            } else if let pendingMaxWidthConstraint = pendingMaximumWidth[panelIndex] {
+                effectiveMaxWidthConstantForPanel = pendingMaxWidthConstraint
+            }
+            
+            let maxWidthConstraint = NSLayoutConstraint(item: aNewPanel,
+                                                        attribute: .width,
+                                                        relatedBy: .lessThanOrEqual,
+                                                        toItem: nil,
+                                                        attribute: .notAnAttribute,
+                                                        multiplier: 1.0,
+                                                        constant: effectiveMaxWidthConstantForPanel)
+            maxWidthConstraint.isActive = true
+            
+            columnMaxWidthMappings[panelIndex] = maxWidthConstraint
+        }
+        
+        func applyPrefferredWidthConstraint() {
+            var effectiveWidthConstantForPanel: CGFloat = 475
+            
+            if let existingWidthConstraint = columnWidthMappings[panelIndex] {
+                effectiveWidthConstantForPanel = existingWidthConstraint.constant
+            } else if let savedWidthFraction = pendingWidthFraction[panelIndex] {
+                effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
+            }
+            
+            let widthConstraint = NSLayoutConstraint(item: aNewPanel,
+                                                        attribute: .width,
+                                                        relatedBy: .equal,
+                                                        toItem: nil,
+                                                        attribute: .notAnAttribute,
+                                                        multiplier: 1.0,
+                                                        constant: effectiveWidthConstantForPanel)
+            widthConstraint.isActive = true
+            
+            columnWidthMappings[panelIndex] = widthConstraint
+        }
+        
         let aNewPanel = UIView()
-        columnToViewMappings[index] = aNewPanel
-        mainStackView.addArrangedSubview(aNewPanel)
+        columnToViewMappings[panelIndex] = aNewPanel
+        // mainStackView.addArrangedSubview(aNewPanel)
+        if panelIndex.index != 0 {
+            // Configure min width
+            applyMinWidthConstraint()
+            
+            // configure max width
+            applyMaxWidthConstraint()
+            
+            // configure width
+            applyPrefferredWidthConstraint()
+            
+        }
         return aNewPanel
     }
     
@@ -154,15 +233,7 @@ public class PanelViewController: UIViewController {
 
     /// children navigation controllers this splitview manages
     var viewControllers = [PanelViewIndex: UINavigationController]()
-    
-    private var pendingViewControllers = [PanelViewIndex: UIViewController]()
-    private var pendingMinimumWidth = [PanelViewIndex: CGFloat]()
-    private var pendingMaximumWidth = [PanelViewIndex: CGFloat]()
-    private var pendingWidthFraction = [PanelViewIndex: CGFloat]()
-    
-    private var savedWidthFractions = [PanelViewIndex: CGFloat]()
-    
-    
+
     /// navigation controller that manages the view stack on the center view
     public var centralPanelNavController: UINavigationController? {
         return viewControllers[.centerPanel]
@@ -185,37 +256,51 @@ public class PanelViewController: UIViewController {
         }
     }
     
+    public func minimumWidth(_ width: CGFloat, at index: Int) {
+        let onTheFlyPanelIndex = PanelViewIndex(index: index)
+        minimumWidth(width, for: onTheFlyPanelIndex)
+    }
+    
     public func minimumWidth(_ width: CGFloat, for column: PanelViewIndex) {
-        if isAttachedToWindow {
-            columnMinWidthMappings[column]?.constant = width
+        if isAttachedToWindow, let constraintForPanel = columnMinWidthMappings[column] {
+            constraintForPanel.constant = width
         } else {
             pendingMinimumWidth[column] = width
         }
     }
     
+    public func maximumWidth(_ width: CGFloat, at index: Int) {
+        let onTheFlyPanelIndex = PanelViewIndex(index: index)
+        maximumWidth(width, for: onTheFlyPanelIndex)
+    }
+    
     public func maximumWidth(_ width: CGFloat, for column: PanelViewIndex) {
-        if isAttachedToWindow {
-            columnMaxWidthMappings[column]?.constant = width
+        if isAttachedToWindow, let constraintForPanel = columnMaxWidthMappings[column] {
+            constraintForPanel.constant = width
         } else {
             pendingMaximumWidth[column] = width
         }
     }
     
+    public func preferredWidthFraction(_ fraction: CGFloat, at index: Int) {
+        let onTheFlyPanelIndex = PanelViewIndex(index: index)
+        preferredWidthFraction(fraction, for: onTheFlyPanelIndex)
+    }
+    
     public func preferredWidthFraction(_ fraction: CGFloat, for column: PanelViewIndex) {
-        if isAttachedToWindow {
-            let sanitizedFraction: CGFloat
-            if fraction > 1 {
-                sanitizedFraction = 1
-            } else if fraction < 0 {
-                sanitizedFraction = 0
-            } else {
-                sanitizedFraction = fraction
-            }
-            
-            columnWidthMappings[column]?.constant = mainStackView.frame.width * sanitizedFraction
-            savedWidthFractions[column] = fraction
+        let sanitizedFraction: CGFloat
+        if fraction > 1 {
+            sanitizedFraction = 1
+        } else if fraction < 0 {
+            sanitizedFraction = 0
         } else {
-            pendingWidthFraction[column] = fraction
+            sanitizedFraction = fraction
+        }
+        
+        if isAttachedToWindow, let constraintForPanel = columnWidthMappings[column] {
+            constraintForPanel.constant = view.frame.width * sanitizedFraction
+        } else {
+            pendingWidthFraction[column] = sanitizedFraction
         }
     }
     
@@ -286,6 +371,11 @@ public class PanelViewController: UIViewController {
         return vcPresentedIn
     }
     
+    public func hide(index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
+        let onTheFlyIndex = PanelViewIndex(index: index)
+        hide(column: onTheFlyIndex, animated: animated, completion: completion)
+    }
+    
     public func hide(column: PanelViewIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
         _hide(column: column, animated: animated, hidingCompleted: { [weak self] in
             guard let strongSelf = self else { return }
@@ -314,13 +404,22 @@ public class PanelViewController: UIViewController {
         }
     }
     
+    public func show(viewController: UIViewController, at index: Int, animated: Bool = true) {
+        let onTheFlyIndex = PanelViewIndex(index: index)
+        show(viewController: viewController, for: onTheFlyIndex, animated: animated)
+    }
+    
     public func show(viewController: UIViewController, for column: PanelViewIndex, animated: Bool = true) {
         func animationBlock() {
             if let aColumn = columnToViewMappings[column] {
-                aColumn.isHidden = false
+                
+                //if column.index > 0 {
                 aColumn.removeFromSuperview()
                 let subViewIndex = calculateAppropriateIndex(for: column)
                 mainStackView.insertArrangedSubview(aColumn, at: subViewIndex)
+                aColumn.isHidden = false
+                //}
+                //self.mainStackView.layoutIfNeeded()
                 // we need to re-establish the constraints
                 //let reestablishedConstraint = inspectorColumnResizer.leftAnchor.constraint(equalTo: forthColumn.leftAnchor, constant: -1.5)
                 //reestablishedConstraint.isActive = true
@@ -337,14 +436,19 @@ public class PanelViewController: UIViewController {
                 // we are about to insert the first panel
                 // hide the empty view
                 self.view.sendSubviewToBack(emptyViewStack)
+                emptyViewStack.isHidden = true
             }
             
+            let newlyCreatedPanel: UIView
             if let alreadyEmbeddedInNavController = viewController as? UINavigationController {
-                add(childNavController: alreadyEmbeddedInNavController, on: column)
+                newlyCreatedPanel = add(childNavController: alreadyEmbeddedInNavController, on: column)
             } else {
                 let navController = UINavigationController(rootViewController: viewController)
-                add(childNavController: navController, on: column)
+                newlyCreatedPanel = add(childNavController: navController, on: column)
             }
+            
+            //let subViewIndex = calculateAppropriateIndex(for: column)
+            //mainStackView.insertArrangedSubview(newlyCreatedPanel, at: subViewIndex)
             
             if animated {
                 UIView.animate(withDuration: animationDuration, animations: {
@@ -367,10 +471,8 @@ public class PanelViewController: UIViewController {
         
         var nextIndex: Int?
         for (subviewIndex, eachPanelIndex) in sortedPanels.enumerated() {
-            if eachPanelIndex.index < column.index {
-                continue
-            } else {
-                nextIndex = eachPanelIndex.index
+            if eachPanelIndex.index == column.index {
+                nextIndex = subviewIndex
             }
         }
         
@@ -423,10 +525,10 @@ public class PanelViewController: UIViewController {
         return viewControllers[.centerPanel]
     }
     
-    private func add(childNavController: UINavigationController, on column: PanelViewIndex) {
-        guard childNavController.parent == nil else {
+    private func add(childNavController: UINavigationController, on column: PanelViewIndex) -> UIView {
+        if let currentPanel = childNavController.parent?.view {
             //if the child already has a parent, it won't add anything
-            return
+            return currentPanel
         }
         
         addChild(childNavController)
@@ -452,6 +554,8 @@ public class PanelViewController: UIViewController {
         )
         
         childNavController.didMove(toParent: self)
+        
+        return parentView
     }
     
     public func replaceTopViewController(with this: UIViewController, animated: Bool) {

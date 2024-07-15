@@ -17,7 +17,7 @@ open class PanelViewIndex: Hashable, Comparable {
     let tag: String
     let index: Int
     
-    init(index: Int, tag: String = "") {
+    public init(index: Int, tag: String = "") {
         self.tag = tag
         self.index = index
     }
