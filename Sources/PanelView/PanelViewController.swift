@@ -13,7 +13,7 @@ public class PanelViewController: UIViewController {
     
     private var emptyView: UIView?
     
-    private var columnToViewMappings = [PanelViewIndex: UIView]()
+    private var panelMappings = [PanelViewIndex: UIView]()
     private var columnWidthMappings = [PanelViewIndex: NSLayoutConstraint]()
     private var columnMinWidthMappings = [PanelViewIndex: NSLayoutConstraint]()
     private var columnMaxWidthMappings = [PanelViewIndex: NSLayoutConstraint]()
@@ -24,7 +24,7 @@ public class PanelViewController: UIViewController {
     private var pendingMaximumWidth = [PanelViewIndex: CGFloat]()
     private var pendingWidthFraction = [PanelViewIndex: CGFloat]()
     
-    private var columnResizerMappings = [PanelViewIndex: UIView]()
+    private var resizerMappings = [PanelViewIndex: UIView]()
     private var hoverGestureMappings = [PanelViewIndex: UIHoverGestureRecognizer]()
     private var dragGestureMappings = [PanelViewIndex: UIHoverGestureRecognizer]()
     private var resizerToPanelMappings = [UIView: PanelViewIndex]()
@@ -37,7 +37,7 @@ public class PanelViewController: UIViewController {
     
     private var didDisplayInitialColumn = false
     
-    private var _resizerConstraintIdentifier = "constraint that needs to be reattached"
+    private var _resizerConstraintIdentifier = "temp constraint:"
     
     // MARK: Public Members
     public var configuration = PanelViewConfiguration()
@@ -219,12 +219,12 @@ public class PanelViewController: UIViewController {
                 if panelIndex.index < 0 {
                     // this is a leading side panel, we need to place the resizer view on the trailing edge of the panel
                     let tempConstraint = viewResizer.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: panelResizerWidth/2.0)
-                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 } else {
                     // this is a trailing side panel, we need to place the resizer on the leading edge of the panel
                     let tempConstraint = viewResizer.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: -panelResizerWidth/2.0)
-                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 }
                 NSLayoutConstraint.activate(layoutConstraints)
@@ -239,27 +239,27 @@ public class PanelViewController: UIViewController {
                 if panelIndex.index < 0 {
                     // this is a top panel that appears above the central panel. we need to place the resizer view on the
                     // bottom edge of the panel
-                    let tempConstraint = viewResizer.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: panelResizerWidth/2.0)
-                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    let tempConstraint = viewResizer.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: -panelResizerWidth/2.0)
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 } else {
                     // this is a bottom panel that appears below the central panel. we need to place the resizer view
                     // on the top edge of the panel
                     let tempConstraint = viewResizer.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: panelResizerWidth/2.0)
-                    tempConstraint.identifier = _resizerConstraintIdentifier
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
                     layoutConstraints.append(tempConstraint)
                 }
                 
                 NSLayoutConstraint.activate(layoutConstraints)
             }
             
-            columnResizerMappings[panelIndex] = viewResizer
+            resizerMappings[panelIndex] = viewResizer
         }
         
         
         let aNewPanel = UIView()
         aNewPanel.isHidden = true
-        columnToViewMappings[panelIndex] = aNewPanel
+        panelMappings[panelIndex] = aNewPanel
         mainStackView.addArrangedSubview(aNewPanel)
         
         if panelIndex.index != 0 {
@@ -310,7 +310,7 @@ public class PanelViewController: UIViewController {
     }
     
     public func isVisible(column: PanelViewIndex) -> Bool {
-        if let discoveredColumn = columnToViewMappings[column] {
+        if let discoveredColumn = panelMappings[column] {
             return !discoveredColumn.isHidden
         } else {
             return false
@@ -433,9 +433,10 @@ public class PanelViewController: UIViewController {
     }
     
     private func hideViewResizer(column: PanelViewIndex) {
-        if let associatedResizer = columnResizerMappings[column] {
-            if let constraintThatNeedToAltered = associatedResizer.constraints.first(where: { $0.identifier == _resizerConstraintIdentifier }) {
-                constraintThatNeedToAltered.constant = -1.0 * panelResizerWidth
+        if let associatedResizer = resizerMappings[column] {
+            let uniqueConstraintIdentifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
+            if let constraintThatNeedToAltered = self.view.constraints.first(where: { $0.identifier == uniqueConstraintIdentifier }) {
+                constraintThatNeedToAltered.constant = 0
             }
         }
     }
@@ -458,9 +459,9 @@ public class PanelViewController: UIViewController {
     
     private func _hide(column: PanelViewIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
         func hideAppropriateColumn() {
-            columnToViewMappings[column]?.isHidden = true
+            panelMappings[column]?.isHidden = true
             
-            // hideViewResizer(column: colu)
+            hideViewResizer(column: column)
             
             if let validEmptyStateView = emptyView {
                 var atLeastOnePanelVisible = false
@@ -500,7 +501,7 @@ public class PanelViewController: UIViewController {
     
     public func show(viewController: UIViewController, for column: PanelViewIndex, animated: Bool = true) {
         func animationBlock() {
-            if let aColumn = columnToViewMappings[column] {
+            if let aColumn = panelMappings[column] {
                 
                 //if column.index > 0 {
                 aColumn.removeFromSuperview()
@@ -510,7 +511,7 @@ public class PanelViewController: UIViewController {
                 
                 
                 // we need to re-establish the constraints for column resizers
-                if let associatedResizer = columnResizerMappings[column] {
+                if let associatedResizer = resizerMappings[column] {
                     let reestablishedConstraint: NSLayoutConstraint
                     if mainStackView.axis == .horizontal {
                         if column.index < 0 {
@@ -533,6 +534,7 @@ public class PanelViewController: UIViewController {
                             reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aColumn.topAnchor, constant: panelResizerWidth/2.0)
                         }
                     }
+                    reestablishedConstraint.identifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
                     reestablishedConstraint.isActive = true
                 }
                 
@@ -574,7 +576,7 @@ public class PanelViewController: UIViewController {
     }
     
     private func calculateAppropriateIndex(for column: PanelViewIndex) -> Int {
-        let sortedPanels: [PanelViewIndex] = columnToViewMappings.map { $0.key }.sorted()
+        let sortedPanels: [PanelViewIndex] = panelMappings.map { $0.key }.sorted()
         if sortedPanels.isEmpty {
             // since there are no panels, the subview index is zero
             return 0
@@ -607,7 +609,7 @@ public class PanelViewController: UIViewController {
         viewControllers.removeAll(keepingCapacity: true)
         
         // reset everything
-        columnToViewMappings.forEach { (_, column) in
+        panelMappings.forEach { (_, column) in
             column.isHidden = true
         }
         
@@ -620,7 +622,7 @@ public class PanelViewController: UIViewController {
                 navController = UINavigationController(rootViewController: eachViewController)
             }
             viewControllers[eachColumn] = navController
-            if let columnToUnhide = columnToViewMappings[eachColumn] {
+            if let columnToUnhide = panelMappings[eachColumn] {
                 add(childNavController: navController, on: eachColumn)
                 columnToUnhide.isHidden = false
             }
@@ -647,7 +649,7 @@ public class PanelViewController: UIViewController {
         
         let parentView: UIView
         
-        if let existingPanel: UIView = columnToViewMappings[column] {
+        if let existingPanel: UIView = panelMappings[column] {
             parentView = existingPanel
         } else {
             parentView = createPanel(for: column)
