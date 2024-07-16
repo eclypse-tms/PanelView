@@ -99,7 +99,6 @@ public class PanelViewController: UIViewController {
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
             newlyCreatedPanel.isHidden = true
-            // hideViewResizer(panel: onTheFlyPanelIndex)
         }
     }
     
@@ -144,6 +143,14 @@ public class PanelViewController: UIViewController {
     }
     
     private func createPanel(for panelIndex: PanelIndex) -> UIView {
+        // attribute that is used to size the panels widthwise or heightwise
+        let layoutAttribute: NSLayoutConstraint.Attribute
+        if mainStackView.axis == .horizontal {
+            layoutAttribute = .width
+        } else {
+            layoutAttribute = .height
+        }
+        
         func applyMinWidthConstraint() {
             var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
             if let existingMinWidthConstraint = panelMinWidthMappings[panelIndex] {
@@ -152,8 +159,10 @@ public class PanelViewController: UIViewController {
                 effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
             }
             
+            
+            
             let minWidthConstraint = NSLayoutConstraint(item: aNewPanel,
-                                                        attribute: .width,
+                                                        attribute: layoutAttribute,
                                                         relatedBy: .greaterThanOrEqual,
                                                         toItem: nil,
                                                         attribute: .notAnAttribute,
@@ -173,7 +182,7 @@ public class PanelViewController: UIViewController {
             }
             
             let maxWidthConstraint = NSLayoutConstraint(item: aNewPanel,
-                                                        attribute: .width,
+                                                        attribute: layoutAttribute,
                                                         relatedBy: .lessThanOrEqual,
                                                         toItem: nil,
                                                         attribute: .notAnAttribute,
@@ -190,11 +199,15 @@ public class PanelViewController: UIViewController {
             if let existingWidthConstraint = panelWidthMappings[panelIndex] {
                 effectiveWidthConstantForPanel = existingWidthConstraint.constant
             } else if let savedWidthFraction = pendingWidthFraction[panelIndex] {
-                effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
+                if mainStackView.axis == .horizontal {
+                    effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
+                } else {
+                    effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
+                }
             }
             
             let widthConstraint = NSLayoutConstraint(item: aNewPanel,
-                                                        attribute: .width,
+                                                        attribute: layoutAttribute,
                                                         relatedBy: .equal,
                                                         toItem: nil,
                                                         attribute: .notAnAttribute,
@@ -265,6 +278,7 @@ public class PanelViewController: UIViewController {
             
             // add drag gesture
             let viewResizerDragGesture = MacPanGestureRecognizer(target: self, action: #selector(didDragSeparator(_:)))
+            viewResizerDragGesture.orientation = configuration.orientation
             viewResizer.addGestureRecognizer(viewResizerDragGesture)
             
             resizerMappings[panelIndex] = viewResizer
@@ -365,7 +379,11 @@ public class PanelViewController: UIViewController {
         }
         
         if isAttachedToWindow, let constraintForPanel = panelWidthMappings[panel] {
-            constraintForPanel.constant = view.frame.width * sanitizedFraction
+            if mainStackView.axis == .horizontal {
+                constraintForPanel.constant = view.frame.width * sanitizedFraction
+            } else {
+                constraintForPanel.constant = view.frame.height * sanitizedFraction
+            }
         } else {
             pendingWidthFraction[panel] = sanitizedFraction
         }
@@ -705,7 +723,11 @@ public class PanelViewController: UIViewController {
                     hoveredSeparator.backgroundColor = highlightColor
                 })
             }
-            NSCursor.resizeLeftRight.set()
+            if mainStackView.axis == .horizontal {
+                NSCursor.resizeLeftRight.set()
+            } else {
+                NSCursor.resizeUpDown.set()
+            }
         case .ended, .cancelled:
             if configuration.viewResizerHighlightColorOnHover != nil {
                 UIView.animate(withDuration: animationDuration, animations: {
@@ -762,23 +784,36 @@ public class PanelViewController: UIViewController {
                     }
                 } else {
                     if resizedPanelIndex.index < 0 {
-                        proposedWidthOrHeight = originalFrame.height + appliedTranslation.x
+                        proposedWidthOrHeight = originalFrame.height + appliedTranslation.y
                     } else {
-                        proposedWidthOrHeight = originalFrame.height - appliedTranslation.x
+                        proposedWidthOrHeight = originalFrame.height - appliedTranslation.y
                     }
                 }
                 
                 let finalPanelWidth: CGFloat
                 if proposedWidthOrHeight < minWidthConstraint.constant {
                     finalPanelWidth = minWidthConstraint.constant
-                    NSCursor.resizeRight.set()
+                    if mainStackView.axis == .horizontal {
+                        NSCursor.resizeRight.set()
+                    } else {
+                        NSCursor.resizeUp.set()
+                    }
+                    
                 } else if proposedWidthOrHeight > maxWidthConstraint.constant {
                     finalPanelWidth = maxWidthConstraint.constant
-                    NSCursor.resizeLeft.set()
+                    if mainStackView.axis == .horizontal {
+                        NSCursor.resizeLeft.set()
+                    } else {
+                        NSCursor.resizeDown.set()
+                    }
                 } else {
                     // it is within the min and max
                     finalPanelWidth = proposedWidthOrHeight
-                    NSCursor.resizeLeftRight.set()
+                    if mainStackView.axis == .horizontal {
+                        NSCursor.resizeLeftRight.set()
+                    } else {
+                        NSCursor.resizeUpDown.set()
+                    }
                 }
                 
                 if let existingWidthConstraint = panelWidthMappings[resizedPanelIndex] {

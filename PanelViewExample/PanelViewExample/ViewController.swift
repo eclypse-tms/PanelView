@@ -36,6 +36,8 @@ class ViewController: UIViewController {
         
         var customConfig = PanelViewConfiguration()
         
+        customConfig.orientation = .vertical
+        
         let emptyStackView = UIStackView()
         emptyStackView.axis = .vertical
         emptyStackView.alignment = .center
