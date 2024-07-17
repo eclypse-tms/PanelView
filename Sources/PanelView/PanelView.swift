@@ -44,6 +44,9 @@ public class PanelView: UIViewController, ResizablePanel {
     
     var _resizerConstraintIdentifier = "temp constraint:"
     
+    /// children navigation controllers this panelview manages
+    public var viewControllers = [PanelIndex: UINavigationController]()
+    
     // MARK: Public Members
     public var configuration = PanelViewConfiguration()
     
@@ -312,9 +315,6 @@ public class PanelView: UIViewController, ResizablePanel {
         }
         return aNewPanel
     }
-    
-    /// children navigation controllers this splitview manages
-    var viewControllers = [PanelIndex: UINavigationController]()
     
     public func push(viewController: UIViewController) {
         if let navController = viewControllers[.center] {
