@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     
     var panelIndexes = [Int]()
     
-    private var panelView: PanelViewController!
+    private var panelView: PanelView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,11 +32,12 @@ class ViewController: UIViewController {
     }
 
     private func addPanelView() {
-        panelView = PanelViewController()
+        panelView = PanelView()
         
         var customConfig = PanelViewConfiguration()
         
-        customConfig.orientation = .vertical
+        customConfig.orientation = .horizontal
+        customConfig.allowsUIPanelSizeAdjustment = false
         
         let emptyStackView = UIStackView()
         emptyStackView.axis = .vertical
@@ -44,7 +45,7 @@ class ViewController: UIViewController {
         emptyStackView.spacing = 8
         
         // image for the empty state
-        let emptyViewImage = UIImageView(image: UIImage(systemName: "macpro.gen3"))
+        let emptyViewImage = UIImageView(image: UIImage(systemName: "viewfinder"))
         NSLayoutConstraint.activate([
             emptyViewImage.widthAnchor.constraint(equalToConstant: 60),
             emptyViewImage.heightAnchor.constraint(equalToConstant: 60)
@@ -54,9 +55,14 @@ class ViewController: UIViewController {
         
         
         let customLabel = UILabel()
-        customLabel.text = "Bonanza"
+        customLabel.text = "Nothing to see here"
         customLabel.font = UIFont.preferredFont(forTextStyle: .title1)
         emptyStackView.addArrangedSubview(customLabel)
+        
+        let customLabel2 = UILabel()
+        customLabel2.text = "This is a demo empty view"
+        customLabel2.font = UIFont.preferredFont(forTextStyle: .body)
+        emptyStackView.addArrangedSubview(customLabel2)
         
         
         customConfig.emptyStateView = emptyStackView
@@ -64,7 +70,7 @@ class ViewController: UIViewController {
         panelView.configuration = customConfig
         
         
-        for index in -10...11 {
+        for index in -panelView.configuration.numberOfPanelsToPrime...panelView.configuration.numberOfPanelsToPrime {
             if index == 0 {
                 continue
             }
@@ -127,7 +133,7 @@ class ViewController: UIViewController {
                     centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
                 ])
                 
-                panelView.show(viewController: initial, for: .centerPanel)
+                panelView.show(viewController: initial, for: .center)
             }
         } else {
             if panelIndexes.contains(0) {
@@ -155,7 +161,7 @@ class ViewController: UIViewController {
                     centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
                 ])
                 
-                panelView.show(viewController: initial, for: .centerPanel)
+                panelView.show(viewController: initial, for: .center)
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  PanelViewController.swift
+//  PanelView.swift
 //
 //
 //  Created by Nessa Kucuk, Turker on 7/12/24.
@@ -7,40 +7,42 @@
 
 import UIKit
 import Combine
+import SwiftUI
 
-public class PanelViewController: UIViewController {
-    private var mainStackView: UIStackView!
+public class PanelView: UIViewController, ResizablePanel {
+    var mainStackView: UIStackView!
     
-    private var emptyView: UIView?
+    var emptyView: UIView?
     
-    private var panelMappings = [PanelIndex: UIView]()
-    private var panelWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    private var panelMinWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    private var panelMaxWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    private var panelCenterMappings = [PanelIndex: CGPoint]()
+    var panelMappings = [PanelIndex: UIView]()
+    var panelWidthMappings = [PanelIndex: NSLayoutConstraint]()
+    var panelMinWidthMappings = [PanelIndex: NSLayoutConstraint]()
+    var panelMaxWidthMappings = [PanelIndex: NSLayoutConstraint]()
+    var panelCenterMappings = [PanelIndex: CGPoint]()
     
-    private var pendingViewControllers = [PanelIndex: UIViewController]()
-    private var pendingMinimumWidth = [PanelIndex: CGFloat]()
-    private var pendingMaximumWidth = [PanelIndex: CGFloat]()
-    private var pendingWidthFraction = [PanelIndex: CGFloat]()
-    private var originalFrameMappings = [PanelIndex: CGRect]()
+    var pendingViewControllers = [PanelIndex: UIViewController]()
+    var pendingMinimumWidth = [PanelIndex: CGFloat]()
+    var pendingMaximumWidth = [PanelIndex: CGFloat]()
+    var pendingWidthFraction = [PanelIndex: CGFloat]()
+    var originalFrameMappings = [PanelIndex: CGRect]()
     
-    private var resizerMappings = [PanelIndex: UIView]()
+    var swiftUIViewMappings = NSMapTable<PanelIndex, SwiftUIViewWrapper>(valueOptions: .weakMemory)
+    
+    var resizerMappings = [PanelIndex: UIView]()
     private var hoverGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
     private var dragGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
     private var resizerToPanelMappings = [UIView: PanelIndex]()
     
-    private let animationDuration = 0.3333
-    private let panelResizerWidth: CGFloat = 3
+    let panelResizerWidth: CGFloat = 3
     private let defaultPanelMinWidth: CGFloat = 320
     private let defaultPanelMaxWidth: CGFloat = 768
     
     var splitViewReady = PassthroughSubject<Void, Error>()
-    private var isAttachedToWindow = false
+    public var isAttachedToWindow = false
     
     private var didDisplayInitialPanel = false
     
-    private var _resizerConstraintIdentifier = "temp constraint:"
+    var _resizerConstraintIdentifier = "temp constraint:"
     
     // MARK: Public Members
     public var configuration = PanelViewConfiguration()
@@ -94,7 +96,7 @@ public class PanelViewController: UIViewController {
     }
     
     private func configureInitialPanels() {
-        for index in -5...5 {
+        for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
             let onTheFlyPanelIndex = PanelIndex(index: index)
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
@@ -142,7 +144,7 @@ public class PanelViewController: UIViewController {
         }
     }
     
-    private func createPanel(for panelIndex: PanelIndex) -> UIView {
+    func createPanel(for panelIndex: PanelIndex) -> UIView {
         // attribute that is used to size the panels widthwise or heightwise
         let layoutAttribute: NSLayoutConstraint.Attribute
         if mainStackView.axis == .horizontal {
@@ -304,107 +306,18 @@ public class PanelViewController: UIViewController {
             applyPrefferredWidthConstraint()
             
             // attach its accompanying view resizer
-            if panelIndex.index != 0 {
+            if panelIndex.index != 0, configuration.allowsUIPanelSizeAdjustment {
                 createViewResizer(newlyCreatedPanel: aNewPanel)
             }
         }
         return aNewPanel
     }
     
-
     /// children navigation controllers this splitview manages
     var viewControllers = [PanelIndex: UINavigationController]()
-
-    /// navigation controller that manages the view stack on the center view
-    public var centralPanelNavController: UINavigationController? {
-        return viewControllers[.centerPanel]
-    }
-    
-    /// navigation controller that manages the view stack on the side view (left hand side) of the panel view
-    public var sideMenuController: UINavigationController? {
-        return viewControllers[.navigationPanel]
-    }
-    
-    public func topViewController(for panel: PanelIndex) -> UIViewController? {
-        return viewControllers[panel]?.topViewController
-    }
-    
-    public func isVisible(panel: PanelIndex) -> Bool {
-        if let discoveredPanel = panelMappings[panel] {
-            return !discoveredPanel.isHidden
-        } else {
-            return false
-        }
-    }
-    
-    public func minimumWidth(_ width: CGFloat, at index: Int) {
-        let onTheFlyPanelIndex = PanelIndex(index: index)
-        minimumWidth(width, for: onTheFlyPanelIndex)
-    }
-    
-    public func minimumWidth(_ width: CGFloat, for panel: PanelIndex) {
-        if isAttachedToWindow, let constraintForPanel = panelMinWidthMappings[panel] {
-            constraintForPanel.constant = width
-        } else {
-            pendingMinimumWidth[panel] = width
-        }
-    }
-    
-    public func maximumWidth(_ width: CGFloat, at index: Int) {
-        let onTheFlyPanelIndex = PanelIndex(index: index)
-        maximumWidth(width, for: onTheFlyPanelIndex)
-    }
-    
-    public func maximumWidth(_ width: CGFloat, for panel: PanelIndex) {
-        if isAttachedToWindow, let constraintForPanel = panelMaxWidthMappings[panel] {
-            constraintForPanel.constant = width
-        } else {
-            pendingMaximumWidth[panel] = width
-        }
-    }
-    
-    public func preferredWidthFraction(_ fraction: CGFloat, at index: Int) {
-        let onTheFlyPanelIndex = PanelIndex(index: index)
-        preferredWidthFraction(fraction, for: onTheFlyPanelIndex)
-    }
-    
-    public func preferredWidthFraction(_ fraction: CGFloat, for panel: PanelIndex) {
-        let sanitizedFraction: CGFloat
-        if fraction > 1 {
-            sanitizedFraction = 1
-        } else if fraction < 0 {
-            sanitizedFraction = 0
-        } else {
-            sanitizedFraction = fraction
-        }
-        
-        if isAttachedToWindow, let constraintForPanel = panelWidthMappings[panel] {
-            if mainStackView.axis == .horizontal {
-                constraintForPanel.constant = view.frame.width * sanitizedFraction
-            } else {
-                constraintForPanel.constant = view.frame.height * sanitizedFraction
-            }
-        } else {
-            pendingWidthFraction[panel] = sanitizedFraction
-        }
-    }
-    
-    
-    public func collapseSideMenu(animated: Bool, completion: (() -> Void)?) {
-        if viewControllers.count > 1 {
-            hide(panel: .navigationPanel, animated: animated, completion: completion)
-        } else {
-            completion?()
-        }
-    }
-    
-    /// hides the third panel (inspector panel)
-    public func collapseInspector(animated: Bool, completion: (() -> Void)?) {
-        hide(panel: .inspectorPanel, animated: animated, completion: completion)
-    }
     
     public func push(viewController: UIViewController) {
-        if let navController = viewControllers[.centerPanel] {
+        if let navController = viewControllers[.center] {
             navController.pushViewController(viewController, animated: true)
         } else {
             fatalError("each panel in panel view must have a parent navigation controller")
@@ -420,7 +333,7 @@ public class PanelViewController: UIViewController {
     }
     
     public func popViewController() {
-        if let navController = viewControllers[.centerPanel] {
+        if let navController = viewControllers[.center] {
             navController.popViewController(animated: true)
         } else {
             fatalError("each panel in panel view must have a parent navigation controller")
@@ -436,170 +349,20 @@ public class PanelViewController: UIViewController {
     }
     
     
-    public func hidePanel(containing viewController: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
-        let panelToHide: PanelIndex? = presents(viewController: viewController)
-        
-        if let discoveredPanelToHide = panelToHide {
-            hide(panel: discoveredPanelToHide, animated: animated, completion: completion)
-        }
-    }
-    
     /// checks whether the provided viewController is currently being presented in one of the panels
     public func presents(viewController: UIViewController) -> PanelIndex? {
         var vcPresentedIn: PanelIndex?
-        for (eachIndex, eachNavController) in viewControllers {
+        for (eachPanel, eachNavController) in viewControllers {
             if eachNavController.viewControllers.contains(viewController) {
-                vcPresentedIn = eachIndex
+                vcPresentedIn = eachPanel
                 break
             }
         }
         return vcPresentedIn
     }
     
-    private func hideViewResizer(panel: PanelIndex) {
-        if let associatedResizer = resizerMappings[panel] {
-            let uniqueConstraintIdentifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
-            if let constraintThatNeedToAltered = self.view.constraints.first(where: { $0.identifier == uniqueConstraintIdentifier }) {
-                constraintThatNeedToAltered.constant = 0
-            }
-        }
-    }
-    
-    public func hide(index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
-        let onTheFlyIndex = PanelIndex(index: index)
-        hide(panel: onTheFlyIndex, animated: animated, completion: completion)
-    }
-    
-    public func hide(panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
-        _hide(panel: panel, animated: animated, hidingCompleted: { [weak self] in
-            guard let strongSelf = self else { return }
-            if let previousVC = strongSelf.viewControllers[panel] {
-                previousVC.removeSelfFromParent()
-                strongSelf.viewControllers.removeValue(forKey: panel)
-            }
-            completion?()
-        })
-    }
-    
-    private func _hide(panel: PanelIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
-        func hideAppropriatePanel() {
-            panelMappings[panel]?.isHidden = true
-            
-            hideViewResizer(panel: panel)
-            
-            if let validEmptyStateView = emptyView {
-                var atLeastOnePanelVisible = false
-                for eachPanel in mainStackView.subviews {
-                    if !eachPanel.isHidden {
-                        // at least one panel is visible
-                        atLeastOnePanelVisible = true
-                        break
-                    }
-                }
-                
-                if !atLeastOnePanelVisible {
-                    // all panels are hidden, show the empty view
-                    self.view.bringSubviewToFront(validEmptyStateView)
-                    validEmptyStateView.isHidden = false
-                }
-            }
-        }
-        
-        if panel.index != 0, animated {
-            // we shouldn't animate hiding of the main panel
-            UIView.animate(withDuration: animationDuration, animations: {
-                hideAppropriatePanel()
-            }, completion: { _ in
-                hidingCompleted?()
-            })
-        } else {
-            hideAppropriatePanel()
-            hidingCompleted?()
-        }
-    }
-    
-    public func show(viewController: UIViewController, at index: Int, animated: Bool = true) {
-        let onTheFlyIndex = PanelIndex(index: index)
-        show(viewController: viewController, for: onTheFlyIndex, animated: animated)
-    }
-    
-    public func show(viewController: UIViewController, for panel: PanelIndex, animated: Bool = true) {
-        func animationBlock() {
-            if let aPanel = panelMappings[panel] {
-                
-                //if panel.index > 0 {
-                aPanel.removeFromSuperview()
-                let subViewIndex = calculateAppropriateIndex(for: panel)
-                mainStackView.insertArrangedSubview(aPanel, at: subViewIndex)
-                aPanel.isHidden = false
-                
-                
-                // we need to re-establish the constraints for panel resizers
-                if let associatedResizer = resizerMappings[panel] {
-                    let reestablishedConstraint: NSLayoutConstraint
-                    if mainStackView.axis == .horizontal {
-                        if panel.index < 0 {
-                            // this is a horizonal layout and the panel is on the left hand side (leading side)
-                            // resizer needs to be aligned to the trailing side of the panel
-                            reestablishedConstraint = associatedResizer.trailingAnchor.constraint(equalTo: aPanel.trailingAnchor, constant: panelResizerWidth/2.0)
-                        } else {
-                            // this is a horizonal layout and the panel is on the right hand side (trailing side)
-                            // resizer needs to be aligned to the leading side of the panel
-                            reestablishedConstraint = associatedResizer.leadingAnchor.constraint(equalTo: aPanel.leadingAnchor, constant: -panelResizerWidth/2.0)
-                        }
-                    } else {
-                        if panel.index < 0 {
-                            // this is a vertical layout and the panel is on the top side
-                            // resizer needs to be aligned to the bottom side of the panel
-                            reestablishedConstraint = associatedResizer.bottomAnchor.constraint(equalTo: aPanel.bottomAnchor, constant: panelResizerWidth/2.0)
-                        } else {
-                            // this is a vertical layout and the panel is on the bottom
-                            // resizer needs to be aligned to the top side of the panel
-                            reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aPanel.topAnchor, constant: panelResizerWidth/2.0)
-                        }
-                    }
-                    reestablishedConstraint.identifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
-                    reestablishedConstraint.isActive = true
-                    associatedResizer.isHidden = false
-                }
-                
-            }
-        }
-        
-        if isAttachedToWindow {
-            if let previousVC = viewControllers[panel] {
-                previousVC.removeSelfFromParent()
-                viewControllers.removeValue(forKey: panel)
-            }
-            
-            
-            // since there is at least one panel that is will be visible
-            // we should hide the empty view stack
-            if let validEmptyStateView = emptyView {
-                self.view.sendSubviewToBack(validEmptyStateView)
-                validEmptyStateView.isHidden = true
-            }
-            
-            if let alreadyEmbeddedInNavController = viewController as? UINavigationController {
-                add(childNavController: alreadyEmbeddedInNavController, on: panel)
-            } else {
-                let navController = UINavigationController(rootViewController: viewController)
-                add(childNavController: navController, on: panel)
-            }
-            
-            if panel.index != 0, animated {
-                UIView.animate(withDuration: animationDuration, animations: {
-                    animationBlock()
-                })
-            } else {
-                animationBlock()
-            }
-        } else {
-            pendingViewControllers[panel] = viewController
-        }
-    }
-    
-    private func calculateAppropriateIndex(for panel: PanelIndex) -> Int {
+
+    func calculateAppropriateIndex(for panel: PanelIndex) -> Int {
         let sortedPanels: [PanelIndex] = panelMappings.map { $0.key }.sorted()
         if sortedPanels.isEmpty {
             // since there are no panels, the subview index is zero
@@ -620,7 +383,9 @@ public class PanelViewController: UIViewController {
             return sortedPanels.endIndex
         }
     }
+
     
+    /*
     public func reset(with singleViewController: UIViewController, on panel: PanelIndex, animated: Bool = true) {
         reset(multiple: [singleViewController: panel])
     }
@@ -657,13 +422,10 @@ public class PanelViewController: UIViewController {
             self.view.backgroundColor = .opaqueSeparator
         }
     }
-    
-    public var centerNavigationController: UINavigationController? {
-        return viewControllers[.centerPanel]
-    }
+    */
     
     @discardableResult
-    private func add(childNavController: UINavigationController, on panel: PanelIndex) -> UIView {
+    func add(childNavController: UINavigationController, on panel: PanelIndex) -> UIView {
         if let currentPanel = childNavController.parent?.view {
             //if the child already has a parent, it won't add anything
             return currentPanel
@@ -697,29 +459,16 @@ public class PanelViewController: UIViewController {
         return parentView
     }
     
-    public func replaceTopViewController(with this: UIViewController, animated: Bool) {
-        if let navController = viewControllers[.centerPanel] {
-            navController.replaceTopViewController(with: this, animated: animated)
-        }
-    }
-    
-    @discardableResult
-    public func popToViewController<T>(usingType viewControllerType: T.Type, animated: Bool) -> [UIViewController]? {
-        if let navController = viewControllers[.centerPanel] {
-            return navController.popToViewController(usingType: viewControllerType, animated: animated)
-        }
-        return nil
-    }
-    
+    // MARK: Hover Gesture
     @objc
-    private func didHoverOnSeparator(_ recognizer: UIHoverGestureRecognizer) {
+    func didHoverOnSeparator(_ recognizer: UIHoverGestureRecognizer) {
         #if targetEnvironment(macCatalyst)
         
         guard let hoveredSeparator = recognizer.view else { return }
         switch recognizer.state {
         case .began, .changed:
-            if let highlightColor = configuration.viewResizerHighlightColorOnHover {
-                UIView.animate(withDuration: animationDuration, animations: {
+            if let highlightColor = configuration.viewResizerHoverColor {
+                UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hoveredSeparator.backgroundColor = highlightColor
                 })
             }
@@ -729,15 +478,15 @@ public class PanelViewController: UIViewController {
                 NSCursor.resizeUpDown.set()
             }
         case .ended, .cancelled:
-            if configuration.viewResizerHighlightColorOnHover != nil {
-                UIView.animate(withDuration: animationDuration, animations: {
+            if configuration.viewResizerHoverColor != nil {
+                UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hoveredSeparator.backgroundColor = .clear
                 })
             }
             NSCursor.arrow.set()
         default:
-            if configuration.viewResizerHighlightColorOnHover != nil {
-                UIView.animate(withDuration: animationDuration, animations: {
+            if configuration.viewResizerHoverColor != nil {
+                UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hoveredSeparator.backgroundColor = .clear
                 })
             }
@@ -748,7 +497,7 @@ public class PanelViewController: UIViewController {
     
     
     @objc
-    private func didDragSeparator(_ gestureRecognizer: UIPanGestureRecognizer) {
+    func didDragSeparator(_ gestureRecognizer: UIPanGestureRecognizer) {
         
         // we cannot continue if we cannot identify which panel and its associated resizer is touched
         guard let draggedSeparator = gestureRecognizer.view,
