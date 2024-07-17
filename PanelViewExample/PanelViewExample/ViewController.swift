@@ -37,7 +37,8 @@ class ViewController: UIViewController {
         var customConfig = PanelViewConfiguration()
         
         customConfig.orientation = .horizontal
-        customConfig.allowsUIPanelSizeAdjustment = false
+        customConfig.allowsUIPanelSizeAdjustment = true
+        customConfig.interPanelSpacing = 10
         
         let emptyStackView = UIStackView()
         emptyStackView.axis = .vertical

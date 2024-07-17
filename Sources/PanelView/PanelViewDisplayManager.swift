@@ -140,7 +140,7 @@ extension PanelView: PanelViewDisplayManager {
         if let validEmptyStateView = emptyView {
             self.view.sendSubviewToBack(validEmptyStateView)
             validEmptyStateView.isHidden = true
-            self.view.backgroundColor = configuration.panelSeparatorColor
         }
+        self.view.backgroundColor = configuration.panelSeparatorColor
     }
 }

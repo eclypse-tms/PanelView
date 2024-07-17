@@ -27,6 +27,9 @@ public struct PanelViewConfiguration {
     /// multiple panels open.
     public var panelSeparatorColor: UIColor
     
+    /// The space in the between the panels.
+    public var interPanelSpacing: CGFloat
+    
     /// Number of panels on each side that are created and added to the view hiearchy.
     /// The default value is 4. This means 4 panels on each side of the main panel
     /// for a total of 9 panels are added to the view hierarchy. Priming panels
@@ -51,5 +54,6 @@ public extension PanelViewConfiguration {
         self.numberOfPanelsToPrime = 4
         self.panelTransitionDuration = 0.333333
         self.allowsUIPanelSizeAdjustment = true
+        self.interPanelSpacing = 1.0
     }
 }

@@ -178,8 +178,9 @@ extension PanelView: PanelViewHidingManager {
                 // all panels are hidden, show the empty view
                 self.view.bringSubviewToFront(validEmptyStateView)
                 validEmptyStateView.isHidden = false
-                self.view.backgroundColor = .systemBackground
+                
             }
         }
+        self.view.backgroundColor = .systemBackground
     }
 }

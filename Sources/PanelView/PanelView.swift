@@ -33,7 +33,10 @@ public class PanelView: UIViewController, ResizablePanel {
     private var dragGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
     private var resizerToPanelMappings = [UIView: PanelIndex]()
     
-    let panelResizerWidth: CGFloat = 3
+    var panelResizerWidth: CGFloat {
+        return configuration.interPanelSpacing + 2
+    }
+    
     private let defaultPanelMinWidth: CGFloat = 320
     private let defaultPanelMaxWidth: CGFloat = 768
     
@@ -117,7 +120,7 @@ public class PanelView: UIViewController, ResizablePanel {
             primaryStackView.axis = .vertical
         }
         
-        primaryStackView.spacing = 1
+        primaryStackView.spacing = configuration.interPanelSpacing
         primaryStackView.backgroundColor = .clear
         primaryStackView.translatesAutoresizingMaskIntoConstraints = false
         
