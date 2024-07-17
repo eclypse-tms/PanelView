@@ -23,6 +23,10 @@ public struct PanelViewConfiguration {
     /// only applicable to macCatalyst
     public var viewResizerHoverColor: UIColor?
     
+    /// the this color is only visible in between the panels - when there are
+    /// multiple panels open.
+    public var panelSeparatorColor: UIColor
+    
     /// Number of panels on each side that are created and added to the view hiearchy.
     /// The default value is 4. This means 4 panels on each side of the main panel
     /// for a total of 9 panels are added to the view hierarchy. Priming panels
@@ -43,6 +47,7 @@ public extension PanelViewConfiguration {
         self.orientation = .horizontal
         self.emptyStateView = nil
         self.viewResizerHoverColor = nil
+        self.panelSeparatorColor = UIColor.opaqueSeparator
         self.numberOfPanelsToPrime = 4
         self.panelTransitionDuration = 0.333333
         self.allowsUIPanelSizeAdjustment = true

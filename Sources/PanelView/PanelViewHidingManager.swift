@@ -123,24 +123,7 @@ extension PanelView: PanelViewHidingManager {
     }
     
     private func _performPanelHiding(panel: PanelIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
-        func showEmptyStateIfNecessary() {
-            if let validEmptyStateView = emptyView {
-                var atLeastOnePanelVisible = false
-                for eachPanel in mainStackView.subviews {
-                    if !eachPanel.isHidden {
-                        // at least one panel is visible
-                        atLeastOnePanelVisible = true
-                        break
-                    }
-                }
-                
-                if !atLeastOnePanelVisible {
-                    // all panels are hidden, show the empty view
-                    self.view.bringSubviewToFront(validEmptyStateView)
-                    validEmptyStateView.isHidden = false
-                }
-            }
-        }
+        
         
         func hideAppropriatePanel() {
             panelMappings[panel]?.isHidden = true
@@ -176,6 +159,27 @@ extension PanelView: PanelViewHidingManager {
         panelMappings.forEach { (eachPanelIndex, panel) in
             panel.isHidden = true
             hideViewResizer(associatedPanel: eachPanelIndex)
+        }
+    }
+    
+    /// when there are no visible panels, we show the empty view
+    private func showEmptyStateIfNecessary() {
+        if let validEmptyStateView = emptyView {
+            var atLeastOnePanelVisible = false
+            for eachPanel in mainStackView.subviews {
+                if !eachPanel.isHidden {
+                    // at least one panel is visible
+                    atLeastOnePanelVisible = true
+                    break
+                }
+            }
+            
+            if !atLeastOnePanelVisible {
+                // all panels are hidden, show the empty view
+                self.view.bringSubviewToFront(validEmptyStateView)
+                validEmptyStateView.isHidden = false
+                self.view.backgroundColor = .systemBackground
+            }
         }
     }
 }

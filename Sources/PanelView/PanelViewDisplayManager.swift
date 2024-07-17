@@ -112,6 +112,7 @@ extension PanelView: PanelViewDisplayManager {
     }
     
     public func show(viewController: UIViewController, for panel: PanelIndex, animated: Bool) {
+        
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()
@@ -120,10 +121,7 @@ extension PanelView: PanelViewDisplayManager {
             
             // since there is at least one panel that is will be visible
             // we should hide the empty view stack
-            if let validEmptyStateView = emptyView {
-                self.view.sendSubviewToBack(validEmptyStateView)
-                validEmptyStateView.isHidden = true
-            }
+            hideEmptyView()
             
             if let alreadyEmbeddedInNavController = viewController as? UINavigationController {
                 add(childNavController: alreadyEmbeddedInNavController, on: panel)
@@ -135,6 +133,14 @@ extension PanelView: PanelViewDisplayManager {
             show(panel: panel, animated: animated)
         } else {
             pendingViewControllers[panel] = viewController
+        }
+    }
+    
+    private func hideEmptyView() {
+        if let validEmptyStateView = emptyView {
+            self.view.sendSubviewToBack(validEmptyStateView)
+            validEmptyStateView.isHidden = true
+            self.view.backgroundColor = configuration.panelSeparatorColor
         }
     }
 }
