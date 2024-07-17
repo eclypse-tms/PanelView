@@ -37,7 +37,7 @@ public class PanelView: UIViewController, ResizablePanel {
     private let defaultPanelMinWidth: CGFloat = 320
     private let defaultPanelMaxWidth: CGFloat = 768
     
-    var splitViewReady = PassthroughSubject<Void, Error>()
+    public var splitViewReady = PassthroughSubject<Void, Error>()
     public var isAttachedToWindow = false
     
     private var didDisplayInitialPanel = false
