@@ -118,6 +118,7 @@ public class PanelView: UIViewController, ResizablePanel {
         }
         
         primaryStackView.spacing = 1
+        primaryStackView.backgroundColor = .clear
         primaryStackView.translatesAutoresizingMaskIntoConstraints = false
         
         self.view.addSubview(primaryStackView)
