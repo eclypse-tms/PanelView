@@ -2,7 +2,7 @@
 //  PanelViewDisplayManager.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/16/24.
+//  Created by eclypse on 7/16/24.
 //
 
 import UIKit
@@ -10,11 +10,11 @@ import UIKit
 public protocol PanelViewDisplayManager {
     /// shows a previously hidden panel. If the panel does not have a childview controller
     /// associated with it already you will see an empty view.
-    func show(panel: PanelIndex, animated: Bool)
+    func show(panel: Panel, animated: Bool)
     
     /// shows a previously hidden panel. If the panel does not have a childview controller
     /// associated with it already you will see an empty view. animates the transition.
-    func show(panel: PanelIndex)
+    func show(panel: Panel)
     
     /// shows a new view controller at the provided panel index. If the panel already contains
     /// another child view controller, it replaces that while animating the transition.
@@ -32,21 +32,25 @@ public protocol PanelViewDisplayManager {
     /// another child view controller, it replaces that. 
     ///
     /// You can use this function interchangeably with show(viewController:at:animated).
-    func show(viewController: UIViewController, for panel: PanelIndex, animated: Bool)
+    func show(viewController: UIViewController, for panel: Panel, animated: Bool)
     
     /// shows a new view controller for the provided named panel. If the panel already contains
     /// another child view controller, it replaces that while animating the transition.
     ///
     /// You can use this function interchangeably with show(viewController:at:animated).
-    func show(viewController: UIViewController, for panel: PanelIndex)
+    func show(viewController: UIViewController, for panel: Panel)
+    
+    /// adds the provided navigation stack to the named panel. If the panel already contains
+    /// another child view controller, it replaces that.
+    func show(navigationStack: [UIViewController], for panel: Panel, animated: Bool)
 }
 
 extension PanelView: PanelViewDisplayManager {
-    public func show(panel: PanelIndex) {
+    public func show(panel: Panel) {
         show(panel: panel, animated: true)
     }
     
-    public func show(panel: PanelIndex, animated: Bool) {
+    public func show(panel: Panel, animated: Bool) {
         func animatableBlock() {
             // in order for animations to run correctly, we need to first remove the panel
             // from the superview and re-insert it later on
@@ -57,7 +61,7 @@ extension PanelView: PanelViewDisplayManager {
             
             // we need to re-establish the constraints for panel resizers
             // center panel does not have a resizer
-            if panel.index != 0, let associatedResizer = resizerMappings[panel] {
+            if panel.index != 0, let associatedResizer = dividerMappings[panel] {
                 let reestablishedConstraint: NSLayoutConstraint
                 if mainStackView.axis == .horizontal {
                     if panel.index < 0 {
@@ -98,21 +102,20 @@ extension PanelView: PanelViewDisplayManager {
     }
     
     public func show(viewController: UIViewController, at index: Int) {
-        let onTheFlyIndex = PanelIndex(index: index)
+        let onTheFlyIndex = Panel(index: index)
         show(viewController: viewController, for: onTheFlyIndex, animated: true)
     }
     
     public func show(viewController: UIViewController, at index: Int, animated: Bool) {
-        let onTheFlyIndex = PanelIndex(index: index)
+        let onTheFlyIndex = Panel(index: index)
         show(viewController: viewController, for: onTheFlyIndex, animated: animated)
     }
     
-    public func show(viewController: UIViewController, for panel: PanelIndex) {
+    public func show(viewController: UIViewController, for panel: Panel) {
         show(viewController: viewController, for: panel, animated: true)
     }
     
-    public func show(viewController: UIViewController, for panel: PanelIndex, animated: Bool) {
-        
+    public func show(viewController: UIViewController, for panel: Panel, animated: Bool) {
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()
@@ -133,6 +136,30 @@ extension PanelView: PanelViewDisplayManager {
             show(panel: panel, animated: animated)
         } else {
             pendingViewControllers[panel] = viewController
+        }
+    }
+    
+    public func show(navigationStack: [UIViewController], for panel: Panel, animated: Bool) {
+        if isAttachedToWindow {
+            if let previousVC = viewControllers[panel] {
+                previousVC.removeSelfFromParent()
+                viewControllers.removeValue(forKey: panel)
+            }
+            
+            // since there is at least one panel that is will be visible
+            // we should hide the empty view stack
+            hideEmptyView()
+            
+           
+            let navController = UINavigationController()
+            navController.setViewControllers(navigationStack, animated: false)
+            add(childNavController: navController, on: panel)
+            
+            show(panel: panel, animated: animated)
+        } else {
+            let navController = UINavigationController()
+            navController.setViewControllers(navigationStack, animated: false)
+            pendingViewControllers[panel] = navController
         }
     }
     

@@ -2,7 +2,7 @@
 //  PanelView+SwiftUI.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/16/24.
+//  Created by eclypse on 7/16/24.
 //
 
 import SwiftUI
@@ -25,11 +25,11 @@ internal final class SwiftUIViewWrapper: View {
 public extension PanelView {
     /// pass any SwiftUI view to display at one of the panels
     func show(swiftUIView: some View, at index: Int, animated: Bool = true) {
-        let onTheFlyPanel = PanelIndex(index: index)
+        let onTheFlyPanel = Panel(index: index)
         show(swiftUIView: swiftUIView, for: onTheFlyPanel, animated: animated)
     }
     
-    func show(swiftUIView: some View, for panel: PanelIndex, animated: Bool = true) {
+    func show(swiftUIView: some View, for panel: Panel, animated: Bool = true) {
         let hostingController = UIHostingController(rootView: swiftUIView)
         swiftUIViewMappings.setObject(SwiftUIViewWrapper(swiftUIView), forKey: panel)
         show(viewController: hostingController, for: panel, animated: animated)
@@ -37,8 +37,8 @@ public extension PanelView {
     
     /// checks whether the provided SwiftUI view is currently being presented in one of the panels
     /// we can only check for type as all the view in SwiftUI as structs.
-    func presents<V: View>(swiftUIViewType: V.Type) -> PanelIndex? {
-        var panelThatContainsSwiftUI: PanelIndex?
+    func presents<V: View>(swiftUIViewType: V.Type) -> Panel? {
+        var panelThatContainsSwiftUI: Panel?
         for (eachPanelIndex, _) in panelMappings {
             if let possibleViewMatch = swiftUIViewMappings.object(forKey: eachPanelIndex) {
                 // we can only check if the types are identical since all SwiftUI views are structs

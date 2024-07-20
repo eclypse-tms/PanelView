@@ -2,7 +2,7 @@
 //  ResizablePanel.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/16/24.
+//  Created by eclypse on 7/16/24.
 //
 
 import UIKit

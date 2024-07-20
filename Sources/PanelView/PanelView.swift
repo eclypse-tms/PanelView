@@ -2,7 +2,7 @@
 //  PanelView.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/12/24.
+//  Created by eclypse on 7/12/24.
 //
 
 import UIKit
@@ -14,24 +14,29 @@ public class PanelView: UIViewController, ResizablePanel {
     
     var emptyView: UIView?
     
-    var panelMappings = [PanelIndex: UIView]()
-    var panelWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    var panelMinWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    var panelMaxWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    var panelCenterMappings = [PanelIndex: CGPoint]()
+    public weak var delegate: PanelViewDelegate?
     
-    var pendingViewControllers = [PanelIndex: UIViewController]()
-    var pendingMinimumWidth = [PanelIndex: CGFloat]()
-    var pendingMaximumWidth = [PanelIndex: CGFloat]()
-    var pendingWidthFraction = [PanelIndex: CGFloat]()
-    var originalFrameMappings = [PanelIndex: CGRect]()
+    var panelMappings = [Panel: UIView]()
+    var panelWidthMappings = [Panel: NSLayoutConstraint]()
+    var panelMinWidthMappings = [Panel: NSLayoutConstraint]()
+    var panelMaxWidthMappings = [Panel: NSLayoutConstraint]()
+    var panelCenterMappings = [Panel: CGPoint]()
     
-    var swiftUIViewMappings = NSMapTable<PanelIndex, SwiftUIViewWrapper>(valueOptions: .weakMemory)
+    var pendingViewControllers = [Panel: UIViewController]()
+    var pendingMinimumWidth = [Panel: CGFloat]()
+    var pendingMaximumWidth = [Panel: CGFloat]()
+    var pendingWidthFraction = [Panel: CGFloat]()
+    var originalFrameMappings = [Panel: CGRect]()
     
-    var resizerMappings = [PanelIndex: UIView]()
-    private var hoverGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
-    private var dragGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
-    private var resizerToPanelMappings = [UIView: PanelIndex]()
+    var swiftUIViewMappings = NSMapTable<Panel, SwiftUIViewWrapper>(valueOptions: .weakMemory)
+    
+    /// maps panels to its accompanying dividers
+    var dividerMappings = [Panel: UIView]()
+    
+    
+    private var hoverGestureMappings = [Panel: UIHoverGestureRecognizer]()
+    private var dragGestureMappings = [Panel: UIHoverGestureRecognizer]()
+    private var dividerToPanelMappings = [UIView: Panel]()
     
     var panelResizerWidth: CGFloat {
         return configuration.interPanelSpacing + 2
@@ -48,7 +53,7 @@ public class PanelView: UIViewController, ResizablePanel {
     var _resizerConstraintIdentifier = "temp constraint:"
     
     /// children navigation controllers this panelview manages
-    public var viewControllers = [PanelIndex: UINavigationController]()
+    public var viewControllers = [Panel: UINavigationController]()
     
     // MARK: Public Members
     public var configuration = PanelViewConfiguration()
@@ -103,7 +108,7 @@ public class PanelView: UIViewController, ResizablePanel {
     
     private func configureInitialPanels() {
         for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
-            let onTheFlyPanelIndex = PanelIndex(index: index)
+            let onTheFlyPanelIndex = Panel(index: index)
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
             newlyCreatedPanel.isHidden = true
@@ -151,7 +156,7 @@ public class PanelView: UIViewController, ResizablePanel {
         }
     }
     
-    func createPanel(for panelIndex: PanelIndex) -> UIView {
+    func createPanel(for indexedPanel: Panel) -> UIView {
         // attribute that is used to size the panels widthwise or heightwise
         let layoutAttribute: NSLayoutConstraint.Attribute
         if mainStackView.axis == .horizontal {
@@ -162,9 +167,9 @@ public class PanelView: UIViewController, ResizablePanel {
         
         func applyMinWidthConstraint() {
             var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
-            if let existingMinWidthConstraint = panelMinWidthMappings[panelIndex] {
+            if let existingMinWidthConstraint = panelMinWidthMappings[indexedPanel] {
                 effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
-            } else if let pendingMinWidthConstraint = pendingMinimumWidth[panelIndex] {
+            } else if let pendingMinWidthConstraint = pendingMinimumWidth[indexedPanel] {
                 effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
             }
             
@@ -179,14 +184,14 @@ public class PanelView: UIViewController, ResizablePanel {
                                                         constant: effectiveMinWidthConstantForPanel)
             minWidthConstraint.isActive = true
             
-            panelMinWidthMappings[panelIndex] = minWidthConstraint
+            panelMinWidthMappings[indexedPanel] = minWidthConstraint
         }
         
         func applyMaxWidthConstraint() {
             var effectiveMaxWidthConstantForPanel: CGFloat = defaultPanelMaxWidth
-            if let existingMaxWidthConstraint = panelMaxWidthMappings[panelIndex] {
+            if let existingMaxWidthConstraint = panelMaxWidthMappings[indexedPanel] {
                 effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
-            } else if let pendingMaxWidthConstraint = pendingMaximumWidth[panelIndex] {
+            } else if let pendingMaxWidthConstraint = pendingMaximumWidth[indexedPanel] {
                 effectiveMaxWidthConstantForPanel = pendingMaxWidthConstraint
             }
             
@@ -199,15 +204,15 @@ public class PanelView: UIViewController, ResizablePanel {
                                                         constant: effectiveMaxWidthConstantForPanel)
             maxWidthConstraint.isActive = true
             
-            panelMaxWidthMappings[panelIndex] = maxWidthConstraint
+            panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
         }
         
         func applyPrefferredWidthConstraint() {
             var effectiveWidthConstantForPanel: CGFloat = 475
             
-            if let existingWidthConstraint = panelWidthMappings[panelIndex] {
+            if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
                 effectiveWidthConstantForPanel = existingWidthConstraint.constant
-            } else if let savedWidthFraction = pendingWidthFraction[panelIndex] {
+            } else if let savedWidthFraction = pendingWidthFraction[indexedPanel] {
                 if mainStackView.axis == .horizontal {
                     effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
                 } else {
@@ -222,36 +227,37 @@ public class PanelView: UIViewController, ResizablePanel {
                                                         attribute: .notAnAttribute,
                                                         multiplier: 1.0,
                                                         constant: effectiveWidthConstantForPanel)
+            widthConstraint.priority = .defaultHigh
             widthConstraint.isActive = true
             
-            panelWidthMappings[panelIndex] = widthConstraint
+            panelWidthMappings[indexedPanel] = widthConstraint
         }
         
         // view resizer needs to be added to the main view above the stackview.
         
-        func createViewResizer(newlyCreatedPanel: UIView) {
-            let viewResizer = UIView()
-            viewResizer.tag = panelIndex.index
+        func createPanelDivider(newlyCreatedPanel: UIView) {
+            let viewDivider = UIView()
+            viewDivider.tag = indexedPanel.index
             // viewResizer.backgroundColor = .purple
-            viewResizer.translatesAutoresizingMaskIntoConstraints = false
-            self.view.addSubview(viewResizer)
+            viewDivider.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(viewDivider)
             
             if mainStackView.axis == .horizontal {
                 // the panels are laid out side by side
                 var layoutConstraints = [NSLayoutConstraint]()
-                layoutConstraints.append(viewResizer.topAnchor.constraint(equalTo: self.view.topAnchor))
-                layoutConstraints.append(viewResizer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
-                layoutConstraints.append(viewResizer.widthAnchor.constraint(equalToConstant: panelResizerWidth))
+                layoutConstraints.append(viewDivider.topAnchor.constraint(equalTo: self.view.topAnchor))
+                layoutConstraints.append(viewDivider.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
+                layoutConstraints.append(viewDivider.widthAnchor.constraint(equalToConstant: panelResizerWidth))
                 
-                if panelIndex.index < 0 {
+                if indexedPanel.index < 0 {
                     // this is a leading side panel, we need to place the resizer view on the trailing edge of the panel
-                    let tempConstraint = viewResizer.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
+                    let tempConstraint = viewDivider.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: 0)
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
                     layoutConstraints.append(tempConstraint)
                 } else {
                     // this is a trailing side panel, we need to place the resizer on the leading edge of the panel
-                    let tempConstraint = viewResizer.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
+                    let tempConstraint = viewDivider.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: 0)
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
                     layoutConstraints.append(tempConstraint)
                 }
                 
@@ -260,49 +266,43 @@ public class PanelView: UIViewController, ResizablePanel {
             } else {
                 // the panels are laid out top to bottom
                 var layoutConstraints = [NSLayoutConstraint]()
-                layoutConstraints.append(viewResizer.leadingAnchor.constraint(equalTo: self.view.leadingAnchor))
-                layoutConstraints.append(viewResizer.trailingAnchor.constraint(equalTo: self.view.trailingAnchor))
-                layoutConstraints.append(viewResizer.heightAnchor.constraint(equalToConstant: panelResizerWidth))
+                layoutConstraints.append(viewDivider.leadingAnchor.constraint(equalTo: self.view.leadingAnchor))
+                layoutConstraints.append(viewDivider.trailingAnchor.constraint(equalTo: self.view.trailingAnchor))
+                layoutConstraints.append(viewDivider.heightAnchor.constraint(equalToConstant: panelResizerWidth))
                 
-                if panelIndex.index < 0 {
+                if indexedPanel.index < 0 {
                     // this is a top panel that appears above the central panel. we need to place the resizer view on the
                     // bottom edge of the panel
-                    let tempConstraint = viewResizer.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
+                    let tempConstraint = viewDivider.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: 0)
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
                     layoutConstraints.append(tempConstraint)
                 } else {
                     // this is a bottom panel that appears below the central panel. we need to place the resizer view
                     // on the top edge of the panel
-                    let tempConstraint = viewResizer.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(panelIndex.index)"
+                    let tempConstraint = viewDivider.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: 0)
+                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
                     layoutConstraints.append(tempConstraint)
                 }
                 
                 NSLayoutConstraint.activate(layoutConstraints)
             }
             
-            // add hover gesture
-            let viewResizerHoverGesture = UIHoverGestureRecognizer(target: self, action: #selector(didHoverOnSeparator(_:)))
-            viewResizer.addGestureRecognizer(viewResizerHoverGesture)
+            dividerMappings[indexedPanel] = viewDivider
+            dividerToPanelMappings[viewDivider] = indexedPanel
             
-            // add drag gesture
-            let viewResizerDragGesture = MacPanGestureRecognizer(target: self, action: #selector(didDragSeparator(_:)))
-            viewResizerDragGesture.orientation = configuration.orientation
-            viewResizer.addGestureRecognizer(viewResizerDragGesture)
+            enableResizing(for: indexedPanel)
             
-            resizerMappings[panelIndex] = viewResizer
-            resizerToPanelMappings[viewResizer] = panelIndex
-            viewResizer.isHidden = true
+            viewDivider.isHidden = true
         }
         
         
         let aNewPanel = UIView()
-        aNewPanel.tag = panelIndex.index
+        aNewPanel.tag = indexedPanel.index
         aNewPanel.isHidden = true
-        panelMappings[panelIndex] = aNewPanel
+        panelMappings[indexedPanel] = aNewPanel
         mainStackView.addArrangedSubview(aNewPanel)
         
-        if panelIndex.index != 0 {
+        if indexedPanel.index != 0 {
             // Configure min width
             applyMinWidthConstraint()
             
@@ -313,8 +313,8 @@ public class PanelView: UIViewController, ResizablePanel {
             applyPrefferredWidthConstraint()
             
             // attach its accompanying view resizer
-            if panelIndex.index != 0, configuration.allowsUIPanelSizeAdjustment {
-                createViewResizer(newlyCreatedPanel: aNewPanel)
+            if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
+                createPanelDivider(newlyCreatedPanel: aNewPanel)
             }
         }
         return aNewPanel
@@ -328,7 +328,7 @@ public class PanelView: UIViewController, ResizablePanel {
         }
     }
     
-    public func push(viewController: UIViewController, on panel: PanelIndex) {
+    public func push(viewController: UIViewController, on panel: Panel) {
         if let navController = viewControllers[panel] {
             navController.pushViewController(viewController, animated: true)
         } else {
@@ -344,7 +344,7 @@ public class PanelView: UIViewController, ResizablePanel {
         }
     }
     
-    public func popViewController(on panel: PanelIndex) {
+    public func popViewController(on panel: Panel) {
         if let navController = viewControllers[panel] {
             navController.popViewController(animated: true)
         } else {
@@ -354,8 +354,8 @@ public class PanelView: UIViewController, ResizablePanel {
     
     
     /// checks whether the provided viewController is currently being presented in one of the panels
-    public func presents(viewController: UIViewController) -> PanelIndex? {
-        var vcPresentedIn: PanelIndex?
+    public func presents(viewController: UIViewController) -> Panel? {
+        var vcPresentedIn: Panel?
         for (eachPanel, eachNavController) in viewControllers {
             if eachNavController.viewControllers.contains(viewController) {
                 vcPresentedIn = eachPanel
@@ -366,8 +366,8 @@ public class PanelView: UIViewController, ResizablePanel {
     }
     
 
-    func calculateAppropriateIndex(for panel: PanelIndex) -> Int {
-        let sortedPanels: [PanelIndex] = panelMappings.map { $0.key }.sorted()
+    func calculateAppropriateIndex(for panel: Panel) -> Int {
+        let sortedPanels: [Panel] = panelMappings.map { $0.key }.sorted()
         if sortedPanels.isEmpty {
             // since there are no panels, the subview index is zero
             return 0
@@ -387,49 +387,9 @@ public class PanelView: UIViewController, ResizablePanel {
             return sortedPanels.endIndex
         }
     }
-
-    
-    /*
-    public func reset(with singleViewController: UIViewController, on panel: PanelIndex, animated: Bool = true) {
-        reset(multiple: [singleViewController: panel])
-    }
-    
-    public func reset(multiple multiViewControllers: [UIViewController: PanelIndex], animated: Bool = true) {
-        // first remove any existing view controllers from the parent
-        for (_, vc) in viewControllers {
-            vc.removeSelfFromParent()
-        }
-        viewControllers.removeAll(keepingCapacity: true)
-        
-        // reset everything
-        panelMappings.forEach { (_, panel) in
-            panel.isHidden = true
-        }
-        
-        // add the view controller one at a time by wrapping it with a nav controller
-        for (eachViewController, eachPanel) in multiViewControllers {
-            let navController: UINavigationController
-            if let alreadyEmbeddedInNavController = eachViewController as? UINavigationController {
-                navController = alreadyEmbeddedInNavController
-            } else {
-                navController = UINavigationController(rootViewController: eachViewController)
-            }
-            viewControllers[eachPanel] = navController
-            if let panelToUnhide = panelMappings[eachPanel] {
-                add(childNavController: navController, on: eachPanel)
-                panelToUnhide.isHidden = false
-            }
-        }
-        
-        if !didDisplayInitialPanel {
-            didDisplayInitialPanel = true
-            self.view.backgroundColor = .opaqueSeparator
-        }
-    }
-    */
     
     @discardableResult
-    func add(childNavController: UINavigationController, on panel: PanelIndex) -> UIView {
+    func add(childNavController: UINavigationController, on panel: Panel) -> UIView {
         if let currentPanel = childNavController.parent?.view {
             //if the child already has a parent, it won't add anything
             return currentPanel
@@ -505,7 +465,7 @@ public class PanelView: UIViewController, ResizablePanel {
         
         // we cannot continue if we cannot identify which panel and its associated resizer is touched
         guard let draggedSeparator = gestureRecognizer.view,
-              let resizedPanelIndex = resizerToPanelMappings[draggedSeparator],
+              let resizedPanelIndex = dividerToPanelMappings[draggedSeparator],
               let attachedPanel = panelMappings[resizedPanelIndex] else { return }
         
         guard resizedPanelIndex.index != 0 else { return } // center panel cannot be resized
@@ -546,27 +506,33 @@ public class PanelView: UIViewController, ResizablePanel {
                 let finalPanelWidth: CGFloat
                 if proposedWidthOrHeight < minWidthConstraint.constant {
                     finalPanelWidth = minWidthConstraint.constant
+                    #if targetEnvironment(macCatalyst)
                     if mainStackView.axis == .horizontal {
                         NSCursor.resizeRight.set()
                     } else {
                         NSCursor.resizeUp.set()
                     }
+                    #endif
                     
                 } else if proposedWidthOrHeight > maxWidthConstraint.constant {
                     finalPanelWidth = maxWidthConstraint.constant
+                    #if targetEnvironment(macCatalyst)
                     if mainStackView.axis == .horizontal {
                         NSCursor.resizeLeft.set()
                     } else {
                         NSCursor.resizeDown.set()
                     }
+                    #endif
                 } else {
                     // it is within the min and max
                     finalPanelWidth = proposedWidthOrHeight
+                    #if targetEnvironment(macCatalyst)
                     if mainStackView.axis == .horizontal {
                         NSCursor.resizeLeftRight.set()
                     } else {
                         NSCursor.resizeUpDown.set()
                     }
+                    #endif
                 }
                 
                 if let existingWidthConstraint = panelWidthMappings[resizedPanelIndex] {
@@ -581,7 +547,9 @@ public class PanelView: UIViewController, ResizablePanel {
             }
             
             if gestureRecognizer.state == .ended {
+                #if targetEnvironment(macCatalyst)
                 NSCursor.arrow.set()
+                #endif
             }
             
         } else { 
@@ -590,7 +558,9 @@ public class PanelView: UIViewController, ResizablePanel {
             if let originalFrame = originalFrameMappings[resizedPanelIndex] {
                 attachedPanel.center = originalFrame.center
             }
+            #if targetEnvironment(macCatalyst)
             NSCursor.arrow.set()
+            #endif
         }
     }
 }

@@ -2,7 +2,7 @@
 //  PanelView+Shortcuts.swift
 //  
 //
-//  Created by Nessa Kucuk, Turker on 7/16/24.
+//  Created by eclypse on 7/16/24.
 //
 
 import UIKit
@@ -18,11 +18,11 @@ public extension PanelView {
         return viewControllers[.navigation]
     }
     
-    func topViewController(for panel: PanelIndex) -> UIViewController? {
+    func topViewController(for panel: Panel) -> UIViewController? {
         return viewControllers[panel]?.topViewController
     }
     
-    func isVisible(panel: PanelIndex) -> Bool {
+    func isVisible(panel: Panel) -> Bool {
         if let discoveredPanel = panelMappings[panel] {
             return !discoveredPanel.isHidden
         } else {

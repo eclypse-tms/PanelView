@@ -2,13 +2,13 @@
 //  PanelOrientation.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/12/24.
+//  Created by eclypse on 7/12/24.
 //
 
 import Foundation
 
 /// Determines how the panels should be laid out.
-public enum PanelOrientation {
+public enum PanelOrientation: Int {
     
     /// lays the panels in a vertical fashion
     case vertical

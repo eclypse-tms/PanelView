@@ -2,7 +2,7 @@
 //  PanelViewHidingManager.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/16/24.
+//  Created by eclypse on 7/16/24.
 //
 
 import UIKit
@@ -11,17 +11,17 @@ public protocol PanelViewHidingManager {
     /// hides the specified panel, optionally animating the transition and notifies the caller when the hiding is complete
     ///
     /// the panel can be redisplayed by calling show(panel:animated:).
-    func hide(panel: PanelIndex, animated: Bool, completion: (() -> Void)?)
+    func hide(panel: Panel, animated: Bool, completion: (() -> Void)?)
     
     /// hides the specified panel and optionally animating the transition
     ///
     /// the panel can be redisplayed by calling show(panel:animated:).
-    func hide(panel: PanelIndex, animated: Bool)
+    func hide(panel: Panel, animated: Bool)
     
     /// hides the specified panel while animating the transition
     ///
     /// the panel can be redisplayed by calling show(panel:animated:).
-    func hide(panel: PanelIndex)
+    func hide(panel: Panel)
     
     /// hides the specified panel at the index, optionally animating the transition and notifies the caller when the hiding is complete
     ///
@@ -70,15 +70,15 @@ extension PanelView: PanelViewHidingManager {
     }
     
     public func hidePanel(containing viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
-        let panelToHide: PanelIndex? = presents(viewController: viewController)
+        let panelToHide: Panel? = presents(viewController: viewController)
         
         if let discoveredPanelToHide = panelToHide {
             hide(panel: discoveredPanelToHide, animated: animated, completion: completion)
         }
     }
     
-    private func hideViewResizer(associatedPanel: PanelIndex) {
-        if let associatedResizer = resizerMappings[associatedPanel] {
+    private func hideViewResizer(associatedPanel: Panel) {
+        if let associatedResizer = dividerMappings[associatedPanel] {
             let uniqueConstraintIdentifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
             if let constraintThatNeedToAltered = self.view.constraints.first(where: { $0.identifier == uniqueConstraintIdentifier }) {
                 constraintThatNeedToAltered.constant = 0
@@ -97,21 +97,21 @@ extension PanelView: PanelViewHidingManager {
     /// hides the panel from the view and removes the view controller from the view hierarchy
     /// by its index. the view controller that was inside the panel may be released from memory.
     public func hide(index: Int, animated: Bool, completion: (() -> Void)?) {
-        let onTheFlyIndex = PanelIndex(index: index)
+        let onTheFlyIndex = Panel(index: index)
         hide(panel: onTheFlyIndex, animated: animated, completion: completion)
     }
     
-    public func hide(panel: PanelIndex) {
+    public func hide(panel: Panel) {
         hide(panel: panel, animated: true, completion: nil)
     }
     
-    public func hide(panel: PanelIndex, animated: Bool) {
+    public func hide(panel: Panel, animated: Bool) {
         hide(panel: panel, animated: animated, completion: nil)
     }
     
     /// hides the panel from the view and removes the view controller from the view hierarchy.
     /// the view controller that was inside the panel may be released from memory.
-    public func hide(panel: PanelIndex, animated: Bool, completion: (() -> Void)?) {
+    public func hide(panel: Panel, animated: Bool, completion: (() -> Void)?) {
         _performPanelHiding(panel: panel, animated: animated, hidingCompleted: { [weak self] in
             guard let strongSelf = self else { return }
             if let previousVC = strongSelf.viewControllers[panel] {
@@ -122,9 +122,7 @@ extension PanelView: PanelViewHidingManager {
         })
     }
     
-    private func _performPanelHiding(panel: PanelIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
-        
-        
+    private func _performPanelHiding(panel: Panel, animated: Bool, hidingCompleted: (() -> Void)?) {
         func hideAppropriatePanel() {
             panelMappings[panel]?.isHidden = true
             
@@ -152,14 +150,17 @@ extension PanelView: PanelViewHidingManager {
             vc.removeSelfFromParent()
         }
         
+        // remove all the view controllers from the mappings
         viewControllers.removeAll(keepingCapacity: true)
         swiftUIViewMappings.removeAllObjects()
         
-        // reset everything
+        // hide everything
         panelMappings.forEach { (eachPanelIndex, panel) in
             panel.isHidden = true
             hideViewResizer(associatedPanel: eachPanelIndex)
         }
+        
+        showEmptyStateIfNecessary()
     }
     
     /// when there are no visible panels, we show the empty view

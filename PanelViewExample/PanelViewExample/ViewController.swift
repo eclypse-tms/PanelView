@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  PanelViewExample
 //
-//  Created by Nessa Kucuk, Turker on 7/12/24.
+//  Created by eclypse on 7/12/24.
 //
 
 import UIKit
@@ -29,16 +29,20 @@ class ViewController: UIViewController {
         trailingPlusButton.setTitle("", for: .normal)
         leadingMinusButton.setTitle("", for: .normal)
         trailingMinusButton.setTitle("", for: .normal)
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        navigationController?.setToolbarHidden(true, animated: false)
     }
 
     private func addPanelView() {
         panelView = PanelView()
+        panelView.delegate = self
         
         var customConfig = PanelViewConfiguration()
         
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
-        customConfig.interPanelSpacing = 10
+        customConfig.interPanelSpacing = 1
         
         let emptyStackView = UIStackView()
         emptyStackView.axis = .vertical
@@ -75,10 +79,10 @@ class ViewController: UIViewController {
             if index == 0 {
                 continue
             }
-            let onTheFlyPanelIndex = PanelIndex(index: index)
-            panelView.minimumWidth(200, for: onTheFlyPanelIndex)
+            let onTheFlyPanelIndex = Panel(index: index)
+            panelView.minimumWidth(100, for: onTheFlyPanelIndex)
             panelView.maximumWidth(600, for: onTheFlyPanelIndex)
-            panelView.preferredWidthFraction(0.225, at: index)
+            panelView.preferredWidthFraction(0.1, at: index)
         }
         
         
@@ -199,7 +203,7 @@ class ViewController: UIViewController {
         .systemIndigo,
         .systemMint,
         .systemTeal,
-        .black
+        // .black
       ]
       
       let randomIndex = Int.random(in: 0..<systemColors.count)
@@ -207,3 +211,11 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController: PanelViewDelegate {
+    func didChangeSize(panelView: PanelView, changes: ScreenSizeChanges) {
+        if changes.contains(.horizontalSizeChangedFromRegularToCompact) ||
+            changes.contains(.verticalSizeChangedFromCompactToRegular) {
+            //panelView.combineAll()
+        }
+    }
+}
