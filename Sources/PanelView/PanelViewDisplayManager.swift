@@ -67,21 +67,21 @@ extension PanelView: PanelViewDisplayManager {
                     if panel.index < 0 {
                         // this is a horizonal layout and the panel is on the left hand side (leading side)
                         // resizer needs to be aligned to the trailing side of the panel
-                        reestablishedConstraint = associatedResizer.trailingAnchor.constraint(equalTo: aPanelToShow.trailingAnchor, constant: panelResizerWidth/2.0)
+                        reestablishedConstraint = associatedResizer.trailingAnchor.constraint(equalTo: aPanelToShow.trailingAnchor, constant: panelDividerWidth/2.0)
                     } else {
                         // this is a horizonal layout and the panel is on the right hand side (trailing side)
                         // resizer needs to be aligned to the leading side of the panel
-                        reestablishedConstraint = associatedResizer.leadingAnchor.constraint(equalTo: aPanelToShow.leadingAnchor, constant: -panelResizerWidth/2.0)
+                        reestablishedConstraint = associatedResizer.leadingAnchor.constraint(equalTo: aPanelToShow.leadingAnchor, constant: -panelDividerWidth/2.0)
                     }
                 } else {
                     if panel.index < 0 {
                         // this is a vertical layout and the panel is on the top side
                         // resizer needs to be aligned to the bottom side of the panel
-                        reestablishedConstraint = associatedResizer.bottomAnchor.constraint(equalTo: aPanelToShow.bottomAnchor, constant: panelResizerWidth/2.0)
+                        reestablishedConstraint = associatedResizer.bottomAnchor.constraint(equalTo: aPanelToShow.bottomAnchor, constant: panelDividerWidth/2.0)
                     } else {
                         // this is a vertical layout and the panel is on the bottom
                         // resizer needs to be aligned to the top side of the panel
-                        reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aPanelToShow.topAnchor, constant: panelResizerWidth/2.0)
+                        reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aPanelToShow.topAnchor, constant: panelDividerWidth/2.0)
                     }
                 }
                 reestablishedConstraint.identifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"

@@ -7,36 +7,29 @@
 
 import UIKit
 
-/// enumerates the possible screen size changes that may happen to due to
-/// device trait changes such as orientation or app window resizing
-public struct ScreenSizeChanges: OptionSet, Hashable {
-    public let rawValue: Int
+public protocol ScreenAdaptation {
+    /// reports current horizontal screen size from UITraitCollection
+    var horizontalScreenSize: UIUserInterfaceSizeClass { get }
     
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
+    /// reports current vertical screen size from UITraitCollection
+    var verticalScreenSize: UIUserInterfaceSizeClass { get }
     
-    /// screen changed to regular size horizontally
-    public static let horizontalSizeChangedFromCompactToRegular = ScreenSizeChanges(rawValue: 1 << 0)
+    /// the panels that are currently being displayed in an ascending order.
+    ///
+    /// If you are using a single panel in an horizontally compact environment,
+    /// you can use this information to see if panel view is presenting multiple or
+    /// single panels.
+    var visiblePanels: [Panel] { get }
     
-    /// screen changed to compact size horizontally
-    public static let horizontalSizeChangedFromRegularToCompact = ScreenSizeChanges(rawValue: 1 << 1)
-    
-    /// screen changed to regular size vertically
-    public static let verticalSizeChangedFromCompactToRegular = ScreenSizeChanges(rawValue: 1 << 2)
-    
-    /// screen changed to compact size vertically
-    public static let verticalSizeChangedFromRegularToCompact = ScreenSizeChanges(rawValue: 1 << 3)
-    
-    /// indicates that panel view became compact size either in horizontal or vertical direction
-    public static let anyDimensionChangedToCompact: ScreenSizeChanges = [.horizontalSizeChangedFromRegularToCompact, .verticalSizeChangedFromRegularToCompact]
-    
-    /// indicates that panel view became regular size either in horizontal or vertical direction
-    public static let anyDimensionChangedToRegular: ScreenSizeChanges = [.horizontalSizeChangedFromCompactToRegular, .verticalSizeChangedFromCompactToRegular]
+    /// takes the content from all the visible panels and puts them in the center panel in a navigation hiearachy.
+    ///
+    /// panels with the lower index are placed at the bottom of the stack while the panel with the highest index
+    /// becomes the visible view controller in the navigation stack.
+    func combineAll()
 }
 
-public extension PanelView {
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+extension PanelView: ScreenAdaptation {
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         
         var detectedChanges: ScreenSizeChanges = []
@@ -63,11 +56,23 @@ public extension PanelView {
         }
     }
     
-    /// takes the content from all the visible panels and puts them in the center panel in a navigation hiearachy.
-    ///
-    /// panels with the lower index are placed at the bottom of the stack while the panel with the highest index
-    /// becomes the visible view controller in the navigation stack.
-    func combineAll() {
+    public var verticalScreenSize: UIUserInterfaceSizeClass {
+        if self.traitCollection.verticalSizeClass == .regular {
+            return .regular
+        } else {
+            return .compact
+        }
+    }
+    
+    public var horizontalScreenSize: UIUserInterfaceSizeClass {
+        if self.traitCollection.horizontalSizeClass == .regular {
+            return .regular
+        } else {
+            return .compact
+        }
+    }
+    
+    public var visiblePanels: [Panel] {
         let sortedVisiblePanels = panelMappings.compactMap { (eachPanelIndex, eachPanel) -> Panel? in
             if isVisible(panel: eachPanelIndex) {
                 return eachPanelIndex
@@ -75,9 +80,13 @@ public extension PanelView {
                 return nil
             }
         }.sorted()
-        
+        return sortedVisiblePanels
+    }
+    
+    
+    public func combineAll() {
         var newNavigationStack = [UIViewController]()
-        for eachVisiblePanel in sortedVisiblePanels {
+        for eachVisiblePanel in visiblePanels {
             if let navControllerManagedViewControllers = viewControllers[eachVisiblePanel]?.viewControllers {
                 newNavigationStack.append(contentsOf: navControllerManagedViewControllers)
             }

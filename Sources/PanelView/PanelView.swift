@@ -38,7 +38,7 @@ public class PanelView: UIViewController, ResizablePanel {
     private var dragGestureMappings = [Panel: UIHoverGestureRecognizer]()
     private var dividerToPanelMappings = [UIView: Panel]()
     
-    var panelResizerWidth: CGFloat {
+    var panelDividerWidth: CGFloat {
         return configuration.interPanelSpacing + 2
     }
     
@@ -247,7 +247,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 var layoutConstraints = [NSLayoutConstraint]()
                 layoutConstraints.append(viewDivider.topAnchor.constraint(equalTo: self.view.topAnchor))
                 layoutConstraints.append(viewDivider.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
-                layoutConstraints.append(viewDivider.widthAnchor.constraint(equalToConstant: panelResizerWidth))
+                layoutConstraints.append(viewDivider.widthAnchor.constraint(equalToConstant: panelDividerWidth))
                 
                 if indexedPanel.index < 0 {
                     // this is a leading side panel, we need to place the resizer view on the trailing edge of the panel
@@ -268,7 +268,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 var layoutConstraints = [NSLayoutConstraint]()
                 layoutConstraints.append(viewDivider.leadingAnchor.constraint(equalTo: self.view.leadingAnchor))
                 layoutConstraints.append(viewDivider.trailingAnchor.constraint(equalTo: self.view.trailingAnchor))
-                layoutConstraints.append(viewDivider.heightAnchor.constraint(equalToConstant: panelResizerWidth))
+                layoutConstraints.append(viewDivider.heightAnchor.constraint(equalToConstant: panelDividerWidth))
                 
                 if indexedPanel.index < 0 {
                     // this is a top panel that appears above the central panel. we need to place the resizer view on the
