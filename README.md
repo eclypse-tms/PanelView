@@ -13,7 +13,7 @@
 A superpowered SplitView that gives the controls back to the developer.
 
 <p align="center">
-  <img src="./assets/hero_image.jpg" width="454.5" height="326.5">
+  <img src="./assets/hero_image.jpg" width="632" height="384">
 </p>
 
 <br/>
