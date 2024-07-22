@@ -321,7 +321,7 @@ Each panel is visually separated by panel dividers. Dividers also allow panels t
 Full SwiftUI support will be added in an upcoming release. 
 
 ## Example
-This repository contains an [Example app](../PanelViewExample) where you can demo the PanelView.
+This repository contains an [Example app](./PanelViewExample) where you can demo the PanelView.
 
 ## Reference
 use the following PanelViewConfiguration object and pass it to PanelView.
