@@ -81,6 +81,12 @@ public class PanelView: UIViewController, ResizablePanel {
     /// you may use this property to separate one PanelView from another
     public var identifier: String = ""
     
+    /// this property indicates whether the PanelView is running in single panel mode.
+    ///
+    /// It doesn't do anything else except to store this information which may be helpful
+    /// to determine your application's UX.
+    public var singlePanelMode = false
+    
     public var configuration = PanelViewConfiguration() {
         didSet {
             if initialConfiguration {
