@@ -81,6 +81,11 @@ public class PanelView: UIViewController, ResizablePanel {
     /// you may use this property to separate one PanelView from another
     public var identifier: String = ""
     
+    /// shorthand for PanelViewConfiguration.singlePanelMode
+    public var singlePanelMode: Bool {
+        return configuration.singlePanelMode
+    }
+    
     public var configuration = PanelViewConfiguration() {
         didSet {
             if initialConfiguration {
