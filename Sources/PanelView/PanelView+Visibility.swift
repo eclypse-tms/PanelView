@@ -159,7 +159,7 @@ public extension PanelView {
         return sortedVisiblePanels
     }
     
-    /// check whether 
+    /// check whether
     func isVisible(panel: Panel) -> Bool {
         if let discoveredPanel = panelMappings[panel] {
             return !discoveredPanel.isHidden
@@ -168,11 +168,45 @@ public extension PanelView {
         }
     }
     
+    /// checks whether the provided viewController is currently being presented in one of the panels
+    func presents(viewController: UIViewController) -> Panel? {
+        var vcPresentedIn: Panel?
+        for (eachPanel, eachNavController) in viewControllers {
+            if eachNavController.viewControllers.contains(viewController) {
+                vcPresentedIn = eachPanel
+                break
+            }
+        }
+        return vcPresentedIn
+    }
+    
     private func hideEmptyView() {
         if let validEmptyStateView = emptyView {
             self.view.sendSubviewToBack(validEmptyStateView)
             validEmptyStateView.isHidden = true
         }
         self.view.backgroundColor = configuration.panelSeparatorColor
+    }
+    
+    private func calculateAppropriateIndex(for panel: Panel) -> Int {
+        let sortedPanels: [Panel] = panelMappings.map { $0.key }.sorted()
+        if sortedPanels.isEmpty {
+            // since there are no panels, the subview index is zero
+            return 0
+        }
+        
+        var nextIndex: Int?
+        for (subviewIndex, eachPanelIndex) in sortedPanels.enumerated() {
+            if eachPanelIndex.index == panel.index {
+                nextIndex = subviewIndex
+            }
+        }
+        
+        if let discoveredIndex = nextIndex {
+            return discoveredIndex
+        } else {
+            // this panel must be the last panel
+            return sortedPanels.endIndex
+        }
     }
 }

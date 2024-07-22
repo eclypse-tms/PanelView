@@ -1,6 +1,6 @@
 //
-//  PanelIndex+Extensions.swift
-//  
+//  Panel+Names.swift
+//
 //
 //  Created by eclypse on 7/16/24.
 //

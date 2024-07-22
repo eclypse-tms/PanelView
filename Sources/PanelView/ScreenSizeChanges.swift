@@ -2,7 +2,7 @@
 //  ScreenSizeChanges.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/19/24.
+//  Created by eclypse on 7/19/24.
 //
 
 import Foundation

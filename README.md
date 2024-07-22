@@ -233,10 +233,12 @@ panelView.hide(panel: .fileExplorer)
 ```
 
 #### Panel Visibility
-`func isVisible(panel:)` allows you to check whether any panel is visible or not. 
 
-`var visiblePanels` property returns all currently visible panels sorted in ascending fashion.
+`func isVisible(panel:)` -> allows you to check whether any panel is visible or not. 
 
+`var visiblePanels` ->  returns all currently visible panels sorted in ascending fashion.
+
+`func presents(viewController:)` -> checks whether the provided viewController is currently being presented in one of the panels	
 
 ## Reacting to Screen Size Changes
 Become the delegate to recieve screen size change events.
@@ -257,7 +259,18 @@ Become the delegate to recieve screen size change events.
 
 When screen size changes to compact you may call `combineAll()` to gather all views in one panel.
 
+## Pushing and Popping ViewControllers on a Panel
+All panels are embedded in a UINavigationViewController. This means you can push or pop view controllers just like you normally do.
 
+`func push(viewController:on:)` -> adds another view controller to the navigation stack on the panel
+
+`func popViewController(on:)` -> pops the top view controller from the given panel
+
+`func replaceTopViewController(with:animated:on:)` -> replaces the top view controller on the specified panel with another view controller
+
+`func popToViewController<T>(usingType:animated:on:)` -> pops the stack on the specified panel to the provided UIViewController type 
+
+`var viewControllers: [Panel: UINavigationController]` -> access the children navigation controllers the PanelView manages
 
 ## Combine Support
 

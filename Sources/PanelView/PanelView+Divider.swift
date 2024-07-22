@@ -2,7 +2,7 @@
 //  PanelView+Divider.swift
 //  
 //
-//  Created by Nessa Kucuk, Turker on 7/21/24.
+//  Created by eclypse on 7/21/24.
 //
 
 import UIKit

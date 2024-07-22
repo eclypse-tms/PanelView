@@ -45,6 +45,7 @@ public extension UIViewController {
         validChild.removeFromParent()
     }
     
+    /// removes a child view controller from its parent
     func removeSelfFromParent() {
         guard self.parent != nil else {
             //you cannot remove something that doesn't have a parent
