@@ -6,6 +6,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Determines how the panels should be laid out.
 public enum PanelOrientation: Int {
@@ -15,4 +18,13 @@ public enum PanelOrientation: Int {
     
     /// lays the panels in a horizontal fashion
     case horizontal
+    
+    var axis: NSLayoutConstraint.Axis {
+        switch self {
+        case .horizontal:
+            return .horizontal
+        case .vertical:
+            return .vertical
+        }
+    }
 }

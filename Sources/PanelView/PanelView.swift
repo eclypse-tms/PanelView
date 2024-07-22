@@ -14,9 +14,10 @@ public class PanelView: UIViewController, ResizablePanel {
     
     var emptyView: UIView?
     
-    public weak var delegate: PanelViewDelegate?
-    
+    /// maps an index to a UIView
     var panelMappings = [Panel: UIView]()
+    
+    
     var panelWidthMappings = [Panel: NSLayoutConstraint]()
     var panelMinWidthMappings = [Panel: NSLayoutConstraint]()
     var panelMaxWidthMappings = [Panel: NSLayoutConstraint]()
@@ -36,27 +37,59 @@ public class PanelView: UIViewController, ResizablePanel {
     
     private var hoverGestureMappings = [Panel: UIHoverGestureRecognizer]()
     private var dragGestureMappings = [Panel: UIHoverGestureRecognizer]()
-    private var dividerToPanelMappings = [UIView: Panel]()
+    var dividerToPanelMappings = [UIView: Panel]()
     
     var panelDividerWidth: CGFloat {
         return configuration.interPanelSpacing + 2
     }
     
-    private let defaultPanelMinWidth: CGFloat = 320
-    private let defaultPanelMaxWidth: CGFloat = 768
-    
-    public var splitViewReady = PassthroughSubject<Void, Error>()
-    public var isAttachedToWindow = false
-    
     private var didDisplayInitialPanel = false
     
-    var _resizerConstraintIdentifier = "temp constraint:"
+    var _dividerConstraintIdentifier = "divider constraint:"
+    
+    private var initialConfiguration = true
+    private let attachedToWindowSubject = PassthroughSubject<Void, Never>()
+    let panelSizeChangedSubject = PassthroughSubject<ScreenSizeChanges, Never>()
+    
+    // MARK: Public Members
+    
+    /// This publisher streams an event when the PanelView is loaded and visible.
+    public var attachedToWindow: AnyPublisher<Void, Never> {
+        return attachedToWindowSubject.eraseToAnyPublisher()
+    }
+    
+    /// This publisher streams an event when the PanelView's screen size changes as observed from UITraitCollection
+    public var panelSizeChanged: AnyPublisher<ScreenSizeChanges, Never> {
+        return panelSizeChangedSubject.eraseToAnyPublisher()
+    }
+    
+    /// This publisher streams an event when the PanelView is loaded and visible.
+    //public let attachedToWindow: AnyPublisher<Void, Never> = PassthroughSubject<Void, Never>().eraseToAnyPublisher()
+    
+    
+    /// Check this property to determine whether the PanelView's view has been loaded and is visible in the window.
+    ///
+    /// This property may be useful if this is the root view in your window.
+    public private (set) var isAttachedToWindow = false
     
     /// children navigation controllers this panelview manages
     public var viewControllers = [Panel: UINavigationController]()
     
-    // MARK: Public Members
-    public var configuration = PanelViewConfiguration()
+    /// assign a delegate to get notified of events in PanelViewDelegate
+    public weak var delegate: PanelViewDelegate?
+    
+    /// you may use this property to separate one PanelView from another
+    public var identifier: String = ""
+    
+    public var configuration = PanelViewConfiguration() {
+        didSet {
+            if initialConfiguration {
+                initialConfiguration = false
+            } else {
+                processConfigurationChanges(oldConfig: oldValue, newConfig: configuration)
+            }
+        }
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,8 +100,7 @@ public class PanelView: UIViewController, ResizablePanel {
         configureEmptyView()
         configureInitialPanels()
         
-        
-        splitViewReady.send()
+        attachedToWindowSubject.send()
         isAttachedToWindow = true
         
         /*
@@ -139,6 +171,7 @@ public class PanelView: UIViewController, ResizablePanel {
         mainStackView = primaryStackView
     }
     
+    // MARK: empty view
     private func configureEmptyView() {
         if let validEmptyStateView = configuration.emptyStateView {
             let emptyViewContainer = UIStackView()
@@ -154,170 +187,6 @@ public class PanelView: UIViewController, ResizablePanel {
             
             emptyView = emptyViewContainer
         }
-    }
-    
-    func createPanel(for indexedPanel: Panel) -> UIView {
-        // attribute that is used to size the panels widthwise or heightwise
-        let layoutAttribute: NSLayoutConstraint.Attribute
-        if mainStackView.axis == .horizontal {
-            layoutAttribute = .width
-        } else {
-            layoutAttribute = .height
-        }
-        
-        func applyMinWidthConstraint() {
-            var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
-            if let existingMinWidthConstraint = panelMinWidthMappings[indexedPanel] {
-                effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
-            } else if let pendingMinWidthConstraint = pendingMinimumWidth[indexedPanel] {
-                effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
-            }
-            
-            
-            
-            let minWidthConstraint = NSLayoutConstraint(item: aNewPanel,
-                                                        attribute: layoutAttribute,
-                                                        relatedBy: .greaterThanOrEqual,
-                                                        toItem: nil,
-                                                        attribute: .notAnAttribute,
-                                                        multiplier: 1.0,
-                                                        constant: effectiveMinWidthConstantForPanel)
-            minWidthConstraint.isActive = true
-            
-            panelMinWidthMappings[indexedPanel] = minWidthConstraint
-        }
-        
-        func applyMaxWidthConstraint() {
-            var effectiveMaxWidthConstantForPanel: CGFloat = defaultPanelMaxWidth
-            if let existingMaxWidthConstraint = panelMaxWidthMappings[indexedPanel] {
-                effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
-            } else if let pendingMaxWidthConstraint = pendingMaximumWidth[indexedPanel] {
-                effectiveMaxWidthConstantForPanel = pendingMaxWidthConstraint
-            }
-            
-            let maxWidthConstraint = NSLayoutConstraint(item: aNewPanel,
-                                                        attribute: layoutAttribute,
-                                                        relatedBy: .lessThanOrEqual,
-                                                        toItem: nil,
-                                                        attribute: .notAnAttribute,
-                                                        multiplier: 1.0,
-                                                        constant: effectiveMaxWidthConstantForPanel)
-            maxWidthConstraint.isActive = true
-            
-            panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
-        }
-        
-        func applyPrefferredWidthConstraint() {
-            var effectiveWidthConstantForPanel: CGFloat = 475
-            
-            if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
-                effectiveWidthConstantForPanel = existingWidthConstraint.constant
-            } else if let savedWidthFraction = pendingWidthFraction[indexedPanel] {
-                if mainStackView.axis == .horizontal {
-                    effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
-                } else {
-                    effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
-                }
-            }
-            
-            let widthConstraint = NSLayoutConstraint(item: aNewPanel,
-                                                        attribute: layoutAttribute,
-                                                        relatedBy: .equal,
-                                                        toItem: nil,
-                                                        attribute: .notAnAttribute,
-                                                        multiplier: 1.0,
-                                                        constant: effectiveWidthConstantForPanel)
-            widthConstraint.priority = .defaultHigh
-            widthConstraint.isActive = true
-            
-            panelWidthMappings[indexedPanel] = widthConstraint
-        }
-        
-        // view resizer needs to be added to the main view above the stackview.
-        
-        func createPanelDivider(newlyCreatedPanel: UIView) {
-            let viewDivider = UIView()
-            viewDivider.tag = indexedPanel.index
-            // viewResizer.backgroundColor = .purple
-            viewDivider.translatesAutoresizingMaskIntoConstraints = false
-            self.view.addSubview(viewDivider)
-            
-            if mainStackView.axis == .horizontal {
-                // the panels are laid out side by side
-                var layoutConstraints = [NSLayoutConstraint]()
-                layoutConstraints.append(viewDivider.topAnchor.constraint(equalTo: self.view.topAnchor))
-                layoutConstraints.append(viewDivider.bottomAnchor.constraint(equalTo: self.view.bottomAnchor))
-                layoutConstraints.append(viewDivider.widthAnchor.constraint(equalToConstant: panelDividerWidth))
-                
-                if indexedPanel.index < 0 {
-                    // this is a leading side panel, we need to place the resizer view on the trailing edge of the panel
-                    let tempConstraint = viewDivider.trailingAnchor.constraint(equalTo: newlyCreatedPanel.trailingAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
-                    layoutConstraints.append(tempConstraint)
-                } else {
-                    // this is a trailing side panel, we need to place the resizer on the leading edge of the panel
-                    let tempConstraint = viewDivider.leadingAnchor.constraint(equalTo: newlyCreatedPanel.leadingAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
-                    layoutConstraints.append(tempConstraint)
-                }
-                
-                NSLayoutConstraint.activate(layoutConstraints)
-                
-            } else {
-                // the panels are laid out top to bottom
-                var layoutConstraints = [NSLayoutConstraint]()
-                layoutConstraints.append(viewDivider.leadingAnchor.constraint(equalTo: self.view.leadingAnchor))
-                layoutConstraints.append(viewDivider.trailingAnchor.constraint(equalTo: self.view.trailingAnchor))
-                layoutConstraints.append(viewDivider.heightAnchor.constraint(equalToConstant: panelDividerWidth))
-                
-                if indexedPanel.index < 0 {
-                    // this is a top panel that appears above the central panel. we need to place the resizer view on the
-                    // bottom edge of the panel
-                    let tempConstraint = viewDivider.bottomAnchor.constraint(equalTo: newlyCreatedPanel.bottomAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
-                    layoutConstraints.append(tempConstraint)
-                } else {
-                    // this is a bottom panel that appears below the central panel. we need to place the resizer view
-                    // on the top edge of the panel
-                    let tempConstraint = viewDivider.topAnchor.constraint(equalTo: newlyCreatedPanel.topAnchor, constant: 0)
-                    tempConstraint.identifier = "\(_resizerConstraintIdentifier)\(indexedPanel.index)"
-                    layoutConstraints.append(tempConstraint)
-                }
-                
-                NSLayoutConstraint.activate(layoutConstraints)
-            }
-            
-            dividerMappings[indexedPanel] = viewDivider
-            dividerToPanelMappings[viewDivider] = indexedPanel
-            
-            enableResizing(for: indexedPanel)
-            
-            viewDivider.isHidden = true
-        }
-        
-        
-        let aNewPanel = UIView()
-        aNewPanel.tag = indexedPanel.index
-        aNewPanel.isHidden = true
-        panelMappings[indexedPanel] = aNewPanel
-        mainStackView.addArrangedSubview(aNewPanel)
-        
-        if indexedPanel.index != 0 {
-            // Configure min width
-            applyMinWidthConstraint()
-            
-            // configure max width
-            applyMaxWidthConstraint()
-            
-            // configure width
-            applyPrefferredWidthConstraint()
-            
-            // attach its accompanying view resizer
-            if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
-                createPanelDivider(newlyCreatedPanel: aNewPanel)
-            }
-        }
-        return aNewPanel
     }
     
     public func push(viewController: UIViewController) {
@@ -431,7 +300,7 @@ public class PanelView: UIViewController, ResizablePanel {
         guard let hoveredSeparator = recognizer.view else { return }
         switch recognizer.state {
         case .began, .changed:
-            if let highlightColor = configuration.viewResizerHoverColor {
+            if let highlightColor = configuration.panelDividerHoverColor {
                 UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hoveredSeparator.backgroundColor = highlightColor
                 })
@@ -442,14 +311,14 @@ public class PanelView: UIViewController, ResizablePanel {
                 NSCursor.resizeUpDown.set()
             }
         case .ended, .cancelled:
-            if configuration.viewResizerHoverColor != nil {
+            if configuration.panelDividerHoverColor != nil {
                 UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hoveredSeparator.backgroundColor = .clear
                 })
             }
             NSCursor.arrow.set()
         default:
-            if configuration.viewResizerHoverColor != nil {
+            if configuration.panelDividerHoverColor != nil {
                 UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hoveredSeparator.backgroundColor = .clear
                 })
@@ -463,7 +332,7 @@ public class PanelView: UIViewController, ResizablePanel {
     @objc
     func didDragSeparator(_ gestureRecognizer: UIPanGestureRecognizer) {
         
-        // we cannot continue if we cannot identify which panel and its associated resizer is touched
+        // we cannot continue if we cannot identify which panel and its associated divider is touched
         guard let draggedSeparator = gestureRecognizer.view,
               let resizedPanelIndex = dividerToPanelMappings[draggedSeparator],
               let attachedPanel = panelMappings[resizedPanelIndex] else { return }

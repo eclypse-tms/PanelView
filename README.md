@@ -36,7 +36,7 @@ Drop the [source files](https://github.com/eclypse-tms/PanelView/Sources) into y
 1. UISplitViewController only lets you run in 2 or 3 column mode. PanelView has no limitations on how many columns you can have.
 1. You can place the columns (panels) to left or to the right of your main view in any combination.
 1. You can stack views top-to-bottom instead of side-by-side. This is in fact why we call our library PanelView.
-1. You can embed a PanelView in another PanelView to have complex, mosaique like layout.
+1. You can embed a PanelView in another PanelView to have complex, mosaique like layouts.
 1. In compact screen size environments instead of collapsing down to one column like UISplitViewController forces you, you can stack your panels on top of each other instead.
 1. You have fine grain controls on how and when to display panels.
 <br/>
@@ -47,7 +47,7 @@ Drop the [source files](https://github.com/eclypse-tms/PanelView/Sources) into y
 	PanelView that is split 6 way
 </p>
 
-## Usage
+## Basic Usage
 ```
 import PanelView
 
@@ -72,9 +72,152 @@ let vc3 = ViewController3()
 
 panelView.show(vc1, for: .navigation)
 panelView.show(vc2, for: .center)
-panelView.show(vc3, for. .inspector)
+panelView.show(vc3, for: .inspector)
 
 ```
+
+# Full API
+
+## Adding PanelView to a View Hiearchy
+#### Option 1: Make PanelView the root view
+```
+// in your SceneDelegate File
+import PanelView
+...
+func scene(_ scene: UIScene, 
+           willConnectTo session: UISceneSession, 
+           options connectionOptions: UIScene.ConnectionOptions) {
+  guard let windowScene = (scene as? UIWindowScene) else { return }
+  ...
+
+  // instantiate PanelView
+  let panelView = PanelView()
+  // now configure the PanelView according to your needs
+  ...
+
+  window = UIWindow(windowScene: windowScene)
+  window?.rootViewController = panelView
+  window?.makeKeyAndVisible()
+}
+
+```
+
+#### Option 2: Make PanelView a child of another ViewController
+```
+//in any ViewController
+import PanelView
+
+override func viewDidLoad() {
+  super.viewDidLoad()
+  ...
+  
+  // instantiate PanelView
+  let panelView = PanelView()
+
+  // now configure the PanelView according to your needs
+  ...
+
+  // make the PanelView child of this ViewController
+  // and take up the entire available space
+  addFullScreen(childViewController: panelView)
+}
+```
+
+## Working with Panels
+As opposed to UISplitViewController, PanelView lets you split your view horizontally or vertically. This is why we call it the `PanelView`. Consider the basic case where the panels are laid out side-by-side as in the SplitViewController. Each panel is referenced by its index. Index zero refers to the main/central view. Panels with negative indices refer to the views on the left side while panels with positive indices refer to the right side of the main screen.
+
+<p align="center">
+  <img src="./assets/index_demo.png" width="501.5" height="360">
+	<br/>
+	Panels are positioned by their index
+</p>
+<br/>
+
+When you are presenting only one viewcontroller you present it as the primary panel as follows:
+
+```
+let vcCentral = CentralViewController()
+panelView.show(viewController: vcCentral, at: 0)
+```
+
+You can also refer to panels by their names: **the names you assign to them.**
+```
+// define a custom panel to refer to it by its name
+extension Panel {
+  public static var fileExplorer: Panel {
+    // this panel will appear to the left of the central view
+    return Panel(index: -1, tag: "fileExplorer")
+  }
+}
+
+// then use its name instead of its index
+let feVC = FileExplorerViewController()
+panelView.show(viewController: feVC, for: .fileExplorer)
+```
+
+## Configuring panel size
+When panels are placed side-by-side, you can set the panel sizes by creating a minimum, maximum and a preferred size. 
+
+```
+panelView.minimumWidth(300, for: .fileExplorer)
+panelView.maximumWidth(825, for: .fileExplorer)
+panelView.preferredWidthFraction(0.33, for: .fileExplorer)
+```
+
+When the views are placed top-to-bottom, you use similarly named functions.
+```
+panelView.minimumHeight(300, for: .fileExplorer)
+panelView.maximumHeight(825, for: .fileExplorer)
+panelView.preferredHeightFraction(0.33, for: .fileExplorer)
+```
+
+Panel sizes can be adjusted programmatically or in the UI by the user by dragging dividers in between the panels. You can turn this setting off.
+```
+// initiates a configuration object with default settings
+var config = PanelViewConfiguration()
+config.allowsUIPanelSizeAdjustment = false
+
+let panelView = PanelView()
+panelView.configuration = config
+
+```
+## Orientation
+Panels can be laid out horizontally or vertically. By default panels are laid out side-by-side like UISplitViewController. If you want to change this behavior, set the orientation to vertical in `PanelViewConfiguration`.
+
+
+
+## Displaying a ViewController
+
+
+
+## Reacting to Screen Size Changes
+Become the delegate to recieve screen size change events.
+```
+  let panelView = PanelView()
+  panelView.delegate = self
+  ...
+  
+  extension ViewController: PanelViewDelegate {
+    func didChangeSize(panelView: PanelView, changes: ScreenSizeChanges) {
+      if changes.contains(.horizontalSizeChangedFromRegularToCompact) {
+          // screen size changed to compact
+          // adjust panels if necessary
+      }
+   }
+
+```
+
+Or if you are using Combine subscribe to PanelView.panelSizeChanged stream.
+```
+  let panelView = PanelView()
+  panelView.panelSizeChanged
+    .sink { sizeChanged in
+    // screen size changed to compact
+    // adjust panels if necessary
+  }.store(in: &cancellables)
+
+```
+
 
 ## Additional Configuration
 PanelView offers additional configuration 

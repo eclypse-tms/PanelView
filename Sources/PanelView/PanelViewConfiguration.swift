@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// Constains settings for PanelView.
 public struct PanelViewConfiguration {
     /// runs the PanelView in horizontal or vertical mode.
     ///
@@ -16,12 +17,11 @@ public struct PanelViewConfiguration {
     /// the view to display when there are no panels visible.
     public var emptyStateView: UIView?
         
-    /// when this value is not nil, the view resizers will be highlighted when
-    /// a pointer hovers over them. when this value is nil, no highlighting will
-    /// occur.
+    /// the color to highlight panel dividers when a pointer hovers over them.
     ///
-    /// only applicable to macCatalyst
-    public var viewResizerHoverColor: UIColor?
+    /// only applicable to macCatalyst. It has no effect when running in iOS
+    /// devices.
+    public var panelDividerHoverColor: UIColor?
     
     /// the this color is only visible in between the panels - when there are
     /// multiple panels open.
@@ -49,7 +49,6 @@ public extension PanelViewConfiguration {
     init() {
         self.orientation = .horizontal
         self.emptyStateView = nil
-        self.viewResizerHoverColor = nil
         self.panelSeparatorColor = UIColor.opaqueSeparator
         self.numberOfPanelsToPrime = 4
         self.panelTransitionDuration = 0.333333

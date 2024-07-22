@@ -7,6 +7,7 @@
 
 import UIKit
 import PanelView
+import Combine
 
 class ViewController: UIViewController {
     
@@ -15,9 +16,11 @@ class ViewController: UIViewController {
     @IBOutlet private var trailingPlusButton: UIButton!
     @IBOutlet private var leadingMinusButton: UIButton!
     @IBOutlet private var trailingMinusButton: UIButton!
+    @IBOutlet private var changeOrientationButton: UIButton!
     
     var panelIndexes = [Int]()
     
+    private var cancellables = Set<AnyCancellable>()
     private var panelView: PanelView!
 
     override func viewDidLoad() {
@@ -25,10 +28,12 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         
         addPanelView()
+        // configureBindings()
         leadingPlusButton.setTitle("", for: .normal)
         trailingPlusButton.setTitle("", for: .normal)
         leadingMinusButton.setTitle("", for: .normal)
         trailingMinusButton.setTitle("", for: .normal)
+        changeOrientationButton.setTitle("", for: .normal)
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setToolbarHidden(true, animated: false)
@@ -39,10 +44,10 @@ class ViewController: UIViewController {
         panelView.delegate = self
         
         var customConfig = PanelViewConfiguration()
-        
+        customConfig.numberOfPanelsToPrime = 5
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
-        customConfig.interPanelSpacing = 1
+        customConfig.interPanelSpacing = 2
         
         let emptyStackView = UIStackView()
         emptyStackView.axis = .vertical
@@ -86,85 +91,77 @@ class ViewController: UIViewController {
         }
         
         
-        addFullScreen(childViewController: panelView)
+        addPanelViewAsChildView(panelView)
     }
-       
-    /// adds a child view controller and makes it full screen
-    public func addFullScreen(childViewController child: UIViewController) {
-        guard child.parent == nil else {
-            //if the child already has a parent, it won't add anything
-            return
-        }
+    
+    private func configureBindings() {
+        panelView.attachedToWindow
+            .sink { _ in
+                // PanelView is loaded and visible
+            }.store(in: &cancellables)
         
-        addChild(child)
-        view.insertSubview(child.view, belowSubview: buttonGroup)
-        
-        child.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            view.leadingAnchor.constraint(equalTo: child.view.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: child.view.trailingAnchor),
-            view.topAnchor.constraint(equalTo: child.view.topAnchor),
-            view.bottomAnchor.constraint(equalTo: child.view.bottomAnchor)
-        ])
-        
-        child.didMove(toParent: self)
+        panelView.panelSizeChanged
+            .sink { changes in
+                // screen size changed
+            }.store(in: &cancellables)
     }
     
     @IBAction
     private func didClickOnAdd(_ sender: UIButton) {
+        func addLabel(to vc: UIViewController, labelText: String) {
+            let centerViewIndicator = UILabel()
+            centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
+            centerViewIndicator.text = labelText
+            centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+            
+            vc.view.addSubview(centerViewIndicator)
+            NSLayoutConstraint.activate([
+                centerViewIndicator.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
+                centerViewIndicator.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor),
+            ])
+        }
+        
         if sender.tag == -1 {
             if panelIndexes.contains(0) {
                 let leftSideVC = UIViewController()
-                leftSideVC.view.backgroundColor = randomSystemColor()
-                
+                leftSideVC.navigationController?.setNavigationBarHidden(true, animated: false)
+                leftSideVC.view.backgroundColor = .systemBackground
                 
                 let newIndex = (panelIndexes.min() ?? 0) - 1
+                addLabel(to: leftSideVC, labelText: String(newIndex))
+                
                 panelIndexes.append(newIndex)
                 panelView.show(viewController: leftSideVC, at: newIndex)
             } else {
                 panelIndexes.append(0)
                 // add the main panel
                 let initial = UIViewController()
+                initial.navigationController?.setNavigationBarHidden(true, animated: false)
                 initial.view.backgroundColor = .systemBackground
                 
-                let centerViewIndicator = UILabel()
-                centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
-                centerViewIndicator.text = "Main"
-                centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+                addLabel(to: initial, labelText: "Main")
                 
-                initial.view.addSubview(centerViewIndicator)
-                NSLayoutConstraint.activate([
-                    centerViewIndicator.centerXAnchor.constraint(equalTo: initial.view.centerXAnchor),
-                    centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
-                ])
-                
-                panelView.show(viewController: initial, for: .center)
+                panelView.show(viewController: initial, for: .main)
             }
         } else {
             if panelIndexes.contains(0) {
                 let rightSideVC = UIViewController()
-                rightSideVC.view.backgroundColor = randomSystemColor()
-                
+                rightSideVC.navigationController?.setNavigationBarHidden(true, animated: false)
+                rightSideVC.view.backgroundColor = .systemBackground
                 
                 let newIndex = (panelIndexes.max() ?? 0) + 1
+                addLabel(to: rightSideVC, labelText: String(newIndex))
+                
                 panelIndexes.append(newIndex)
                 panelView.show(viewController: rightSideVC, at: newIndex)
             } else {
                 panelIndexes.append(0)
                 // add the main panel
                 let initial = UIViewController()
+                initial.navigationController?.setNavigationBarHidden(true, animated: false)
                 initial.view.backgroundColor = .systemBackground
                 
-                let centerViewIndicator = UILabel()
-                centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
-                centerViewIndicator.text = "Main"
-                centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-                
-                initial.view.addSubview(centerViewIndicator)
-                NSLayoutConstraint.activate([
-                    centerViewIndicator.centerXAnchor.constraint(equalTo: initial.view.centerXAnchor),
-                    centerViewIndicator.centerYAnchor.constraint(equalTo: initial.view.centerYAnchor),
-                ])
+                addLabel(to: initial, labelText: "Main")
                 
                 panelView.show(viewController: initial, for: .center)
             }
@@ -209,6 +206,36 @@ class ViewController: UIViewController {
       let randomIndex = Int.random(in: 0..<systemColors.count)
       return systemColors[randomIndex]
     }
+    
+    @IBAction
+    private func didChangeOrientation(_ sender: UIButton) {
+        if panelView.configuration.orientation == .horizontal {
+            panelView.configuration.orientation = .vertical
+        } else {
+            panelView.configuration.orientation = .horizontal
+        }
+    }
+    
+    /// adds a child view controller and makes it full screen
+    private func addPanelViewAsChildView(_ panelView: PanelView) {
+        guard panelView.parent == nil else {
+            //if the child already has a parent, it won't add anything
+            return
+        }
+        
+        addChild(panelView)
+        view.insertSubview(panelView.view, belowSubview: buttonGroup)
+        
+        panelView.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            view.leadingAnchor.constraint(equalTo: panelView.view.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: panelView.view.trailingAnchor),
+            view.topAnchor.constraint(equalTo: panelView.view.topAnchor),
+            view.bottomAnchor.constraint(equalTo: panelView.view.bottomAnchor)
+        ])
+        
+        panelView.didMove(toParent: self)
+    }
 }
 
 extension ViewController: PanelViewDelegate {
@@ -217,5 +244,12 @@ extension ViewController: PanelViewDelegate {
             changes.contains(.verticalSizeChangedFromCompactToRegular) {
             //panelView.combineAll()
         }
+    }
+}
+
+
+extension Panel {
+    public static var main: Panel {
+        return Panel(index: 0, tag: "main")
     }
 }

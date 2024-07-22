@@ -53,6 +53,7 @@ extension PanelView: ScreenAdaptation {
         
         if !detectedChanges.isEmpty {
             delegate?.didChangeSize(panelView: self, changes: detectedChanges)
+            panelSizeChangedSubject.send(detectedChanges)
         }
     }
     

@@ -79,7 +79,7 @@ extension PanelView: PanelViewHidingManager {
     
     private func hideViewResizer(associatedPanel: Panel) {
         if let associatedResizer = dividerMappings[associatedPanel] {
-            let uniqueConstraintIdentifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
+            let uniqueConstraintIdentifier = "\(_dividerConstraintIdentifier)\(associatedResizer.tag)"
             if let constraintThatNeedToAltered = self.view.constraints.first(where: { $0.identifier == uniqueConstraintIdentifier }) {
                 constraintThatNeedToAltered.constant = 0
             }

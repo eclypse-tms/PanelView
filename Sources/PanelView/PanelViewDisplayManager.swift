@@ -84,7 +84,7 @@ extension PanelView: PanelViewDisplayManager {
                         reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aPanelToShow.topAnchor, constant: panelDividerWidth/2.0)
                     }
                 }
-                reestablishedConstraint.identifier = "\(_resizerConstraintIdentifier)\(associatedResizer.tag)"
+                reestablishedConstraint.identifier = "\(_dividerConstraintIdentifier)\(associatedResizer.tag)"
                 reestablishedConstraint.isActive = true
                 associatedResizer.isHidden = false
             }
