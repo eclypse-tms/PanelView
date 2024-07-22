@@ -42,6 +42,8 @@ extension PanelView {
             }
         }
         
+        
+        
         if oldConfig.interPanelSpacing != configuration.interPanelSpacing {
             mainStackView.spacing = configuration.interPanelSpacing
         }
@@ -55,5 +57,7 @@ extension PanelView {
                 }
             }
         }
+        
+        self.emptyView configuration.emptyStateView
     }
 }

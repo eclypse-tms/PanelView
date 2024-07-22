@@ -67,8 +67,6 @@ extension PanelView {
         if configuration.allowsUIPanelSizeAdjustment {
             enableResizing(for: indexedPanel)
         }
-        
-        // viewDivider.isHidden = true
     }
     
     func removePanelDivider(for indexedPanel: Panel) {

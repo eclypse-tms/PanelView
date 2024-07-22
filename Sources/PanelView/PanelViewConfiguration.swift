@@ -25,7 +25,7 @@ public struct PanelViewConfiguration {
     
     /// the this color is only visible in between the panels - when there are
     /// multiple panels open.
-    public var panelSeparatorColor: UIColor
+    public var panelDividerColor: UIColor
     
     /// The space in the between the panels.
     public var interPanelSpacing: CGFloat
@@ -58,7 +58,7 @@ public extension PanelViewConfiguration {
     init() {
         self.orientation = .horizontal
         self.emptyStateView = nil
-        self.panelSeparatorColor = UIColor.opaqueSeparator
+        self.panelDividerColor = UIColor.opaqueSeparator
         self.numberOfPanelsToPrime = 4
         self.panelTransitionDuration = 0.333333
         self.allowsUIPanelSizeAdjustment = true

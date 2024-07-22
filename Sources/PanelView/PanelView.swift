@@ -103,7 +103,6 @@ public class PanelView: UIViewController, ResizablePanel {
         attachedToWindowSubject.send()
         isAttachedToWindow = true
         
-        /*
         if !pendingViewControllers.isEmpty {
             let sortedPanels = pendingViewControllers.sorted(by: { lhs, rhs in
                 return lhs.key.index < rhs.key.index
@@ -112,9 +111,10 @@ public class PanelView: UIViewController, ResizablePanel {
             for (eachPanel, eachVC) in sortedPanels {
                 self.show(viewController: eachVC, for: eachPanel, animated: false)
             }
-            //pendingViewControllers.removeAll()
+            pendingViewControllers.removeAll()
         }
-        
+         
+        /*
         if !pendingMinimumWidth.isEmpty {
             for (eachPanel, eachMinWidth) in pendingMinimumWidth {
                 self.minimumWidth(eachMinWidth, for: eachPanel)
@@ -172,7 +172,7 @@ public class PanelView: UIViewController, ResizablePanel {
     }
     
     // MARK: empty view
-    private func configureEmptyView() {
+    func configureEmptyView() {
         if let validEmptyStateView = configuration.emptyStateView {
             let emptyViewContainer = UIStackView()
             
@@ -186,6 +186,8 @@ public class PanelView: UIViewController, ResizablePanel {
             emptyViewContainer.addArrangedSubview(validEmptyStateView)
             
             emptyView = emptyViewContainer
+        } else {
+            
         }
     }
     

@@ -185,7 +185,7 @@ public extension PanelView {
             self.view.sendSubviewToBack(validEmptyStateView)
             validEmptyStateView.isHidden = true
         }
-        self.view.backgroundColor = configuration.panelSeparatorColor
+        self.view.backgroundColor = configuration.panelDividerColor
     }
     
     private func calculateAppropriateIndex(for panel: Panel) -> Int {

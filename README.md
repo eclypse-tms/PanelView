@@ -257,7 +257,7 @@ Become the delegate to recieve screen size change events.
 
 ```
 
-When screen size changes to compact you may call `combineAll()` to gather all views in one panel.
+`func combineAll()` -> gathers all views in the center panel - maybe useful when the screen size changes to compact.
 
 ## Pushing and Popping ViewControllers on a Panel
 All panels are embedded in a UINavigationViewController. This means you can push or pop view controllers just like you normally do.
@@ -292,46 +292,81 @@ If you are using Combine, PanelView publishes events on `panelSizeChanged` and `
 
 ```
 
+## Empty State
+When there are no panels presented on the PanelView, it is possible to show a separate empty state. Provide a valid view in `PanelViewConfiguration.emptyStateView` to enable this functionality.
 
-## Additional Configuration
-PanelView offers additional configuration 
+<p align="center">
+  <img src="./assets/empty_view.png" width="383.5" height="301.5">
+	<br/>
+	Example Empty View
+</p>
+
+## Panel Dividers
+Each panel is visually separated by panel dividers. Dividers also allow panels to be adjusted in size. 
+
+`PanelViewConfiguration.panelDividerColor` -> controls the divider color
+
+`PanelViewConfiguration.panelDividerHoverColor ` -> controls the hover color
+
+`PanelViewConfiguration.interPanelSpacing` -> the width or height of the panel dividers
+
+`PanelViewConfiguration.allowsUIPanelSizeAdjustment` -> controls whether users can adjust the size of panels within the previously provided minimum and maximum parameters.
+
+
+`func enableResizing(for:)` -> enables a panel to be resized in the UI.
+
+`func disableResizing(for:)` -> removes the ability for a panel to be resized in the UI. Panels can be resized programmatically.
+
+## Reference
+use the following PanelViewConfiguration object and pass it to PanelView.
 ```
 /// Provides configuration possibilities for PanelView
 public struct PanelViewConfiguration {
-    /// runs the PanelView in horizontal or vertical mode.
-    ///
-    /// Once the orientation is determined, it cannot be changed later on.
-    public var orientation: PanelOrientation
+  /// runs the PanelView in horizontal or vertical mode.
+  ///
+  /// Once the orientation is determined, it cannot be changed later on.
+  public var orientation: PanelOrientation
+  
+  /// the view to display when there are no panels visible.
+  public var emptyStateView: UIView?
     
-    /// the view to display when there are no panels visible.
-    public var emptyStateView: UIView?
-        
-    /// when this value is not nil, the view resizers will be highlighted when
-    /// a pointer hovers over them. when this value is nil, no highlighting will
-    /// occur.
-    ///
-    /// only applicable to macCatalyst
-    public var viewResizerHoverColor: UIColor?
-    
-    /// the this color is only visible in between the panels - when there are
-    /// multiple panels open.
-    public var panelSeparatorColor: UIColor
-    
-    /// The space in the between the panels.
-    public var interPanelSpacing: CGFloat
-    
-    /// Number of panels on each side that are created and added to the view hiearchy.
-    /// The default value is 4. This means 4 panels on each side of the main panel
-    /// for a total of 9 panels are added to the view hierarchy. Priming panels
-    /// before hand helps with animations and transitions to work correctly. If you know
-    /// that you will need more than 9 panels adjust this number accordingly otherwise
-    /// leave it as-is.
-    public var numberOfPanelsToPrime: Int
-    
-    /// the animation duration when inserting and removing panels from the view
-    public var panelTransitionDuration: Double
-    
-    /// determines whether the panels heights or widths can be changed in the UI
-    public var allowsUIPanelSizeAdjustment: Bool
+  /// when this value is not nil, the view dividers will be highlighted when
+  /// a pointer hovers over them. when this value is nil, no highlighting will
+  /// occur.
+  ///
+  /// only applicable to macCatalyst
+  public var panelDividerHoverColor: UIColor?
+  
+  /// the this color is only visible in between the panels - when there are
+  /// multiple panels open.
+  public var panelDividerColor: UIColor
+  
+  /// The space in the between the panels.
+  public var interPanelSpacing: CGFloat
+  
+  /// Number of panels on each side that are created and added to the view hiearchy.
+  /// The default value is 4. This means 4 panels on each side of the main panel
+  /// for a total of 9 panels are added to the view hierarchy. Priming panels
+  /// before hand helps with animations and transitions to work correctly. If you know
+  /// that you will need more than 9 panels adjust this number accordingly otherwise
+  /// leave it as-is.
+  public var numberOfPanelsToPrime: Int
+  
+  /// the animation duration when inserting and removing panels from the view
+  public var panelTransitionDuration: Double
+  
+  /// determines whether the panels heights or widths can be changed in the UI
+  public var allowsUIPanelSizeAdjustment: Bool
+
+  /// controls whether to automatically release the view controllers when a panel is hidden
+  ///
+  /// This property is by default false. This means that view controller will be kept
+  /// in memory when its associated panel is hidden from view. This allows you to
+  /// re-use the view controller when the panel is shown again without having to 
+  /// worry about preserving its state.
+  /// On the other hand if you are not planning on re-using the same view controller
+  /// when the panels are hidden, set this property to true to automatically 
+  /// reclaim the memory occupied by the view controller.
+  public var autoReleaseViewControllers: Bool
 }
 ```
