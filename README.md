@@ -280,7 +280,7 @@ If you are using Combine, PanelView publishes events on `panelSizeChanged` and `
 
   panelView.panelSizeChanged
     .sink { sizeChanged in
-    // screen size changed to compact
+    // screen size changed to compact or regular
     // adjust panels if necessary
   }.store(in: &cancellables)
 
@@ -316,6 +316,12 @@ Each panel is visually separated by panel dividers. Dividers also allow panels t
 `func enableResizing(for:)` -> enables a panel to be resized in the UI.
 
 `func disableResizing(for:)` -> removes the ability for a panel to be resized in the UI. Panels can be resized programmatically.
+
+## SwiftUI Support
+Full SwiftUI support will be added in an upcoming release. 
+
+## Example
+This repository contains an [Example app](../PanelViewExample) where you can demo the PanelView.
 
 ## Reference
 use the following PanelViewConfiguration object and pass it to PanelView.
