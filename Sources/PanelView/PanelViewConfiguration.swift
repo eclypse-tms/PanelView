@@ -43,6 +43,15 @@ public struct PanelViewConfiguration {
     
     /// determines whether the panels heights or widths can be changed in the UI
     public var allowsUIPanelSizeAdjustment: Bool
+    
+    /// controls whether to automatically release the view controllers when a panel is hidden
+    ///
+    /// This property is by default false. This means that view controller will be kept in memory
+    /// when its associated panel is hidden from view. This allows you to re-use the view controller
+    /// when the panel is shown again without having to worry about preserving its state.
+    /// On the other hand if you are not planning on re-using the same view controller when the panels are
+    /// hidden, set this property to true to automatically reclaim the memory occupied by the view controller.
+    public var autoReleaseViewControllers: Bool
 }
 
 public extension PanelViewConfiguration {
@@ -54,5 +63,7 @@ public extension PanelViewConfiguration {
         self.panelTransitionDuration = 0.333333
         self.allowsUIPanelSizeAdjustment = true
         self.interPanelSpacing = 1.0
+        self.panelDividerHoverColor = nil
+        self.autoReleaseViewControllers = false
     }
 }

@@ -73,18 +73,6 @@ extension PanelView: ScreenAdaptation {
         }
     }
     
-    public var visiblePanels: [Panel] {
-        let sortedVisiblePanels = panelMappings.compactMap { (eachPanelIndex, eachPanel) -> Panel? in
-            if isVisible(panel: eachPanelIndex) {
-                return eachPanelIndex
-            } else {
-                return nil
-            }
-        }.sorted()
-        return sortedVisiblePanels
-    }
-    
-    
     public func combineAll() {
         var newNavigationStack = [UIViewController]()
         for eachVisiblePanel in visiblePanels {

@@ -7,50 +7,13 @@
 
 import UIKit
 
-public protocol PanelViewDisplayManager {
-    /// shows a previously hidden panel. If the panel does not have a childview controller
-    /// associated with it already you will see an empty view.
-    func show(panel: Panel, animated: Bool)
-    
-    /// shows a previously hidden panel. If the panel does not have a childview controller
-    /// associated with it already you will see an empty view. animates the transition.
-    func show(panel: Panel)
-    
-    /// shows a new view controller at the provided panel index. If the panel already contains
-    /// another child view controller, it replaces that while animating the transition.
-    ///
-    /// You can use this function interchangeably with show(viewController:for:animated).
-    func show(viewController: UIViewController, at index: Int)
-    
-    /// shows a new view controller at the provided panel index. If the panel already contains
-    /// another child view controller, it replaces that while animating the transition.
-    ///
-    /// You can use this function interchangeably with show(viewController:for:animated).
-    func show(viewController: UIViewController, at index: Int, animated: Bool)
-    
-    /// shows a new view controller for the provided named panel. If the panel already contains
-    /// another child view controller, it replaces that. 
-    ///
-    /// You can use this function interchangeably with show(viewController:at:animated).
-    func show(viewController: UIViewController, for panel: Panel, animated: Bool)
-    
-    /// shows a new view controller for the provided named panel. If the panel already contains
-    /// another child view controller, it replaces that while animating the transition.
-    ///
-    /// You can use this function interchangeably with show(viewController:at:animated).
-    func show(viewController: UIViewController, for panel: Panel)
-    
-    /// adds the provided navigation stack to the named panel. If the panel already contains
-    /// another child view controller, it replaces that.
-    func show(navigationStack: [UIViewController], for panel: Panel, animated: Bool)
-}
-
-extension PanelView: PanelViewDisplayManager {
-    public func show(panel: Panel) {
-        show(panel: panel, animated: true)
-    }
-    
-    public func show(panel: Panel, animated: Bool) {
+public extension PanelView {
+    /// If the panel is already associated with a view controller, this action redisplays it.
+    /// - Parameters:
+    ///   - panel: the name of the panel to show.
+    ///   - animated: whether to animate the transition. the default it true.
+    ///   - completion: receive a callback when the panel is fully displayed.
+    func show(panel: Panel, animated: Bool, completion: (() -> Void)? = nil) {
         func animatableBlock() {
             // in order for animations to run correctly, we need to first remove the panel
             // from the superview and re-insert it later on
@@ -95,27 +58,36 @@ extension PanelView: PanelViewDisplayManager {
         if panel.index != 0, animated {
             UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                 animatableBlock()
+            }, completion: { _ in
+                completion?()
             })
         } else {
             animatableBlock()
+            completion?()
         }
     }
     
-    public func show(viewController: UIViewController, at index: Int) {
+    
+    /// Displays a view controller at the specified index. If there was another view controller already associated
+    /// with that panel, this action replaces the existing view controller.
+    /// - Parameters:
+    ///   - viewController: a view controller to show.
+    ///   - index: negative indices appear on the left side of the screen. positive indices appear on the right side.
+    ///   - animated: whether to animate the transition. the default it true.
+    ///   - completion: receive a callback when the panel is fully displayed.
+    func show(viewController: UIViewController, at index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
         let onTheFlyIndex = Panel(index: index)
-        show(viewController: viewController, for: onTheFlyIndex, animated: true)
+        show(viewController: viewController, for: onTheFlyIndex, animated: animated, completion: completion)
     }
     
-    public func show(viewController: UIViewController, at index: Int, animated: Bool) {
-        let onTheFlyIndex = Panel(index: index)
-        show(viewController: viewController, for: onTheFlyIndex, animated: animated)
-    }
-    
-    public func show(viewController: UIViewController, for panel: Panel) {
-        show(viewController: viewController, for: panel, animated: true)
-    }
-    
-    public func show(viewController: UIViewController, for panel: Panel, animated: Bool) {
+    /// Displays a view controller for the named panel. If there was another view controller already associated
+    /// with that panel, this action replaces the existing view controller.
+    /// - Parameters:
+    ///   - viewController: a view controller to show.
+    ///   - panel: the name of the panel to show this view controller.
+    ///   - animated: whether to animate the transition. the default it true.
+    ///   - completion: receive a callback when the panel is fully displayed.
+    func show(viewController: UIViewController, for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()
@@ -133,13 +105,21 @@ extension PanelView: PanelViewDisplayManager {
                 add(childNavController: navController, on: panel)
             }
             
-            show(panel: panel, animated: animated)
+            show(panel: panel, animated: animated, completion: completion)
         } else {
             pendingViewControllers[panel] = viewController
+            completion?()
         }
     }
     
-    public func show(navigationStack: [UIViewController], for panel: Panel, animated: Bool) {
+    /// Displays a navigation stack for the named panel. If there was another view controller already associated
+    /// with that panel, this action replaces the existing view controller.
+    /// - Parameters:
+    ///   - navigationStack: view controllers of a navigation stack.
+    ///   - panel: the name of the panel to show this navigation stack.
+    ///   - animated: whether to animate the transition. the default it true.
+    ///   - completion: receive a callback when the panel is fully displayed.
+    func show(navigationStack: [UIViewController], for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()
@@ -149,17 +129,42 @@ extension PanelView: PanelViewDisplayManager {
             // since there is at least one panel that is will be visible
             // we should hide the empty view stack
             hideEmptyView()
-            
            
             let navController = UINavigationController()
             navController.setViewControllers(navigationStack, animated: false)
             add(childNavController: navController, on: panel)
             
-            show(panel: panel, animated: animated)
+            show(panel: panel, animated: animated, completion: completion)
         } else {
             let navController = UINavigationController()
             navController.setViewControllers(navigationStack, animated: false)
             pendingViewControllers[panel] = navController
+            completion?()
+        }
+    }
+    
+    func topViewController(for panel: Panel) -> UIViewController? {
+        return viewControllers[panel]?.topViewController
+    }
+    
+    
+    var visiblePanels: [Panel] {
+        let sortedVisiblePanels = panelMappings.compactMap { (eachPanelIndex, eachPanel) -> Panel? in
+            if isVisible(panel: eachPanelIndex) {
+                return eachPanelIndex
+            } else {
+                return nil
+            }
+        }.sorted()
+        return sortedVisiblePanels
+    }
+    
+    /// check whether 
+    func isVisible(panel: Panel) -> Bool {
+        if let discoveredPanel = panelMappings[panel] {
+            return !discoveredPanel.isHidden
+        } else {
+            return false
         }
     }
     

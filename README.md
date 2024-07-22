@@ -10,7 +10,7 @@
 </p>
 
 # PanelView
-A superpowered SplitView that gives the controls back to the developer.
+A superpowered SplitView that gives controls back to the developer.
 
 <p align="center">
   <img src="./assets/hero_image.jpg" width="842.66" height="512">
@@ -32,7 +32,7 @@ Drop the [source files](https://github.com/eclypse-tms/PanelView/Sources) into y
 <br/>
 
 ## Why PanelView?
-1. Apple's UISplitViewController works and behaves in unexpected ways. Developer has to come up with too many work-arounds to get UISplitViewController to work as desired. PanelView gives control back to the developer.
+1. Apple's UISplitViewController works and behaves in unexpected ways. Developer has to come up with too many work-arounds to get UISplitViewController to work as desired. PanelView gives control back to the developers.
 1. UISplitViewController only lets you run in 2 or 3 column mode. PanelView has no limitations on how many columns you can have.
 1. You can place the columns (panels) to left or to the right of your main view in any combination.
 1. You can stack views top-to-bottom instead of side-by-side. This is in fact why we call our library PanelView.
@@ -52,6 +52,9 @@ Drop the [source files](https://github.com/eclypse-tms/PanelView/Sources) into y
 import PanelView
 
 let panelView = PanelView()
+var config = PanelViewConfiguration()
+config.interPanelSpacing = 2
+panelView.configuration = panelView
 // then add this PanelView to your view hierarchy in anyway you see fit
 
 // let's say you have 3 panels you want to display
@@ -144,13 +147,21 @@ You can also refer to panels by their names: **the names you assign to them.**
 ```
 // define a custom panel to refer to it by its name
 extension Panel {
+  // this panel is the primary view
+  public static var main: Panel {
+    return Panel(index: 0, tag: "main")
+  }
+
+  // this panel appears to the left of the center view
   public static var fileExplorer: Panel {
-    // this panel will appear to the left of the central view
     return Panel(index: -1, tag: "fileExplorer")
   }
 }
 
-// then use its name instead of its index
+// then use their name instead of their index
+let vcCentral = CentralViewController()
+panelView.show(viewController: vcCentral, for: .main)
+
 let feVC = FileExplorerViewController()
 panelView.show(viewController: feVC, for: .fileExplorer)
 ```
@@ -171,7 +182,7 @@ panelView.maximumHeight(825, for: .fileExplorer)
 panelView.preferredHeightFraction(0.33, for: .fileExplorer)
 ```
 
-Panel sizes can be adjusted programmatically or in the UI by the user by dragging dividers in between the panels. You can turn this setting off.
+Panel sizes can be adjusted programmatically or in the UI by dragging dividers in between the panels. You can turn this setting off.
 ```
 // initiates a configuration object with default settings
 var config = PanelViewConfiguration()
@@ -181,13 +192,50 @@ let panelView = PanelView()
 panelView.configuration = config
 
 ```
+
+*Note: Central panel cannot be sized and always takes up the available space after other panels are laid out.*
+
 ## Orientation
 Panels can be laid out horizontally or vertically. By default panels are laid out side-by-side like UISplitViewController. If you want to change this behavior, set the orientation to vertical in `PanelViewConfiguration`.
 
 
 
-## Displaying a ViewController
+## Hiding a Panel
+You can hide a panel 3 different ways: 
+1. By its index
+1. By its name
+1. By the view controller that it contains
+```
+// hide the panel by its given name
+panelView.hide(panel: .fileExplorer)
+```
 
+You may force the PanelView to release the view controllers upon hiding if you don't need 
+to use them again.
+```
+// hide the panel by its given name
+panelView.hide(panel: .fileExplorer, releaseViewController: .true)
+```
+
+If releasing the view controllers when panels are hidden is a common pattern in your application, you may prefer to set it to auto-release.
+
+```
+var config = PanelViewConfiguration()
+config.autoReleaseViewControllers = true
+
+let panelView = PanelView()
+panelView.configuration = config
+
+...
+// hide the panel as usual 
+// but you don't have to specify releaseViewController argument
+panelView.hide(panel: .fileExplorer)
+```
+
+#### Panel Visibility
+`func isVisible(panel:)` allows you to check whether any panel is visible or not. 
+
+`var visiblePanels` property returns all currently visible panels sorted in ascending fashion.
 
 
 ## Reacting to Screen Size Changes
@@ -207,13 +255,26 @@ Become the delegate to recieve screen size change events.
 
 ```
 
-Or if you are using Combine subscribe to PanelView.panelSizeChanged stream.
+When screen size changes to compact you may call `combineAll()` to gather all views in one panel.
+
+
+
+## Combine Support
+
+If you are using Combine, PanelView publishes events on `panelSizeChanged` and `attachedToWindow` streams.
 ```
   let panelView = PanelView()
+
   panelView.panelSizeChanged
     .sink { sizeChanged in
     // screen size changed to compact
     // adjust panels if necessary
+  }.store(in: &cancellables)
+
+
+  panelView.attachedToWindow
+    .sink { _ in
+    // PanelView is visible on the window
   }.store(in: &cancellables)
 
 ```

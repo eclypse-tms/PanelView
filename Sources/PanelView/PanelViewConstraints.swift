@@ -8,19 +8,43 @@
 import Foundation
 
 public protocol PanelViewConstraints {
+    // MARK: Heights
+    /// sets the minimum height for the given index at the corresponding panel
     func minimumHeight(_ height: CGFloat, at index: Int)
+    
+    /// sets the minimum height for the given panel
     func minimumHeight(_ height: CGFloat, for panel: Panel)
+    
+    /// sets the maximum height for the given index at the corresponding panel
     func maximumHeight(_ height: CGFloat, at index: Int)
+    
+    /// sets the maximum height for the given panel
     func maximumHeight(_ height: CGFloat, for panel: Panel)
     
+    // MARK: Widths
+    /// sets the minimum width for the given index at the corresponding panel
     func minimumWidth(_ width: CGFloat, at index: Int)
+    
+    /// sets the minimum width for the given panel
     func minimumWidth(_ width: CGFloat, for panel: Panel)
+    
+    /// sets the maximum width for the given index at the corresponding panel
     func maximumWidth(_ width: CGFloat, at index: Int)
+    
+    /// sets the maximum width for the given panel
     func maximumWidth(_ width: CGFloat, for panel: Panel)
     
+    // MARK: Preferences
+    /// preferred width of the panel in terms of screen size
     func preferredWidthFraction(_ fraction: CGFloat, at index: Int)
+    
+    /// preferred width of the panel in terms of screen size
     func preferredWidthFraction(_ fraction: CGFloat, for panel: Panel)
+    
+    /// preferred height of the panel in terms of screen size
     func preferredHeightFraction(_ fraction: CGFloat, at index: Int)
+    
+    /// preferred height of the panel in terms of screen size
     func preferredHeightFraction(_ fraction: CGFloat, for panel: Panel)
 }
 
