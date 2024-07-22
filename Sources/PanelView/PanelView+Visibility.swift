@@ -15,6 +15,15 @@ public extension PanelView {
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(panel: Panel, animated: Bool, completion: (() -> Void)? = nil) {
         func animatableBlock() {
+            if configuration.singlePanelMode {
+                // when running in single panel mode, we hide all other visible panels
+                visiblePanels.forEach { eachPanel in
+                    if let panelContainer = panelMappings[eachPanel] {
+                        panelContainer.isHidden = true
+                    }
+                }
+            }
+            
             // in order for animations to run correctly, we need to first remove the panel
             // from the superview and re-insert it later on
             aPanelToShow.removeFromSuperview()
@@ -94,7 +103,7 @@ public extension PanelView {
                 viewControllers.removeValue(forKey: panel)
             }
             
-            // since there is at least one panel that is will be visible
+            // since there is at least one panel that will be visible
             // we should hide the empty view stack
             hideEmptyView()
             
