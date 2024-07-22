@@ -217,7 +217,7 @@ to use them again.
 panelView.hide(panel: .fileExplorer, releaseViewController: .true)
 ```
 
-If releasing the view controllers when panels are hidden is a common pattern in your application, you may prefer to set it to auto-release.
+If releasing the view controllers when panels are hidden is a common pattern in your application, you may set it to auto-release in the configuration object.
 
 ```
 var config = PanelViewConfiguration()
