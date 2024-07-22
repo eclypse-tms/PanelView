@@ -62,6 +62,12 @@ public extension PanelView {
             }
         }
         
+        // we cannot hide the panel with the index 0 when there are other visible panels
+        // causes constraint issues
+        if panel.index == 0, visiblePanels.first(where: { $0.index != 0 }) != nil {
+            return
+        }
+        
         _performPanelHiding(panel: panel, animated: animated, hidingCompleted: { [weak self] in
             guard let strongSelf = self else { return }
             let shouldViewControllerBeReleasedFromMemory: Bool
@@ -117,14 +123,24 @@ public extension PanelView {
                 }
             }
             
-            if !atLeastOnePanelVisible {
+            if atLeastOnePanelVisible {
+                // since there is at least one panel visible
+                // we make sure that background is panel divider color
+                self.view.backgroundColor = configuration.panelDividerColor
+            } else {
                 // all panels are hidden, show the empty view
                 self.view.bringSubviewToFront(validEmptyStateView)
                 validEmptyStateView.isHidden = false
                 
+                // we are showing the empty view - switch the background back to the system color
+                self.view.backgroundColor = .systemBackground
             }
+        } else {
+            // there is no empty view setup for this PanelView
+            // the only thing to do is to ensure that background is panel divider color
+            self.view.backgroundColor = configuration.panelDividerColor
         }
-        self.view.backgroundColor = .systemBackground
+        
     }
     
     private func hideViewResizer(associatedPanel: Panel) {

@@ -58,6 +58,6 @@ extension PanelView {
             }
         }
         
-        self.emptyView configuration.emptyStateView
+        self.configureEmptyView()
     }
 }

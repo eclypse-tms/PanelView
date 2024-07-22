@@ -187,7 +187,7 @@ public class PanelView: UIViewController, ResizablePanel {
             
             emptyView = emptyViewContainer
         } else {
-            
+            emptyView = nil
         }
     }
     

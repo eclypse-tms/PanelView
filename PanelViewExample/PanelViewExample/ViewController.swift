@@ -49,6 +49,26 @@ class ViewController: UIViewController {
         customConfig.allowsUIPanelSizeAdjustment = true
         customConfig.interPanelSpacing = 2
         
+        customConfig.emptyStateView = configureEmptyView()
+        
+        panelView.configuration = customConfig
+        
+        
+        for index in -panelView.configuration.numberOfPanelsToPrime...panelView.configuration.numberOfPanelsToPrime {
+            if index == 0 {
+                continue
+            }
+            let onTheFlyPanelIndex = Panel(index: index)
+            panelView.minimumWidth(100, for: onTheFlyPanelIndex)
+            panelView.maximumWidth(600, for: onTheFlyPanelIndex)
+            panelView.preferredWidthFraction(0.1, at: index)
+        }
+        
+        
+        addPanelViewAsChildView(panelView)
+    }
+    
+    private func configureEmptyView() -> UIView {
         let emptyStackView = UIStackView()
         emptyStackView.axis = .vertical
         emptyStackView.alignment = .center
@@ -74,24 +94,7 @@ class ViewController: UIViewController {
         customLabel2.font = UIFont.preferredFont(forTextStyle: .body)
         emptyStackView.addArrangedSubview(customLabel2)
         
-        
-        customConfig.emptyStateView = emptyStackView
-        
-        panelView.configuration = customConfig
-        
-        
-        for index in -panelView.configuration.numberOfPanelsToPrime...panelView.configuration.numberOfPanelsToPrime {
-            if index == 0 {
-                continue
-            }
-            let onTheFlyPanelIndex = Panel(index: index)
-            panelView.minimumWidth(100, for: onTheFlyPanelIndex)
-            panelView.maximumWidth(600, for: onTheFlyPanelIndex)
-            panelView.preferredWidthFraction(0.1, at: index)
-        }
-        
-        
-        addPanelViewAsChildView(panelView)
+        return emptyStackView
     }
     
     private func configureBindings() {
@@ -125,7 +128,7 @@ class ViewController: UIViewController {
             if panelIndexes.contains(0) {
                 let leftSideVC = UIViewController()
                 leftSideVC.navigationController?.setNavigationBarHidden(true, animated: false)
-                leftSideVC.view.backgroundColor = .systemBackground
+                leftSideVC.view.backgroundColor = randomSystemColor() //.systemBackground
                 
                 let newIndex = (panelIndexes.min() ?? 0) - 1
                 addLabel(to: leftSideVC, labelText: String(newIndex))
@@ -147,7 +150,7 @@ class ViewController: UIViewController {
             if panelIndexes.contains(0) {
                 let rightSideVC = UIViewController()
                 rightSideVC.navigationController?.setNavigationBarHidden(true, animated: false)
-                rightSideVC.view.backgroundColor = .systemBackground
+                rightSideVC.view.backgroundColor = randomSystemColor() // .systemBackground
                 
                 let newIndex = (panelIndexes.max() ?? 0) + 1
                 addLabel(to: rightSideVC, labelText: String(newIndex))
@@ -170,17 +173,30 @@ class ViewController: UIViewController {
     
     @IBAction
     private func didClickOnRemove(_ sender: UIButton) {
-        if sender.tag == -1 {
-            if let indexToRemove = panelIndexes.min() {
-                panelView.hide(index: indexToRemove)
-                panelIndexes.sort()
-                panelIndexes.remove(at: 0)
-            }
+        guard panelIndexes.count > 0 else { return }
+        if panelIndexes.count == 1 {
+            // there is only one panel (presumably center panel)
+            panelView.hide(index: 0)
+            panelIndexes.remove(at: 0)
         } else {
-            if let indexToRemove = panelIndexes.max() {
-                panelView.hide(index: indexToRemove)
-                panelIndexes.sort()
-                panelIndexes.remove(at: (panelIndexes.endIndex - 1))
+            if sender.tag == -1 {
+                if let indexToRemove = panelIndexes.min() {
+                    if indexToRemove < 0 {
+                        // this button can only remove left panels
+                        panelView.hide(index: indexToRemove)
+                        panelIndexes.sort()
+                        panelIndexes.remove(at: 0)
+                    }
+                }
+            } else {
+                if let indexToRemove = panelIndexes.max() {
+                    if indexToRemove > 0 {
+                        // this button can only remove right panels
+                        panelView.hide(index: indexToRemove)
+                        panelIndexes.sort()
+                        panelIndexes.remove(at: (panelIndexes.endIndex - 1))
+                    }
+                }
             }
         }
     }
