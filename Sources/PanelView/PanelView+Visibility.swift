@@ -24,41 +24,53 @@ public extension PanelView {
                 }
             }
             
+            if configuration.singlePanelMode {
+                // when running in single panel mode, we have to disable constraints for the panel
+                // we are about to show
+                deactivatePanelLayoutConstraints(for: panel)
+            } else {
+                activatePanelLayoutConstraintsIfNecessary(for: panel)
+            }
+            
             // in order for animations to run correctly, we need to first remove the panel
             // from the superview and re-insert it later on
             aPanelToShow.removeFromSuperview()
             let subViewIndex = calculateAppropriateIndex(for: panel)
             mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
             aPanelToShow.isHidden = false
-            
-            // we need to re-establish the constraints for panel resizers
-            // center panel does not have a resizer
-            if panel.index != 0, let associatedResizer = dividerMappings[panel] {
-                let reestablishedConstraint: NSLayoutConstraint
-                if mainStackView.axis == .horizontal {
-                    if panel.index < 0 {
-                        // this is a horizonal layout and the panel is on the left hand side (leading side)
-                        // resizer needs to be aligned to the trailing side of the panel
-                        reestablishedConstraint = associatedResizer.trailingAnchor.constraint(equalTo: aPanelToShow.trailingAnchor, constant: panelDividerWidth/2.0)
+            if configuration.singlePanelMode {
+                // when running in single panel mode,
+                // all dividers are ignored
+            } else {
+                // when running in multi panel mode, we need to re-establish the constraints for panel dividers
+                // note that center panel does not have a divider that is used for resizing the panel
+                if panel.index != 0, let associatedDivider = dividerMappings[panel] {
+                    let reestablishedConstraint: NSLayoutConstraint
+                    if mainStackView.axis == .horizontal {
+                        if panel.index < 0 {
+                            // this is a horizonal layout and the panel is on the left hand side (leading side)
+                            // resizer needs to be aligned to the trailing side of the panel
+                            reestablishedConstraint = associatedDivider.trailingAnchor.constraint(equalTo: aPanelToShow.trailingAnchor, constant: panelDividerWidth/2.0)
+                        } else {
+                            // this is a horizonal layout and the panel is on the right hand side (trailing side)
+                            // resizer needs to be aligned to the leading side of the panel
+                            reestablishedConstraint = associatedDivider.leadingAnchor.constraint(equalTo: aPanelToShow.leadingAnchor, constant: -panelDividerWidth/2.0)
+                        }
                     } else {
-                        // this is a horizonal layout and the panel is on the right hand side (trailing side)
-                        // resizer needs to be aligned to the leading side of the panel
-                        reestablishedConstraint = associatedResizer.leadingAnchor.constraint(equalTo: aPanelToShow.leadingAnchor, constant: -panelDividerWidth/2.0)
+                        if panel.index < 0 {
+                            // this is a vertical layout and the panel is on the top side
+                            // resizer needs to be aligned to the bottom side of the panel
+                            reestablishedConstraint = associatedDivider.bottomAnchor.constraint(equalTo: aPanelToShow.bottomAnchor, constant: panelDividerWidth/2.0)
+                        } else {
+                            // this is a vertical layout and the panel is on the bottom
+                            // resizer needs to be aligned to the top side of the panel
+                            reestablishedConstraint = associatedDivider.topAnchor.constraint(equalTo: aPanelToShow.topAnchor, constant: panelDividerWidth/2.0)
+                        }
                     }
-                } else {
-                    if panel.index < 0 {
-                        // this is a vertical layout and the panel is on the top side
-                        // resizer needs to be aligned to the bottom side of the panel
-                        reestablishedConstraint = associatedResizer.bottomAnchor.constraint(equalTo: aPanelToShow.bottomAnchor, constant: panelDividerWidth/2.0)
-                    } else {
-                        // this is a vertical layout and the panel is on the bottom
-                        // resizer needs to be aligned to the top side of the panel
-                        reestablishedConstraint = associatedResizer.topAnchor.constraint(equalTo: aPanelToShow.topAnchor, constant: panelDividerWidth/2.0)
-                    }
+                    reestablishedConstraint.identifier = "\(_dividerConstraintIdentifier)\(associatedDivider.tag)"
+                    reestablishedConstraint.isActive = true
+                    associatedDivider.isHidden = false
                 }
-                reestablishedConstraint.identifier = "\(_dividerConstraintIdentifier)\(associatedResizer.tag)"
-                reestablishedConstraint.isActive = true
-                associatedResizer.isHidden = false
             }
         }
         
