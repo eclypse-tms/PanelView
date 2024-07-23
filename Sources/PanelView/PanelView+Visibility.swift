@@ -24,14 +24,6 @@ public extension PanelView {
                 }
             }
             
-            if configuration.singlePanelMode {
-                // when running in single panel mode, we have to disable constraints for the panel
-                // we are about to show
-                deactivatePanelLayoutConstraints(for: panel)
-            } else {
-                activatePanelLayoutConstraintsIfNecessary(for: panel)
-            }
-            
             // in order for animations to run correctly, we need to first remove the panel
             // from the superview and re-insert it later on
             aPanelToShow.removeFromSuperview()
@@ -75,6 +67,14 @@ public extension PanelView {
         }
         
         let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
+        
+        if configuration.singlePanelMode {
+            // when running in single panel mode, we have to disable constraints for the panel
+            // we are about to show
+            deactivatePanelLayoutConstraints(for: panel)
+        } else {
+            activatePanelLayoutConstraintsIfNecessary(for: panel)
+        }
         
         if panel.index != 0, animated {
             UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
