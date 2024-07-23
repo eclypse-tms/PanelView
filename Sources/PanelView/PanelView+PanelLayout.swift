@@ -43,18 +43,26 @@ extension PanelView {
         mainStackView.addArrangedSubview(aNewPanel)
         
         if indexedPanel.index != 0 {
-            // Configure min width
-            applyMinWidthConstraint(for: aNewPanel, using: indexedPanel)
             
-            // configure max width
-            applyMaxWidthConstraint(for: aNewPanel, using: indexedPanel)
-            
-            // configure width
-            applyPrefferredWidthConstraint(for: aNewPanel, using: indexedPanel)
-            
-            // attach its accompanying view divider
-            if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
-                createPanelDivider(associatedPanel: aNewPanel, for: indexedPanel)
+            if configuration.singlePanelMode {
+                // when running in single panel mode
+                // we do not need to apply any constraints to any
+                // panel because there is only one panel and it takes
+                // up the entirity of the screen
+            } else {
+                // Configure min width
+                applyMinWidthConstraint(for: aNewPanel, using: indexedPanel)
+                
+                // configure max width
+                applyMaxWidthConstraint(for: aNewPanel, using: indexedPanel)
+                
+                // configure width
+                applyPrefferredWidthConstraint(for: aNewPanel, using: indexedPanel)
+                
+                // attach its accompanying view divider
+                if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
+                    createPanelDivider(associatedPanel: aNewPanel, for: indexedPanel)
+                }
             }
         }
         return aNewPanel

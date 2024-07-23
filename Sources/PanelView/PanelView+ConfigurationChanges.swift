@@ -42,7 +42,26 @@ extension PanelView {
             }
         }
         
-        
+        if oldConfig.singlePanelMode != configuration.singlePanelMode {
+            if configuration.singlePanelMode {
+                // when running in single panel mode, we have to disable constraints for the panel
+                // we are about to show
+                panelMappings.forEach { (indexedPanel, _) in
+                    deactivatePanelLayoutConstraints(for: indexedPanel)
+                    removePanelDivider(for: indexedPanel)
+                }
+                
+            } else {
+                panelMappings.forEach { (indexedPanel, _) in
+                    if indexedPanel.index == 0 {
+                        // there are no constraints or panel dividers for the center panel
+                    } else {
+                        activatePanelLayoutConstraintsIfNecessary(for: indexedPanel)
+                        createPanel(for: indexedPanel)
+                    }
+                }
+            }
+        }
         
         if oldConfig.interPanelSpacing != configuration.interPanelSpacing {
             mainStackView.spacing = configuration.interPanelSpacing

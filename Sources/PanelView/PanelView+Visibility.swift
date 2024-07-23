@@ -13,8 +13,9 @@ public extension PanelView {
     ///   - panel: the name of the panel to show.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
-    func show(panel: Panel, animated: Bool, completion: (() -> Void)? = nil) {
+    func show(panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
         func animatableBlock() {
+            
             if configuration.singlePanelMode {
                 // when running in single panel mode, we hide all other visible panels
                 visiblePanels.forEach { eachPanel in
@@ -32,7 +33,8 @@ public extension PanelView {
             aPanelToShow.isHidden = false
             if configuration.singlePanelMode {
                 // when running in single panel mode,
-                // all dividers are ignored
+                // all dividers are ignored - so we don't have to re-establish
+                // divider constraints
             } else {
                 // when running in multi panel mode, we need to re-establish the constraints for panel dividers
                 // note that center panel does not have a divider that is used for resizing the panel
@@ -67,14 +69,6 @@ public extension PanelView {
         }
         
         let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
-        
-        if configuration.singlePanelMode {
-            // when running in single panel mode, we have to disable constraints for the panel
-            // we are about to show
-            deactivatePanelLayoutConstraints(for: panel)
-        } else {
-            activatePanelLayoutConstraintsIfNecessary(for: panel)
-        }
         
         if panel.index != 0, animated {
             UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
