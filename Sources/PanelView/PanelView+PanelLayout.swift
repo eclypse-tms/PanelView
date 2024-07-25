@@ -60,9 +60,11 @@ extension PanelView {
                 applyPrefferredWidthConstraint(for: aNewPanel, using: indexedPanel)
                 
                 // attach its accompanying view divider
+                /*
                 if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
                     createPanelDivider(associatedPanel: aNewPanel, for: indexedPanel)
                 }
+                */
             }
         }
         return aNewPanel

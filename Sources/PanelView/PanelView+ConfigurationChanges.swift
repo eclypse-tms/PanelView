@@ -9,7 +9,7 @@ import Foundation
 
 extension PanelView {
     func processConfigurationChanges(oldConfig: PanelViewConfiguration, newConfig: PanelViewConfiguration) {
-        if oldConfig.orientation != configuration.orientation {
+        if oldConfig.orientation != newConfig.orientation {
             //orientation changed
             // we need to expunge the existing panel constraints
             panelMappings.forEach { (indexedPanel, existingPanel) in
@@ -21,7 +21,7 @@ extension PanelView {
                 }
             }
             
-            mainStackView.axis = configuration.orientation.axis
+            mainStackView.axis = newConfig.orientation.axis
             
             panelMappings.forEach { (indexedPanel, existingPanel) in
                 if indexedPanel.index != 0 {
@@ -42,7 +42,7 @@ extension PanelView {
             }
         }
         
-        if oldConfig.singlePanelMode != configuration.singlePanelMode {
+        if oldConfig.singlePanelMode != newConfig.singlePanelMode {
             if configuration.singlePanelMode {
                 // when running in single panel mode, we have to disable constraints for the panel
                 // we are about to show
@@ -63,13 +63,13 @@ extension PanelView {
             }
         }
         
-        if oldConfig.interPanelSpacing != configuration.interPanelSpacing {
-            mainStackView.spacing = configuration.interPanelSpacing
+        if oldConfig.interPanelSpacing != newConfig.interPanelSpacing {
+            mainStackView.spacing = newConfig.interPanelSpacing
         }
         
-        if oldConfig.allowsUIPanelSizeAdjustment != configuration.allowsUIPanelSizeAdjustment {
+        if oldConfig.allowsUIPanelSizeAdjustment != newConfig.allowsUIPanelSizeAdjustment {
             panelMappings.forEach { (indexedPanel, existingPanel) in
-                if configuration.allowsUIPanelSizeAdjustment {
+                if newConfig.allowsUIPanelSizeAdjustment {
                     createPanelDivider(associatedPanel: existingPanel, for: indexedPanel)
                 } else {
                     removePanelDivider(for: indexedPanel)
@@ -77,6 +77,9 @@ extension PanelView {
             }
         }
         
-        self.configureEmptyView()
+        if oldConfig.emptyStateView != newConfig.emptyStateView {
+            self.configureEmptyView()
+        }
+        
     }
 }

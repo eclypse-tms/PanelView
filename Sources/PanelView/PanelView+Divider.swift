@@ -8,10 +8,11 @@
 import UIKit
 
 extension PanelView {
-    func createPanelDivider(associatedPanel: UIView, for indexedPanel: Panel) {
+    @discardableResult
+    func createPanelDivider(associatedPanel: UIView, for indexedPanel: Panel) -> UIView {
         let viewDivider = UIView()
         viewDivider.tag = indexedPanel.index
-        // viewDivider.backgroundColor = .yellow
+        viewDivider.backgroundColor = .green
         viewDivider.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(viewDivider)
         
@@ -24,12 +25,12 @@ extension PanelView {
             
             if indexedPanel.index < 0 {
                 // this is a leading side panel, we need to place the divider view on the trailing edge of the panel
-                let tempConstraint = viewDivider.trailingAnchor.constraint(equalTo: associatedPanel.trailingAnchor, constant: 0)
+                let tempConstraint = viewDivider.trailingAnchor.constraint(equalTo: associatedPanel.trailingAnchor, constant: panelDividerWidth/2.0)
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             } else {
                 // this is a trailing side panel, we need to place the divider on the leading edge of the panel
-                let tempConstraint = viewDivider.leadingAnchor.constraint(equalTo: associatedPanel.leadingAnchor, constant: 0)
+                let tempConstraint = viewDivider.leadingAnchor.constraint(equalTo: associatedPanel.leadingAnchor, constant: -panelDividerWidth/2.0)
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             }
@@ -46,13 +47,13 @@ extension PanelView {
             if indexedPanel.index < 0 {
                 // this is a top panel that appears above the central panel. we need to place the divider view on the
                 // bottom edge of the panel
-                let tempConstraint = viewDivider.bottomAnchor.constraint(equalTo: associatedPanel.bottomAnchor, constant: 0)
+                let tempConstraint = viewDivider.bottomAnchor.constraint(equalTo: associatedPanel.bottomAnchor, constant: panelDividerWidth/2.0)
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             } else {
                 // this is a bottom panel that appears below the central panel. we need to place the divider view
                 // on the top edge of the panel
-                let tempConstraint = viewDivider.topAnchor.constraint(equalTo: associatedPanel.topAnchor, constant: 0)
+                let tempConstraint = viewDivider.topAnchor.constraint(equalTo: associatedPanel.topAnchor, constant: panelDividerWidth/2.0)
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             }
@@ -67,6 +68,8 @@ extension PanelView {
         if configuration.allowsUIPanelSizeAdjustment {
             enableResizing(for: indexedPanel)
         }
+        
+        return viewDivider
     }
     
     func removePanelDivider(for indexedPanel: Panel) {

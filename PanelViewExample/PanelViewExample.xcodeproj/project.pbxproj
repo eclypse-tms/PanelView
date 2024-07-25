@@ -14,6 +14,7 @@
 		B1066FAF2C41C764004EC355 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1066FAE2C41C764004EC355 /* Assets.xcassets */; };
 		B1066FB22C41C764004EC355 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1066FB02C41C764004EC355 /* LaunchScreen.storyboard */; };
 		B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */ = {isa = PBXBuildFile; productRef = B1066FBB2C41C7D1004EC355 /* PanelView */; };
+		B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */,
+				B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +91,7 @@
 			name = PanelViewExample;
 			packageProductDependencies = (
 				B1066FBB2C41C7D1004EC355 /* PanelView */,
+				B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */,
 			);
 			productName = PanelViewExample;
 			productReference = B1066FA22C41C763004EC355 /* PanelViewExample.app */;
@@ -120,6 +123,7 @@
 			mainGroup = B1066F992C41C763004EC355;
 			packageReferences = (
 				B1066FBA2C41C7D1004EC355 /* XCLocalSwiftPackageReference ".." */,
+				B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */,
 			);
 			productRefGroup = B1066FA32C41C763004EC355 /* Products */;
 			projectDirPath = "";
@@ -395,10 +399,26 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/yonat/MultiSelectSegmentedControl";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		B1066FBB2C41C7D1004EC355 /* PanelView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PanelView;
+		};
+		B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */;
+			productName = MultiSelectSegmentedControl;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

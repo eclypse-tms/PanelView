@@ -8,17 +8,19 @@
 import UIKit
 import PanelView
 import Combine
+import MultiSelectSegmentedControl
 
 class ViewController: UIViewController {
     
     @IBOutlet private var buttonGroup: UIStackView!
-    @IBOutlet private var leadingPlusButton: UIButton!
-    @IBOutlet private var trailingPlusButton: UIButton!
-    @IBOutlet private var leadingMinusButton: UIButton!
-    @IBOutlet private var trailingMinusButton: UIButton!
-    @IBOutlet private var changeOrientationButton: UIButton!
+
     
-    var panelIndexes = [Int]()
+    @IBOutlet private var lhsMultiSelect: MultiSelectSegmentedControl!
+    @IBOutlet private var rhsMultiSelect: MultiSelectSegmentedControl!
+    
+    @IBOutlet private var singlePanelMode: UISwitch!
+    @IBOutlet private var changeOrientationSegments: UISegmentedControl!
+    @IBOutlet private var showEmptyView: UISwitch!
     
     private var cancellables = Set<AnyCancellable>()
     private var panelView: PanelView!
@@ -29,11 +31,11 @@ class ViewController: UIViewController {
         
         addPanelView()
         // configureBindings()
-        leadingPlusButton.setTitle("", for: .normal)
-        trailingPlusButton.setTitle("", for: .normal)
-        leadingMinusButton.setTitle("", for: .normal)
-        trailingMinusButton.setTitle("", for: .normal)
-        changeOrientationButton.setTitle("", for: .normal)
+        
+        rhsMultiSelect.items = ["1", "2", "3", "4", "5"]
+        rhsMultiSelect.delegate = self
+        lhsMultiSelect.items = ["5", "4", "3", "2", "1"]
+        lhsMultiSelect.delegate = self
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setToolbarHidden(true, animated: false)
@@ -47,8 +49,9 @@ class ViewController: UIViewController {
         customConfig.numberOfPanelsToPrime = 5
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
-        customConfig.interPanelSpacing = 2
-        
+        customConfig.interPanelSpacing = 5
+        customConfig.singlePanelMode = false
+        customConfig.autoReleaseViewControllers = true
         customConfig.emptyStateView = configureEmptyView()
         
         panelView.configuration = customConfig
@@ -66,6 +69,13 @@ class ViewController: UIViewController {
         
         
         addPanelViewAsChildView(panelView)
+        
+        let mainVC = UIViewController()
+        mainVC.navigationController?.setNavigationBarHidden(true, animated: false)
+        mainVC.view.backgroundColor = .systemBackground
+        addLabel(to: mainVC, labelText: "Main")
+        
+        panelView.show(viewController: mainVC, for: .main)
     }
     
     private func configureEmptyView() -> UIView {
@@ -110,95 +120,41 @@ class ViewController: UIViewController {
     }
     
     @IBAction
-    private func didClickOnAdd(_ sender: UIButton) {
-        func addLabel(to vc: UIViewController, labelText: String) {
-            let centerViewIndicator = UILabel()
-            centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
-            centerViewIndicator.text = labelText
-            centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-            
-            vc.view.addSubview(centerViewIndicator)
-            NSLayoutConstraint.activate([
-                centerViewIndicator.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
-                centerViewIndicator.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor),
-            ])
-        }
-        
-        if sender.tag == -1 {
-            if panelIndexes.contains(0) {
-                let leftSideVC = UIViewController()
-                leftSideVC.navigationController?.setNavigationBarHidden(true, animated: false)
-                leftSideVC.view.backgroundColor = randomSystemColor() //.systemBackground
-                
-                let newIndex = (panelIndexes.min() ?? 0) - 1
-                addLabel(to: leftSideVC, labelText: String(newIndex))
-                
-                panelIndexes.append(newIndex)
-                panelView.show(viewController: leftSideVC, at: newIndex)
-            } else {
-                panelIndexes.append(0)
-                // add the main panel
-                let initial = UIViewController()
-                initial.navigationController?.setNavigationBarHidden(true, animated: false)
-                initial.view.backgroundColor = .systemBackground
-                
-                addLabel(to: initial, labelText: "Main")
-                
-                panelView.show(viewController: initial, for: .main)
-            }
+    private func didSwitchOrientation(_ sender: UISegmentedControl) {
+        if panelView.configuration.orientation == .horizontal {
+            panelView.configuration.orientation = .vertical
         } else {
-            if panelIndexes.contains(0) {
-                let rightSideVC = UIViewController()
-                rightSideVC.navigationController?.setNavigationBarHidden(true, animated: false)
-                rightSideVC.view.backgroundColor = randomSystemColor() // .systemBackground
-                
-                let newIndex = (panelIndexes.max() ?? 0) + 1
-                addLabel(to: rightSideVC, labelText: String(newIndex))
-                
-                panelIndexes.append(newIndex)
-                panelView.show(viewController: rightSideVC, at: newIndex)
-            } else {
-                panelIndexes.append(0)
-                // add the main panel
-                let initial = UIViewController()
-                initial.navigationController?.setNavigationBarHidden(true, animated: false)
-                initial.view.backgroundColor = .systemBackground
-                
-                addLabel(to: initial, labelText: "Main")
-                
-                panelView.show(viewController: initial, for: .center)
-            }
+            panelView.configuration.orientation = .horizontal
         }
     }
     
     @IBAction
-    private func didClickOnRemove(_ sender: UIButton) {
-        guard panelIndexes.count > 0 else { return }
-        if panelIndexes.count == 1 {
-            // there is only one panel (presumably center panel)
-            panelView.hide(index: 0)
-            panelIndexes.remove(at: 0)
+    private func switchToSinglePanelMode(_ sender: UISwitch) {
+        panelView.configuration.singlePanelMode = sender.isOn
+    }
+    
+    @IBAction
+    private func showOrHideEmptyView(_ sender: UISwitch) {
+        if sender.isOn {
+            // show the empty view
+            panelView.displayEmptyState()
         } else {
-            if sender.tag == -1 {
-                if let indexToRemove = panelIndexes.min() {
-                    if indexToRemove < 0 {
-                        // this button can only remove left panels
-                        panelView.hide(index: indexToRemove)
-                        panelIndexes.sort()
-                        panelIndexes.remove(at: 0)
-                    }
-                }
-            } else {
-                if let indexToRemove = panelIndexes.max() {
-                    if indexToRemove > 0 {
-                        // this button can only remove right panels
-                        panelView.hide(index: indexToRemove)
-                        panelIndexes.sort()
-                        panelIndexes.remove(at: (panelIndexes.endIndex - 1))
-                    }
-                }
-            }
+            // hide the empty state
+            panelView.hideEmptyState()
         }
+    }
+    
+    private func addLabel(to vc: UIViewController, labelText: String) {
+        let centerViewIndicator = UILabel()
+        centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
+        centerViewIndicator.text = labelText
+        centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        
+        vc.view.addSubview(centerViewIndicator)
+        NSLayoutConstraint.activate([
+            centerViewIndicator.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
+            centerViewIndicator.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor),
+        ])
     }
     
     private func randomSystemColor() -> UIColor {
@@ -223,14 +179,7 @@ class ViewController: UIViewController {
       return systemColors[randomIndex]
     }
     
-    @IBAction
-    private func didChangeOrientation(_ sender: UIButton) {
-        if panelView.configuration.orientation == .horizontal {
-            panelView.configuration.orientation = .vertical
-        } else {
-            panelView.configuration.orientation = .horizontal
-        }
-    }
+    
     
     /// adds a child view controller and makes it full screen
     private func addPanelViewAsChildView(_ panelView: PanelView) {
@@ -259,6 +208,36 @@ extension ViewController: PanelViewDelegate {
         if changes.contains(.horizontalSizeChangedFromRegularToCompact) ||
             changes.contains(.verticalSizeChangedFromCompactToRegular) {
             //panelView.combineAll()
+        }
+    }
+}
+
+extension ViewController: MultiSelectSegmentedControlDelegate {
+    func multiSelect(_ multiSelectSegmentedControl: MultiSelectSegmentedControl, didChange value: Bool, at index: Int) {
+        func showOrHidePanel(panelIndex: Int, panelLabel: String) {
+            if value {
+                // show a new panel with a new view controller
+                let aNewVC = UIViewController()
+                aNewVC.navigationController?.setNavigationBarHidden(true, animated: false)
+                aNewVC.view.backgroundColor = randomSystemColor() //.systemBackground
+                addLabel(to: aNewVC, labelText: panelLabel)
+                panelView.show(viewController: aNewVC, at: panelIndex)
+            } else {
+                // hide the panel
+                panelView.hide(index: panelIndex)
+            }
+        }
+        
+        if multiSelectSegmentedControl == lhsMultiSelect {
+            // left hand side multi select controls are clicked
+            if let titleForSegment = lhsMultiSelect.titleForSegment(at: index), let panelIndex = Int(titleForSegment) {
+                showOrHidePanel(panelIndex: (panelIndex * -1), panelLabel: String(panelIndex * -1))
+            }
+        } else if multiSelectSegmentedControl == rhsMultiSelect {
+            // right hand side multi select controls are clicked
+            if let titleForSegment = rhsMultiSelect.titleForSegment(at: index), let panelIndex = Int(titleForSegment) {
+                showOrHidePanel(panelIndex: panelIndex, panelLabel: titleForSegment)
+            }
         }
     }
 }

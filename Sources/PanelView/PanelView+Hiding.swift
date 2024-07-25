@@ -43,9 +43,9 @@ public extension PanelView {
         func hideAppropriatePanel() {
             panelMappings[panel]?.isHidden = true
             
-            hideViewResizer(associatedPanel: panel)
+            hideViewDivider(associatedPanel: panel)
             
-            showEmptyStateIfNecessary()
+            displayEmptyStateIfNecessary()
         }
         
         func _performPanelHiding(panel: Panel, animated: Bool, hidingCompleted: (() -> Void)?) {
@@ -54,18 +54,24 @@ public extension PanelView {
                 UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                     hideAppropriatePanel()
                 }, completion: { _ in
+                    self.mainStackView.layoutIfNeeded()
                     hidingCompleted?()
                 })
             } else {
                 hideAppropriatePanel()
+                self.mainStackView.layoutIfNeeded()
                 hidingCompleted?()
             }
         }
         
-        // we cannot hide the panel with the index 0 when there are other visible panels
+        // if we decide to hide the central panel and there are other panels visible,
+        // this creates a problem with the constraints as the central panel is the one
+        // without constraints which allows it to take the remainder of the space. 
+        // when this happens, we need to find the panel with the highest panel index
+        // and disable 
         // causes constraint issues
         if panel.index == 0, visiblePanels.first(where: { $0.index != 0 }) != nil {
-            return
+            
         }
         
         _performPanelHiding(panel: panel, animated: animated, hidingCompleted: { [weak self] in
@@ -86,6 +92,10 @@ public extension PanelView {
                     strongSelf.viewControllers.removeValue(forKey: panel)
                 }
             }
+            
+            // now that the panel is hidden, remove it from the view
+            strongSelf.removePanelDivider(for: panel)
+            
             completion?()
         })
     }
@@ -105,45 +115,13 @@ public extension PanelView {
         // hide everything
         panelMappings.forEach { (eachPanelIndex, panel) in
             panel.isHidden = true
-            hideViewResizer(associatedPanel: eachPanelIndex)
+            hideViewDivider(associatedPanel: eachPanelIndex)
         }
         
-        showEmptyStateIfNecessary()
+        displayEmptyStateIfNecessary()
     }
     
-    /// when there are no visible panels, we show the empty view
-    private func showEmptyStateIfNecessary() {
-        if let validEmptyStateView = emptyView {
-            var atLeastOnePanelVisible = false
-            for eachPanel in mainStackView.subviews {
-                if !eachPanel.isHidden {
-                    // at least one panel is visible
-                    atLeastOnePanelVisible = true
-                    break
-                }
-            }
-            
-            if atLeastOnePanelVisible {
-                // since there is at least one panel visible
-                // we make sure that background is panel divider color
-                self.view.backgroundColor = configuration.panelDividerColor
-            } else {
-                // all panels are hidden, show the empty view
-                self.view.bringSubviewToFront(validEmptyStateView)
-                validEmptyStateView.isHidden = false
-                
-                // we are showing the empty view - switch the background back to the system color
-                self.view.backgroundColor = .systemBackground
-            }
-        } else {
-            // there is no empty view setup for this PanelView
-            // the only thing to do is to ensure that background is panel divider color
-            self.view.backgroundColor = configuration.panelDividerColor
-        }
-        
-    }
-    
-    private func hideViewResizer(associatedPanel: Panel) {
+    private func hideViewDivider(associatedPanel: Panel) {
         if let associatedResizer = dividerMappings[associatedPanel] {
             let uniqueConstraintIdentifier = "\(_dividerConstraintIdentifier)\(associatedResizer.tag)"
             if let constraintThatNeedToAltered = self.view.constraints.first(where: { $0.identifier == uniqueConstraintIdentifier }) {

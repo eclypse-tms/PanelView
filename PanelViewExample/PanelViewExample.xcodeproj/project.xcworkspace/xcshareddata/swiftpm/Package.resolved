@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "multiselectsegmentedcontrol",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yonat/MultiSelectSegmentedControl",
+      "state" : {
+        "revision" : "b7ca9865a18f39e0be623526750208f203824b1b",
+        "version" : "2.4.0"
+      }
+    },
+    {
+      "identity" : "sweeterswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yonat/SweeterSwift",
+      "state" : {
+        "revision" : "d324c3ce0d021f8d1f11f10014ad597fad60e36c",
+        "version" : "1.2.5"
+      }
+    }
+  ],
+  "version" : 2
+}
