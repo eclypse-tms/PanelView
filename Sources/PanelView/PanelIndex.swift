@@ -38,10 +38,10 @@ open class PanelIndex: Hashable, Comparable, CustomDebugStringConvertible {
     /// only used for debugging purposes.
     ///
     /// The value of tag member is not used to test for equality.
-    let tag: String
+    public let tag: String
     
     /// The primary value that separates one panel from another is its index value.
-    let index: Int
+    public let index: Int
     
     public init(index: Int, tag: String = "") {
         self.tag = tag

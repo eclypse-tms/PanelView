@@ -32,10 +32,12 @@ class ViewController: UIViewController {
         addPanelView()
         // configureBindings()
         
-        rhsMultiSelect.items = ["1", "2", "3", "4", "5"]
-        rhsMultiSelect.delegate = self
         lhsMultiSelect.items = ["5", "4", "3", "2", "1"]
         lhsMultiSelect.delegate = self
+        
+        rhsMultiSelect.items = ["1", "2", "3", "4", "5"]
+        rhsMultiSelect.delegate = self
+        
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setToolbarHidden(true, animated: false)
@@ -131,6 +133,29 @@ class ViewController: UIViewController {
     @IBAction
     private func switchToSinglePanelMode(_ sender: UISwitch) {
         panelView.configuration.singlePanelMode = sender.isOn
+        
+        if sender.isOn {
+            // we switched to single panel mode
+            // deselect everything
+            if let panelWithHighestIndex = panelView.visiblePanels.last {
+                // we need to deselect the rest of the buttons from the multi select segments
+                lhsMultiSelect.selectAllSegments(false)
+                rhsMultiSelect.selectAllSegments(false)
+                if panelWithHighestIndex.index < 0 {
+                    let segmentToSelect = lhsMultiSelect.segments.count + panelWithHighestIndex.index
+                    lhsMultiSelect.selectedSegmentIndex = segmentToSelect
+                } else {
+                    let segmentToSelect = panelWithHighestIndex.index - 1
+                    rhsMultiSelect.selectedSegmentIndex = segmentToSelect
+                }
+            }
+            lhsMultiSelect.allowsMultipleSelection = false
+            rhsMultiSelect.allowsMultipleSelection = false
+        } else {
+            lhsMultiSelect.allowsMultipleSelection = true
+            rhsMultiSelect.allowsMultipleSelection = true
+        }
+       
     }
     
     @IBAction
@@ -229,11 +254,21 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
         }
         
         if multiSelectSegmentedControl == lhsMultiSelect {
+            // we need to deselect buttons from the other controls if we are in a single panel mode
+            if panelView.configuration.singlePanelMode {
+                rhsMultiSelect.selectAllSegments(false)
+            }
+            
             // left hand side multi select controls are clicked
             if let titleForSegment = lhsMultiSelect.titleForSegment(at: index), let panelIndex = Int(titleForSegment) {
                 showOrHidePanel(panelIndex: (panelIndex * -1), panelLabel: String(panelIndex * -1))
             }
         } else if multiSelectSegmentedControl == rhsMultiSelect {
+            // we need to deselect buttons from the other controls if we are in a single panel mode
+            if panelView.configuration.singlePanelMode {
+                lhsMultiSelect.selectAllSegments(false)
+            }
+            
             // right hand side multi select controls are clicked
             if let titleForSegment = rhsMultiSelect.titleForSegment(at: index), let panelIndex = Int(titleForSegment) {
                 showOrHidePanel(panelIndex: panelIndex, panelLabel: titleForSegment)

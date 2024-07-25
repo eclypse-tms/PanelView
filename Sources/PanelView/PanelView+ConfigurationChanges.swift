@@ -38,7 +38,7 @@ extension PanelView {
             
             visiblePanels.forEach { eachVisiblePanelIndex in
                 if let existingPanel = panelMappings[eachVisiblePanelIndex] {
-                    if eachVisiblePanelIndex.index != 0, configuration.allowsUIPanelSizeAdjustment {
+                    if eachVisiblePanelIndex.index != 0, newConfig.allowsUIPanelSizeAdjustment {
                         createPanelDivider(associatedPanel: existingPanel, for: eachVisiblePanelIndex)
                     }
                 }
@@ -46,12 +46,28 @@ extension PanelView {
         }
         
         if oldConfig.singlePanelMode != newConfig.singlePanelMode {
-            if configuration.singlePanelMode {
-                // when running in single panel mode, we have to disable constraints for the panel
-                // we are about to show
+            if newConfig.singlePanelMode {
+                // when running in single panel mode, we have to disable constraints 
+                // for all the panels as well as remove all panel dividers since
+                // we are only showing one panel at a time
                 panelMappings.forEach { (indexedPanel, _) in
                     deactivatePanelLayoutConstraints(for: indexedPanel)
                     removePanelDivider(for: indexedPanel)
+                }
+                
+                // now that all panel constraints are removed, we need to hide all existing panels
+                // except the one with the highest index
+                if let panelWithTheHighestIndex = visiblePanels.last {
+                    visiblePanels.forEach { eachPanelIndex in
+                        // hide everything but the last indexed panel
+                        if eachPanelIndex != panelWithTheHighestIndex {
+                            // hide but do not release the view controller from the view
+                            hide(panel: eachPanelIndex, animated: true, releaseViewController: .false)
+                        }
+                    }
+                } else {
+                    // there are no visible panels
+                    // this may be because we are only showing the empty view
                 }
                 
             } else {

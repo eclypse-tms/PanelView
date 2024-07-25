@@ -75,7 +75,7 @@ public extension PanelView {
                 // when running in single panel mode,
                 // all dividers are ignored - so we don't have to re-establish
                 // divider constraints
-                self.mainStackView.layoutIfNeeded()
+                // self.mainStackView.layoutIfNeeded()
             } else {
                 
             }
@@ -92,8 +92,8 @@ public extension PanelView {
             mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
         }
         
-        // reattach its accompanying view divider
-        if panel.index != 0, configuration.allowsUIPanelSizeAdjustment {
+        // reattach its accompanying view divider if necessary
+        if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !configuration.singlePanelMode {
             createPanelDivider(associatedPanel: aPanelToShow, for: panel)
         }
         
@@ -193,7 +193,7 @@ public extension PanelView {
         return viewControllers[panel]?.topViewController
     }
     
-    
+    /// returns a list of all visible panels sorted in ascending order by each panel's index
     var visiblePanels: [PanelIndex] {
         let sortedVisiblePanels = panelMappings.compactMap { (eachPanelIndex, eachPanel) -> PanelIndex? in
             if isVisible(panel: eachPanelIndex) {
