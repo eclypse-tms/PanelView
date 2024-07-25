@@ -1,5 +1,5 @@
 //
-//  Panel.swift
+//  PanelIndex.swift
 //
 //
 //  Created by eclypse on 7/12/24.
@@ -33,7 +33,7 @@ import Foundation
 ///     ...
 ///     panelView.hide(panel: .secondary)
 ///
-open class Panel: Hashable, Comparable {
+open class PanelIndex: Hashable, Comparable, CustomDebugStringConvertible {
     /// the tag is used to identify this panel. The tag is optional and
     /// only used for debugging purposes.
     ///
@@ -49,11 +49,11 @@ open class Panel: Hashable, Comparable {
     }
     
     
-    public static func == (lhs: Panel, rhs: Panel) -> Bool {
+    public static func == (lhs: PanelIndex, rhs: PanelIndex) -> Bool {
         return lhs.index == rhs.index
     }
     
-    public static func < (lhs: Panel, rhs: Panel) -> Bool {
+    public static func < (lhs: PanelIndex, rhs: PanelIndex) -> Bool {
         return lhs.index < rhs.index
     }
     
@@ -61,7 +61,15 @@ open class Panel: Hashable, Comparable {
         hasher.combine(index)
     }
     
-    public static var center: Panel {
-        return Panel(index: 0, tag: "center")
+    public var debugDescription: String {
+        if tag.isEmpty {
+            return "panel index: \(index)"
+        } else {
+            return "tag: \(tag), panel index: \(index)"
+        }
+    }
+    
+    public static var center: PanelIndex {
+        return PanelIndex(index: 0, tag: "center")
     }
 }

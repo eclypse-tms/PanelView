@@ -14,7 +14,7 @@ public extension PanelView {
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
-        let onTheFlyIndex = Panel(index: index)
+        let onTheFlyIndex = PanelIndex(index: index)
         show(panel: onTheFlyIndex, animated: animated, completion: completion)
     }
     
@@ -23,7 +23,7 @@ public extension PanelView {
     ///   - panel: the name of the panel to show.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
-    func show(panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
+    func show(panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
         func reestablishDividerConstaintIfNecessary(for acompanyingView: UIView) {
             if let associatedDivider = dividerMappings[panel], panel.index > 0 {
                 // when running in multi panel mode, we need to re-establish the constraints for panel dividers
@@ -122,7 +122,7 @@ public extension PanelView {
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(viewController: UIViewController, at index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
-        let onTheFlyIndex = Panel(index: index)
+        let onTheFlyIndex = PanelIndex(index: index)
         show(viewController: viewController, for: onTheFlyIndex, animated: animated, completion: completion)
     }
     
@@ -133,7 +133,7 @@ public extension PanelView {
     ///   - panel: the name of the panel to show this view controller.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
-    func show(viewController: UIViewController, for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
+    func show(viewController: UIViewController, for panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()
@@ -165,7 +165,7 @@ public extension PanelView {
     ///   - panel: the name of the panel to show this navigation stack.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
-    func show(navigationStack: [UIViewController], for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
+    func show(navigationStack: [UIViewController], for panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()
@@ -189,13 +189,13 @@ public extension PanelView {
         }
     }
     
-    func topViewController(for panel: Panel) -> UIViewController? {
+    func topViewController(for panel: PanelIndex) -> UIViewController? {
         return viewControllers[panel]?.topViewController
     }
     
     
-    var visiblePanels: [Panel] {
-        let sortedVisiblePanels = panelMappings.compactMap { (eachPanelIndex, eachPanel) -> Panel? in
+    var visiblePanels: [PanelIndex] {
+        let sortedVisiblePanels = panelMappings.compactMap { (eachPanelIndex, eachPanel) -> PanelIndex? in
             if isVisible(panel: eachPanelIndex) {
                 return eachPanelIndex
             } else {
@@ -206,7 +206,7 @@ public extension PanelView {
     }
     
     /// check whether
-    func isVisible(panel: Panel) -> Bool {
+    func isVisible(panel: PanelIndex) -> Bool {
         if let discoveredPanel = panelMappings[panel] {
             return !discoveredPanel.isHidden
         } else {
@@ -215,8 +215,8 @@ public extension PanelView {
     }
     
     /// checks whether the provided viewController is currently being presented in one of the panels
-    func presents(viewController: UIViewController) -> Panel? {
-        var vcPresentedIn: Panel?
+    func presents(viewController: UIViewController) -> PanelIndex? {
+        var vcPresentedIn: PanelIndex?
         for (eachPanel, eachNavController) in viewControllers {
             if eachNavController.viewControllers.contains(viewController) {
                 vcPresentedIn = eachPanel
@@ -226,8 +226,8 @@ public extension PanelView {
         return vcPresentedIn
     }
     
-    private func calculateAppropriateIndex(for panel: Panel) -> Int {
-        let sortedPanels: [Panel] = panelMappings.map { $0.key }.sorted()
+    private func calculateAppropriateIndex(for panel: PanelIndex) -> Int {
+        let sortedPanels: [PanelIndex] = panelMappings.map { $0.key }.sorted()
         if sortedPanels.isEmpty {
             // since there are no panels, the subview index is zero
             return 0

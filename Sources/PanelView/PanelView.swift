@@ -16,29 +16,29 @@ public class PanelView: UIViewController, ResizablePanel {
     var _emptyViewContainerStack: UIStackView?
     
     /// maps an index to a UIView
-    var panelMappings = [Panel: UIView]()
+    var panelMappings = [PanelIndex: UIView]()
     
     
-    var panelWidthMappings = [Panel: NSLayoutConstraint]()
-    var panelMinWidthMappings = [Panel: NSLayoutConstraint]()
-    var panelMaxWidthMappings = [Panel: NSLayoutConstraint]()
-    var panelCenterMappings = [Panel: CGPoint]()
+    var panelWidthMappings = [PanelIndex: NSLayoutConstraint]()
+    var panelMinWidthMappings = [PanelIndex: NSLayoutConstraint]()
+    var panelMaxWidthMappings = [PanelIndex: NSLayoutConstraint]()
+    var panelCenterMappings = [PanelIndex: CGPoint]()
     
-    var pendingViewControllers = [Panel: UIViewController]()
-    var pendingMinimumWidth = [Panel: CGFloat]()
-    var pendingMaximumWidth = [Panel: CGFloat]()
-    var pendingWidthFraction = [Panel: CGFloat]()
-    var originalFrameMappings = [Panel: CGRect]()
+    var pendingViewControllers = [PanelIndex: UIViewController]()
+    var pendingMinimumWidth = [PanelIndex: CGFloat]()
+    var pendingMaximumWidth = [PanelIndex: CGFloat]()
+    var pendingWidthFraction = [PanelIndex: CGFloat]()
+    var originalFrameMappings = [PanelIndex: CGRect]()
     
-    var swiftUIViewMappings = NSMapTable<Panel, SwiftUIViewWrapper>(valueOptions: .weakMemory)
+    var swiftUIViewMappings = NSMapTable<PanelIndex, SwiftUIViewWrapper>(valueOptions: .weakMemory)
     
     /// maps panels to its accompanying dividers
-    var dividerMappings = [Panel: UIView]()
+    var dividerMappings = [PanelIndex: UIView]()
     
     
-    private var hoverGestureMappings = [Panel: UIHoverGestureRecognizer]()
-    private var dragGestureMappings = [Panel: UIHoverGestureRecognizer]()
-    var dividerToPanelMappings = [UIView: Panel]()
+    private var hoverGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
+    private var dragGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
+    var dividerToPanelMappings = [UIView: PanelIndex]()
     
     var panelDividerWidth: CGFloat {
         return configuration.interPanelSpacing + 2
@@ -74,7 +74,7 @@ public class PanelView: UIViewController, ResizablePanel {
     public private (set) var isAttachedToWindow = false
     
     /// children navigation controllers this panelview manages
-    public var viewControllers = [Panel: UINavigationController]()
+    public var viewControllers = [PanelIndex: UINavigationController]()
     
     /// assign a delegate to get notified of events in PanelViewDelegate
     public weak var delegate: PanelViewDelegate?
@@ -146,7 +146,7 @@ public class PanelView: UIViewController, ResizablePanel {
     
     private func configureInitialPanels() {
         for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
-            let onTheFlyPanelIndex = Panel(index: index)
+            let onTheFlyPanelIndex = PanelIndex(index: index)
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
             newlyCreatedPanel.isHidden = true
@@ -217,7 +217,7 @@ public class PanelView: UIViewController, ResizablePanel {
     }
     
     @discardableResult
-    func add(childNavController: UINavigationController, on panel: Panel) -> UIView {
+    func add(childNavController: UINavigationController, on panel: PanelIndex) -> UIView {
         if let currentPanel = childNavController.parent?.view {
             //if the child already has a parent, it won't add anything
             return currentPanel

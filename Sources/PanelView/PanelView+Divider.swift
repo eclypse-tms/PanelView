@@ -9,7 +9,7 @@ import UIKit
 
 extension PanelView {
     @discardableResult
-    func createPanelDivider(associatedPanel: UIView, for indexedPanel: Panel) -> UIView {
+    func createPanelDivider(associatedPanel: UIView, for indexedPanel: PanelIndex) -> UIView {
         let viewDivider = UIView()
         viewDivider.tag = indexedPanel.index
         viewDivider.backgroundColor = .green
@@ -53,7 +53,7 @@ extension PanelView {
             } else {
                 // this is a bottom panel that appears below the central panel. we need to place the divider view
                 // on the top edge of the panel
-                let tempConstraint = viewDivider.topAnchor.constraint(equalTo: associatedPanel.topAnchor, constant: panelDividerWidth/2.0)
+                let tempConstraint = viewDivider.topAnchor.constraint(equalTo: associatedPanel.topAnchor, constant: -panelDividerWidth/2.0)
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             }
@@ -72,7 +72,7 @@ extension PanelView {
         return viewDivider
     }
     
-    func removePanelDivider(for indexedPanel: Panel) {
+    func removePanelDivider(for indexedPanel: PanelIndex) {
         if let viewDivider = dividerMappings[indexedPanel] {
             viewDivider.removeFromSuperview()
             dividerToPanelMappings.removeValue(forKey: viewDivider)

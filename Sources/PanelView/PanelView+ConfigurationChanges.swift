@@ -32,11 +32,14 @@ extension PanelView {
                     applyMaxWidthConstraint(for: existingPanel, using: indexedPanel)
                     
                     // configure width
-                    applyPrefferredWidthConstraint(for: existingPanel, using: indexedPanel)
-                    
-                    // attach its accompanying view divider
-                    if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
-                        createPanelDivider(associatedPanel: existingPanel, for: indexedPanel)
+                    applyPreferredWidthConstraint(for: existingPanel, using: indexedPanel)
+                }
+            }
+            
+            visiblePanels.forEach { eachVisiblePanelIndex in
+                if let existingPanel = panelMappings[eachVisiblePanelIndex] {
+                    if eachVisiblePanelIndex.index != 0, configuration.allowsUIPanelSizeAdjustment {
+                        createPanelDivider(associatedPanel: existingPanel, for: eachVisiblePanelIndex)
                     }
                 }
             }

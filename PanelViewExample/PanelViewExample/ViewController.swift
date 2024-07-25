@@ -61,7 +61,7 @@ class ViewController: UIViewController {
             if index == 0 {
                 continue
             }
-            let onTheFlyPanelIndex = Panel(index: index)
+            let onTheFlyPanelIndex = PanelIndex(index: index)
             panelView.minimumWidth(100, for: onTheFlyPanelIndex)
             panelView.maximumWidth(600, for: onTheFlyPanelIndex)
             panelView.preferredWidthFraction(0.1, at: index)
@@ -243,8 +243,8 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
 }
 
 
-extension Panel {
-    public static var main: Panel {
-        return Panel(index: 0, tag: "main")
+extension PanelIndex {
+    public static var main: PanelIndex {
+        return PanelIndex(index: 0, tag: "main")
     }
 }
