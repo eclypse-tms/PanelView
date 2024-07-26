@@ -13,7 +13,7 @@ import MultiSelectSegmentedControl
 class ViewController: UIViewController {
     
     @IBOutlet private var buttonGroup: UIStackView!
-    
+    @IBOutlet private var buttonGroupContainer: UIView!
     
     @IBOutlet private var lhsMultiSelect: MultiSelectSegmentedControl!
     @IBOutlet private var rhsMultiSelect: MultiSelectSegmentedControl!
@@ -125,10 +125,10 @@ class ViewController: UIViewController {
     private func didSwitchOrientation(_ sender: UISegmentedControl) {
         if panelView.configuration.orientation == .horizontal {
             panelView.configuration.orientation = .vertical
-            buttonGroup.backgroundColor = .systemGray5
+            buttonGroupContainer.backgroundColor = .systemGray5
         } else {
             panelView.configuration.orientation = .horizontal
-            buttonGroup.backgroundColor = .clear
+            buttonGroupContainer.backgroundColor = .clear
         }
     }
     
@@ -260,7 +260,7 @@ class ViewController: UIViewController {
         }
         
         addChild(panelView)
-        view.insertSubview(panelView.view, belowSubview: buttonGroup)
+        view.insertSubview(panelView.view, belowSubview: buttonGroupContainer)
         
         panelView.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
