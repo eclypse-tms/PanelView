@@ -14,6 +14,7 @@
 		B1066FAF2C41C764004EC355 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1066FAE2C41C764004EC355 /* Assets.xcassets */; };
 		B1066FB22C41C764004EC355 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1066FB02C41C764004EC355 /* LaunchScreen.storyboard */; };
 		B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */ = {isa = PBXBuildFile; productRef = B1066FBB2C41C7D1004EC355 /* PanelView */; };
+		B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */; };
 		B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 		B1066FB12C41C764004EC355 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B1066FB32C41C764004EC355 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B1066FB92C41C7AA004EC355 /* PanelViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PanelViewExample.entitlements; sourceTree = "<group>"; };
+		B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				B1066FAE2C41C764004EC355 /* Assets.xcassets */,
 				B1066FB02C41C764004EC355 /* LaunchScreen.storyboard */,
 				B1066FB32C41C764004EC355 /* Info.plist */,
+				B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */,
 			);
 			path = PanelViewExample;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */,
 				B1066FAA2C41C763004EC355 /* ViewController.swift in Sources */,
 				B1066FA62C41C763004EC355 /* AppDelegate.swift in Sources */,
 				B1066FA82C41C763004EC355 /* SceneDelegate.swift in Sources */,

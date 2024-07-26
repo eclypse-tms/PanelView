@@ -69,14 +69,14 @@ extension PanelView {
                     // there are no visible panels
                     // this may be because we are only showing the empty view
                 }
-                
             } else {
+                //we switched to multi panel
                 panelMappings.forEach { (indexedPanel, _) in
                     if indexedPanel.index == 0 {
                         // there are no constraints or panel dividers for the center panel
                     } else {
                         activatePanelLayoutConstraintsIfNecessary(for: indexedPanel)
-                        createPanel(for: indexedPanel)
+                        // createPanel(for: indexedPanel)
                     }
                 }
             }

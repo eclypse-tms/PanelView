@@ -64,15 +64,15 @@ public extension PanelView {
             }
         }
         
+        
         // if we decide to hide the central panel and there are other panels visible,
         // this creates a problem with the constraints as the central panel is the one
         // without constraints which allows it to take the remainder of the space. 
         // when this happens, we need to find the panel with the highest panel index
-        // and disable 
-        // causes constraint issues
-        if panel.index == 0, visiblePanels.first(where: { $0.index != 0 }) != nil {
+        // and disable the constraints on that panel
+        //if panel.index == 0, visiblePanels.first(where: { $0.index != 0 }) != nil {
             
-        }
+        //}
         
         _performPanelHiding(panel: panel, animated: animated, hidingCompleted: { [weak self] in
             guard let strongSelf = self else { return }

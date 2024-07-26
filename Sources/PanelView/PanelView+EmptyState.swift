@@ -11,7 +11,7 @@ public extension PanelView {
     /// displays the empty state and hides all other visible panels.
     ///
     /// if there was no empty state view provided, this function does nothing
-    func displayEmptyState() {
+    func showEmptyState() {
         if let validEmptyStateView = _emptyStateBackgroundView {
             // show the empty view
             self.view.bringSubviewToFront(validEmptyStateView)

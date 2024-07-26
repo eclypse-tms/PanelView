@@ -106,6 +106,10 @@ public extension PanelView {
                 self.mainStackView.layoutIfNeeded()
                 completion?()
             })
+        } else if panel.index == 0, visiblePanels.isEmpty {
+            animatableBlock(acompanyingView: aPanelToShow)
+            // self.mainStackView.layoutIfNeeded()
+            completion?()
         } else {
             animatableBlock(acompanyingView: aPanelToShow)
             self.mainStackView.layoutIfNeeded()

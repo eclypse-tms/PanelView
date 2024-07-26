@@ -13,10 +13,11 @@ import MultiSelectSegmentedControl
 class ViewController: UIViewController {
     
     @IBOutlet private var buttonGroup: UIStackView!
-
+    
     
     @IBOutlet private var lhsMultiSelect: MultiSelectSegmentedControl!
     @IBOutlet private var rhsMultiSelect: MultiSelectSegmentedControl!
+    @IBOutlet private var showCenterPanel: UISwitch!
     
     @IBOutlet private var singlePanelMode: UISwitch!
     @IBOutlet private var changeOrientationSegments: UISegmentedControl!
@@ -37,7 +38,6 @@ class ViewController: UIViewController {
         
         rhsMultiSelect.items = ["1", "2", "3", "4", "5"]
         rhsMultiSelect.delegate = self
-        
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setToolbarHidden(true, animated: false)
@@ -125,8 +125,10 @@ class ViewController: UIViewController {
     private func didSwitchOrientation(_ sender: UISegmentedControl) {
         if panelView.configuration.orientation == .horizontal {
             panelView.configuration.orientation = .vertical
+            buttonGroup.backgroundColor = .systemGray5
         } else {
             panelView.configuration.orientation = .horizontal
+            buttonGroup.backgroundColor = .clear
         }
     }
     
@@ -144,14 +146,23 @@ class ViewController: UIViewController {
                 if panelWithHighestIndex.index < 0 {
                     let segmentToSelect = lhsMultiSelect.segments.count + panelWithHighestIndex.index
                     lhsMultiSelect.selectedSegmentIndex = segmentToSelect
+                    showCenterPanel.isOn = false
+                } else if panelWithHighestIndex.index == 0 {
+                    showCenterPanel.isOn = true
                 } else {
                     let segmentToSelect = panelWithHighestIndex.index - 1
                     rhsMultiSelect.selectedSegmentIndex = segmentToSelect
+                    showCenterPanel.isOn = false
                 }
             }
+            
+            // we to prevent multiple segments from being selected since we are only showing a single panel
             lhsMultiSelect.allowsMultipleSelection = false
             rhsMultiSelect.allowsMultipleSelection = false
         } else {
+            // when we are in multi panel mode
+            
+            // we also need to allow for multiple segments to be selected
             lhsMultiSelect.allowsMultipleSelection = true
             rhsMultiSelect.allowsMultipleSelection = true
         }
@@ -162,10 +173,45 @@ class ViewController: UIViewController {
     private func showOrHideEmptyView(_ sender: UISwitch) {
         if sender.isOn {
             // show the empty view
-            panelView.displayEmptyState()
+            panelView.showEmptyState()
         } else {
             // hide the empty state
             panelView.hideEmptyState()
+        }
+    }
+    
+    @IBAction
+    private func showCentralPanel(_ sender: UISwitch) {
+        // we can only take this action in single panel mode
+        if panelView.configuration.singlePanelMode {
+            if sender.isOn {
+                // show central panel
+                panelView.show(index: 0)
+                lhsMultiSelect.selectAllSegments(false)
+                rhsMultiSelect.selectAllSegments(false)
+            } else {
+                // user wants to hide the central panel
+                // but it is not a valid action
+                // if you want to hide the central panel in single panel mode
+                // you should call panelView.showEmptyState() instead
+                sender.isOn = true
+                showEmptyView.isOn = true
+                panelView.showEmptyState()
+            }
+        } else {
+            // in multi panel mode
+            if sender.isOn {
+                // it is possible that central panel is hidden
+                // after switching from single panel earlier
+                panelView.show(index: 0)
+            } else {
+                // in multi panel mode, we cannot hide central panel
+                sender.isOn = true
+                
+                showOneActionAlert(title: "Invalid Action", message: "In multi panel mode the central panel cannot be hidden.")
+                // showEmptyView.isOn = true
+                // panelView.showEmptyState()
+            }
         }
     }
     
@@ -244,8 +290,13 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
                 // show a new panel with a new view controller
                 let aNewVC = UIViewController()
                 aNewVC.navigationController?.setNavigationBarHidden(true, animated: false)
-                aNewVC.view.backgroundColor = randomSystemColor() //.systemBackground
-                addLabel(to: aNewVC, labelText: panelLabel)
+                if panelIndex == 0 {
+                    aNewVC.view.backgroundColor = .systemBackground
+                    addLabel(to: aNewVC, labelText: "Main")
+                } else {
+                    aNewVC.view.backgroundColor = randomSystemColor() //.systemBackground
+                    addLabel(to: aNewVC, labelText: panelLabel)
+                }
                 panelView.show(viewController: aNewVC, at: panelIndex)
             } else {
                 // hide the panel
@@ -273,6 +324,11 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
             if let titleForSegment = rhsMultiSelect.titleForSegment(at: index), let panelIndex = Int(titleForSegment) {
                 showOrHidePanel(panelIndex: panelIndex, panelLabel: titleForSegment)
             }
+        }
+        
+        if panelView.singlePanelMode {
+            // in single panel mode central panel can be hidden
+            showCenterPanel.isOn = false
         }
     }
 }
