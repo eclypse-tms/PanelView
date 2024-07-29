@@ -70,14 +70,18 @@ extension PanelView {
                     // this may be because we are only showing the empty view
                 }
             } else {
-                //we switched to multi panel
+                // when switched to multi panel mode, we need to show the center panel
+                show(index: 0, animated: false)
                 panelMappings.forEach { (indexedPanel, _) in
                     if indexedPanel.index == 0 {
                         // there are no constraints or panel dividers for the center panel
                     } else {
                         activatePanelLayoutConstraintsIfNecessary(for: indexedPanel)
-                        // createPanel(for: indexedPanel)
                     }
+                }
+                
+                visiblePanels.forEach { eachPanel in
+                    createPanelDivider(for: eachPanel)
                 }
             }
         }

@@ -185,13 +185,13 @@ extension PanelView {
     
     func deactivatePanelLayoutConstraints(for indexedPanel: PanelIndex) {
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
-            pendingMaximumWidth[indexedPanel] = aConstraint.constant
+            // pendingMaximumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
             // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
-            pendingMinimumWidth[indexedPanel] = aConstraint.constant
+            // pendingMinimumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
             // panelMinWidthMappings.removeValue(forKey: indexedPanel)
         }
