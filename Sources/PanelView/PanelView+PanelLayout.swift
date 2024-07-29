@@ -45,7 +45,7 @@ extension PanelView {
         
         if indexedPanel.index != 0 {
             
-            if configuration.singlePanelMode {
+            if isSinglePanelMode {
                 // when running in single panel mode
                 // we do not need to apply any constraints to any
                 // panel because there is only one panel and it takes
@@ -187,13 +187,13 @@ extension PanelView {
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
             pendingMaximumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            panelMaxWidthMappings.removeValue(forKey: indexedPanel)
+            // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
             pendingMinimumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            panelMinWidthMappings.removeValue(forKey: indexedPanel)
+            // panelMinWidthMappings.removeValue(forKey: indexedPanel)
         }
         
         if let aConstraint = panelWidthMappings[indexedPanel] {

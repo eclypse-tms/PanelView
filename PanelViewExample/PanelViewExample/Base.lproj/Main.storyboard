@@ -168,7 +168,7 @@
                                         <variation key="widthClass=compact" axis="vertical" spacing="30"/>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="backgroundColor" systemColor="systemGray5Color"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="5Tz-KM-6dq" secondAttribute="bottom" constant="16" id="CUJ-fb-0Gn"/>
                                     <constraint firstItem="5Tz-KM-6dq" firstAttribute="top" secondItem="tGC-qT-G2U" secondAttribute="top" constant="16" id="Q6n-Q7-Uzu"/>
@@ -204,6 +204,9 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

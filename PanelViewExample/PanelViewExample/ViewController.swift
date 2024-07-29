@@ -52,7 +52,7 @@ class ViewController: UIViewController {
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
         customConfig.interPanelSpacing = 5
-        customConfig.singlePanelMode = false
+        customConfig.panelMode = .multi
         customConfig.autoReleaseViewControllers = true
         customConfig.emptyStateView = configureEmptyView()
         
@@ -125,16 +125,15 @@ class ViewController: UIViewController {
     private func didSwitchOrientation(_ sender: UISegmentedControl) {
         if panelView.configuration.orientation == .horizontal {
             panelView.configuration.orientation = .vertical
-            buttonGroupContainer.backgroundColor = .systemGray5
         } else {
             panelView.configuration.orientation = .horizontal
-            buttonGroupContainer.backgroundColor = .clear
         }
     }
     
     @IBAction
     private func switchToSinglePanelMode(_ sender: UISwitch) {
-        panelView.configuration.singlePanelMode = sender.isOn
+        let newPanelMode: PanelMode = sender.isOn ? .single : .multi
+        panelView.configuration.panelMode = newPanelMode
         
         if sender.isOn {
             // we switched to single panel mode
@@ -160,13 +159,13 @@ class ViewController: UIViewController {
             lhsMultiSelect.allowsMultipleSelection = false
             rhsMultiSelect.allowsMultipleSelection = false
         } else {
-            // when we are in multi panel mode
+            // when we are in multi panel mode central panel is automatically gets selected
+            showCenterPanel.isOn = true
             
             // we also need to allow for multiple segments to be selected
             lhsMultiSelect.allowsMultipleSelection = true
             rhsMultiSelect.allowsMultipleSelection = true
         }
-       
     }
     
     @IBAction
@@ -183,7 +182,7 @@ class ViewController: UIViewController {
     @IBAction
     private func showCentralPanel(_ sender: UISwitch) {
         // we can only take this action in single panel mode
-        if panelView.configuration.singlePanelMode {
+        if panelView.configuration.panelMode == .single {
             if sender.isOn {
                 // show central panel
                 panelView.show(index: 0)
@@ -194,9 +193,9 @@ class ViewController: UIViewController {
                 // but it is not a valid action
                 // if you want to hide the central panel in single panel mode
                 // you should call panelView.showEmptyState() instead
+                showOneActionAlert(title: "Invalid Action",
+                                   message: "In single panel mode hiding the central panel is not a valid action.")
                 sender.isOn = true
-                showEmptyView.isOn = true
-                panelView.showEmptyState()
             }
         } else {
             // in multi panel mode
@@ -306,7 +305,7 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
         
         if multiSelectSegmentedControl == lhsMultiSelect {
             // we need to deselect buttons from the other controls if we are in a single panel mode
-            if panelView.configuration.singlePanelMode {
+            if panelView.configuration.panelMode == .single {
                 rhsMultiSelect.selectAllSegments(false)
             }
             
@@ -316,7 +315,7 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
             }
         } else if multiSelectSegmentedControl == rhsMultiSelect {
             // we need to deselect buttons from the other controls if we are in a single panel mode
-            if panelView.configuration.singlePanelMode {
+            if panelView.configuration.panelMode == .single {
                 lhsMultiSelect.selectAllSegments(false)
             }
             
@@ -326,7 +325,7 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
             }
         }
         
-        if panelView.singlePanelMode {
+        if panelView.configuration.panelMode == .single {
             // in single panel mode central panel can be hidden
             showCenterPanel.isOn = false
         }

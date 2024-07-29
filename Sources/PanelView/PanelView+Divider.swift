@@ -8,11 +8,27 @@
 import UIKit
 
 extension PanelView {
-    @discardableResult
-    func createPanelDivider(associatedPanel: UIView, for indexedPanel: PanelIndex) -> UIView {
+    func createPanelDivider(for indexedPanel: PanelIndex) {
+        guard indexedPanel.index != 0 else { return } // we cannot create a panel divider for central panel
+        
+        if let existingPanelDivider = dividerMappings[indexedPanel] {
+            existingPanelDivider.removeFromSuperview()
+            dividerMappings.removeValue(forKey: indexedPanel)
+            
+            dividerToPanelMappings.removeValue(forKey: existingPanelDivider)    
+        }
+        
+        let associatedPanel: UIView
+        if let matchingPanel = panelMappings[indexedPanel] {
+            associatedPanel = matchingPanel
+        } else {
+            associatedPanel = createPanel(for: indexedPanel)
+        }
+        
+        
         let viewDivider = UIView()
         viewDivider.tag = indexedPanel.index
-        // viewDivider.backgroundColor = .green
+        viewDivider.backgroundColor = .green
         viewDivider.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(viewDivider)
         
@@ -68,8 +84,6 @@ extension PanelView {
         if configuration.allowsUIPanelSizeAdjustment {
             enableResizing(for: indexedPanel)
         }
-        
-        return viewDivider
     }
     
     func removePanelDivider(for indexedPanel: PanelIndex) {

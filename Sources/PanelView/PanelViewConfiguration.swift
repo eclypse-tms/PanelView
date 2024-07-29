@@ -53,13 +53,12 @@ public struct PanelViewConfiguration {
     /// hidden, set this property to true to automatically reclaim the memory occupied by the view controller.
     public var autoReleaseViewControllers: Bool
     
-    /// this property indicates whether the PanelView is running in single panel mode. Default value is false.
+    /// Determines whether to run PanelView in single or multi panel mode.
+    /// When in single panel mode, any panel that you show will take up the entire available screen and
+    /// other panels - if they are visible, will be hidden.
     ///
-    /// Set this property to true to enable single panel mode. In this mode,
-    /// any panel that you show will take up the entire available screen and
-    /// other size constraints will be ignored. This mode may be useful when running the
-    /// PanelView in compact screens.
-    public var singlePanelMode: Bool
+    /// This mode may be useful when running the PanelView in compact screen sizes.
+    public var panelMode: PanelMode
 }
 
 public extension PanelViewConfiguration {
@@ -73,6 +72,6 @@ public extension PanelViewConfiguration {
         self.interPanelSpacing = 1.0
         self.panelDividerHoverColor = nil
         self.autoReleaseViewControllers = false
-        self.singlePanelMode = false
+        self.panelMode = .multi
     }
 }

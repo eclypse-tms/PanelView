@@ -61,7 +61,7 @@ public extension PanelView {
         }
         
         func animatableBlock(acompanyingView: UIView) {
-            if configuration.singlePanelMode {
+            if isSinglePanelMode {
                 // when running in single panel mode, we hide all other visible panels
                 visiblePanels.forEach { eachPanel in
                     if let panelContainer = panelMappings[eachPanel] {
@@ -71,7 +71,7 @@ public extension PanelView {
             }
             
             acompanyingView.isHidden = false
-            if configuration.singlePanelMode {
+            if isSinglePanelMode {
                 // when running in single panel mode,
                 // all dividers are ignored - so we don't have to re-establish
                 // divider constraints
@@ -93,8 +93,8 @@ public extension PanelView {
         }
         
         // reattach its accompanying view divider if necessary
-        if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !configuration.singlePanelMode {
-            createPanelDivider(associatedPanel: aPanelToShow, for: panel)
+        if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !isSinglePanelMode {
+            createPanelDivider(for: panel)
         }
         
         // reestablishDividerConstaintIfNecessary(for: aPanelToShow)

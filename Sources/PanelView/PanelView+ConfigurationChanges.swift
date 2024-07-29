@@ -39,15 +39,15 @@ extension PanelView {
             visiblePanels.forEach { eachVisiblePanelIndex in
                 if let existingPanel = panelMappings[eachVisiblePanelIndex] {
                     if eachVisiblePanelIndex.index != 0, newConfig.allowsUIPanelSizeAdjustment {
-                        createPanelDivider(associatedPanel: existingPanel, for: eachVisiblePanelIndex)
+                        createPanelDivider(for: eachVisiblePanelIndex)
                     }
                 }
             }
         }
         
-        if oldConfig.singlePanelMode != newConfig.singlePanelMode {
-            if newConfig.singlePanelMode {
-                // when running in single panel mode, we have to disable constraints 
+        if oldConfig.panelMode != newConfig.panelMode {
+            if newConfig.panelMode == .single {
+                // when running in single panel mode, we have to disable constraints
                 // for all the panels as well as remove all panel dividers since
                 // we are only showing one panel at a time
                 panelMappings.forEach { (indexedPanel, _) in
@@ -89,7 +89,7 @@ extension PanelView {
         if oldConfig.allowsUIPanelSizeAdjustment != newConfig.allowsUIPanelSizeAdjustment {
             panelMappings.forEach { (indexedPanel, existingPanel) in
                 if newConfig.allowsUIPanelSizeAdjustment {
-                    createPanelDivider(associatedPanel: existingPanel, for: indexedPanel)
+                    createPanelDivider(for: indexedPanel)
                 } else {
                     removePanelDivider(for: indexedPanel)
                 }
@@ -97,8 +97,11 @@ extension PanelView {
         }
         
         if oldConfig.emptyStateView != newConfig.emptyStateView {
-            self.configureEmptyView()
+            if let validNewEmptyState = newConfig.emptyStateView {
+                self.configure(emptyStateView: validNewEmptyState)
+            } else {
+                self.removeEmptyStateView()
+            }
         }
-        
     }
 }

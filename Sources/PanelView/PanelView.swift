@@ -48,7 +48,7 @@ public class PanelView: UIViewController, ResizablePanel {
     
     var _dividerConstraintIdentifier = "divider constraint:"
     
-    private var initialConfiguration = true
+    private var _initialConfiguration = true
     private let attachedToWindowSubject = PassthroughSubject<Void, Never>()
     let panelSizeChangedSubject = PassthroughSubject<ScreenSizeChanges, Never>()
     
@@ -63,10 +63,6 @@ public class PanelView: UIViewController, ResizablePanel {
     public var panelSizeChanged: AnyPublisher<ScreenSizeChanges, Never> {
         return panelSizeChangedSubject.eraseToAnyPublisher()
     }
-    
-    /// This publisher streams an event when the PanelView is loaded and visible.
-    //public let attachedToWindow: AnyPublisher<Void, Never> = PassthroughSubject<Void, Never>().eraseToAnyPublisher()
-    
     
     /// Check this property to determine whether the PanelView's view has been loaded and is visible in the window.
     ///
@@ -83,14 +79,14 @@ public class PanelView: UIViewController, ResizablePanel {
     public var identifier: String = ""
     
     /// shorthand for PanelViewConfiguration.singlePanelMode
-    public var singlePanelMode: Bool {
-        return configuration.singlePanelMode
+    public var isSinglePanelMode: Bool {
+        return configuration.panelMode == .single
     }
     
     public var configuration = PanelViewConfiguration() {
         didSet {
-            if initialConfiguration {
-                initialConfiguration = false
+            if _initialConfiguration {
+                _initialConfiguration = false
             } else {
                 processConfigurationChanges(oldConfig: oldValue, newConfig: configuration)
             }
@@ -103,7 +99,11 @@ public class PanelView: UIViewController, ResizablePanel {
         self.view.backgroundColor = .systemBackground
         
         configurePrimaryStackView()
-        configureEmptyView()
+        if let validEmptyStateView = configuration.emptyStateView {
+            configure(emptyStateView: validEmptyStateView)
+        } else {
+            removeEmptyStateView()
+        }
         configureInitialPanels()
         
         attachedToWindowSubject.send()
@@ -178,42 +178,41 @@ public class PanelView: UIViewController, ResizablePanel {
     }
     
     // MARK: empty view
-    func configureEmptyView() {
-        if let validEmptyStateView = configuration.emptyStateView {
+    func configure(emptyStateView: UIView) {
+        if _emptyStateBackgroundView == nil {
+            let emptyStateBackgroundView = UIView()
+            emptyStateBackgroundView.backgroundColor = .systemBackground
+            emptyStateBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+            self.view.addSubview(emptyStateBackgroundView)
             
-            if _emptyStateBackgroundView == nil {
-                let emptyStateBackgroundView = UIView()
-                emptyStateBackgroundView.backgroundColor = .systemBackground
-                emptyStateBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-                self.view.addSubview(emptyStateBackgroundView)
-                
-                NSLayoutConstraint.activate([
-                    emptyStateBackgroundView.topAnchor.constraint(equalTo: self.view.topAnchor),
-                    emptyStateBackgroundView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-                    emptyStateBackgroundView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-                    emptyStateBackgroundView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
-                ])
-                _emptyStateBackgroundView = emptyStateBackgroundView
-            }
-            
-            if let alreadyConfiguredEmptyViewContainer = _emptyViewContainerStack {
-                alreadyConfiguredEmptyViewContainer.subviews.forEach { $0.removeFromSuperview() }
-            } else {
-                let emptyViewContainer = UIStackView()
-                emptyViewContainer.translatesAutoresizingMaskIntoConstraints = false
-                _emptyStateBackgroundView!.addSubview(emptyViewContainer)
-                NSLayoutConstraint.activate([
-                    emptyViewContainer.centerXAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerXAnchor),
-                    emptyViewContainer.centerYAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerYAnchor)
-                ])
-                _emptyViewContainerStack = emptyViewContainer
-            }
-            
-            _emptyViewContainerStack!.addArrangedSubview(validEmptyStateView)
-        } else {
-            _emptyViewContainerStack = nil
-            _emptyStateBackgroundView = nil
+            NSLayoutConstraint.activate([
+                emptyStateBackgroundView.topAnchor.constraint(equalTo: self.view.topAnchor),
+                emptyStateBackgroundView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+                emptyStateBackgroundView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+                emptyStateBackgroundView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
+            ])
+            _emptyStateBackgroundView = emptyStateBackgroundView
         }
+        
+        if let alreadyConfiguredEmptyViewContainer = _emptyViewContainerStack {
+            alreadyConfiguredEmptyViewContainer.subviews.forEach { $0.removeFromSuperview() }
+        } else {
+            let emptyViewContainer = UIStackView()
+            emptyViewContainer.translatesAutoresizingMaskIntoConstraints = false
+            _emptyStateBackgroundView!.addSubview(emptyViewContainer)
+            NSLayoutConstraint.activate([
+                emptyViewContainer.centerXAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerXAnchor),
+                emptyViewContainer.centerYAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerYAnchor)
+            ])
+            _emptyViewContainerStack = emptyViewContainer
+        }
+        
+        _emptyViewContainerStack!.addArrangedSubview(emptyStateView)
+    }
+    
+    func removeEmptyStateView() {
+        _emptyViewContainerStack = nil
+        _emptyStateBackgroundView = nil
     }
     
     @discardableResult
