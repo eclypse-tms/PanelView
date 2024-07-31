@@ -87,7 +87,6 @@ extension PanelView {
                                                     multiplier: 1.0,
                                                     constant: effectiveMinWidthConstantForPanel)
         
-        minWidthConstraint.priority = UILayoutPriority(999)
         minWidthConstraint.isActive = true
         minWidthConstraint.identifier = "min \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMinWidthMappings[indexedPanel] = minWidthConstraint
@@ -108,7 +107,6 @@ extension PanelView {
                                                     attribute: .notAnAttribute,
                                                     multiplier: 1.0,
                                                     constant: effectiveMaxWidthConstantForPanel)
-        maxWidthConstraint.priority = UILayoutPriority(999)
         maxWidthConstraint.isActive = true
         maxWidthConstraint.identifier = "max \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMaxWidthMappings[indexedPanel] = maxWidthConstraint

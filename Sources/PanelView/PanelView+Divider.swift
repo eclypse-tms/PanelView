@@ -41,12 +41,12 @@ extension PanelView {
             
             if indexedPanel.index < 0 {
                 // this is a leading side panel, we need to place the divider view on the trailing edge of the panel
-                let tempConstraint = viewDivider.trailingAnchor.constraint(equalTo: associatedPanel.trailingAnchor, constant: panelDividerWidth/2.0)
+                let tempConstraint = viewDivider.trailingAnchor.constraint(equalTo: associatedPanel.trailingAnchor, constant: (panelDividerWidth-1))
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             } else {
                 // this is a trailing side panel, we need to place the divider on the leading edge of the panel
-                let tempConstraint = viewDivider.leadingAnchor.constraint(equalTo: associatedPanel.leadingAnchor, constant: -panelDividerWidth/2.0)
+                let tempConstraint = viewDivider.leadingAnchor.constraint(equalTo: associatedPanel.leadingAnchor, constant: -(panelDividerWidth-1))
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             }
@@ -63,13 +63,13 @@ extension PanelView {
             if indexedPanel.index < 0 {
                 // this is a top panel that appears above the central panel. we need to place the divider view on the
                 // bottom edge of the panel
-                let tempConstraint = viewDivider.bottomAnchor.constraint(equalTo: associatedPanel.bottomAnchor, constant: panelDividerWidth/2.0)
+                let tempConstraint = viewDivider.bottomAnchor.constraint(equalTo: associatedPanel.bottomAnchor, constant: (panelDividerWidth-1))
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             } else {
                 // this is a bottom panel that appears below the central panel. we need to place the divider view
                 // on the top edge of the panel
-                let tempConstraint = viewDivider.topAnchor.constraint(equalTo: associatedPanel.topAnchor, constant: -panelDividerWidth/2.0)
+                let tempConstraint = viewDivider.topAnchor.constraint(equalTo: associatedPanel.topAnchor, constant: -(panelDividerWidth-1))
                 tempConstraint.identifier = "\(_dividerConstraintIdentifier)\(indexedPanel.index)"
                 layoutConstraints.append(tempConstraint)
             }

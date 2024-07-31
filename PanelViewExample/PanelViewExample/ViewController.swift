@@ -48,10 +48,10 @@ class ViewController: UIViewController {
         panelView.delegate = self
         
         var customConfig = PanelViewConfiguration()
-        customConfig.numberOfPanelsToPrime = 5
+        customConfig.numberOfPanelsToPrime = 3
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
-        customConfig.interPanelSpacing = 5
+        customConfig.interPanelSpacing = 20
         customConfig.panelMode = .multi
         customConfig.autoReleaseViewControllers = true
         customConfig.emptyStateView = configureEmptyView()
