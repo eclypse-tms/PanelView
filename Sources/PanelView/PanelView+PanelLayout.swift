@@ -77,6 +77,8 @@ extension PanelView {
             effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
         } else if let pendingMinWidthConstraint = pendingMinimumWidth[indexedPanel] {
             effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
+        } else {
+            print("we couldn't find minimum width constraint for panel: \(indexedPanel.index). applying default values.")
         }
         
         let minWidthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -98,6 +100,8 @@ extension PanelView {
             effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
         } else if let pendingMaxWidthConstraint = pendingMaximumWidth[indexedPanel] {
             effectiveMaxWidthConstantForPanel = pendingMaxWidthConstraint
+        } else {
+            print("we couldn't find maximum width constraint for panel: \(indexedPanel.index). applying default values.")
         }
         
         let maxWidthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -123,6 +127,8 @@ extension PanelView {
             } else {
                 effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
             }
+        } else {
+            print("we couldn't find width constraint for panel: \(indexedPanel.index). applying default values.")
         }
         
         let widthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -139,7 +145,6 @@ extension PanelView {
     }
     
     func activatePanelLayoutConstraintsIfNecessary(for indexedPanel: PanelIndex) {
-        var doWeNeedToRecreatePanel = false
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
             if aConstraint.isActive {
                 // nothing to do - max constraint is already active
@@ -147,7 +152,7 @@ extension PanelView {
                 if let correspondingView = panelMappings[indexedPanel] {
                     applyMaxWidthConstraint(for: correspondingView, using: indexedPanel)
                 } else {
-                    doWeNeedToRecreatePanel = true
+                    print("there is no corresponding panel view for the index: \(indexedPanel.index)")
                 }
             }
         }
@@ -159,7 +164,7 @@ extension PanelView {
                 if let correspondingView = panelMappings[indexedPanel] {
                     applyMinWidthConstraint(for: correspondingView, using: indexedPanel)
                 } else {
-                    doWeNeedToRecreatePanel = true
+                    print("there is no corresponding panel view for the index: \(indexedPanel.index)")
                 }
             }
         }
@@ -171,14 +176,16 @@ extension PanelView {
                 if let correspondingView = panelMappings[indexedPanel] {
                     applyPreferredWidthConstraint(for: correspondingView, using: indexedPanel)
                 } else {
-                    doWeNeedToRecreatePanel = true
+                    print("there is no corresponding panel view for the index: \(indexedPanel.index)")
                 }
             }
         }
         
+        /*
         if doWeNeedToRecreatePanel {
             createPanel(for: indexedPanel)
         }
+        */
     }
     
     func deactivatePanelLayoutConstraints(for indexedPanel: PanelIndex) {

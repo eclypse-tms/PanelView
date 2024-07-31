@@ -23,6 +23,8 @@ extension PanelView {
             
             mainStackView.axis = newConfig.orientation.axis
             
+            mainStackView.layoutIfNeeded()
+            
             panelMappings.forEach { (indexedPanel, existingPanel) in
                 if indexedPanel.index != 0 {
                     // Configure min width
@@ -36,10 +38,13 @@ extension PanelView {
                 }
             }
             
-            visiblePanels.forEach { eachVisiblePanelIndex in
-                if let existingPanel = panelMappings[eachVisiblePanelIndex] {
-                    if eachVisiblePanelIndex.index != 0, newConfig.allowsUIPanelSizeAdjustment {
-                        createPanelDivider(for: eachVisiblePanelIndex)
+            // re-create panel dividers if in multi-panel mode
+            if !isSinglePanelMode {
+                visiblePanels.forEach { eachVisiblePanelIndex in
+                    if let existingPanel = panelMappings[eachVisiblePanelIndex] {
+                        if eachVisiblePanelIndex.index != 0, newConfig.allowsUIPanelSizeAdjustment {
+                            createPanelDivider(for: eachVisiblePanelIndex)
+                        }
                     }
                 }
             }

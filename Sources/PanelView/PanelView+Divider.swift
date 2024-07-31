@@ -9,7 +9,12 @@ import UIKit
 
 extension PanelView {
     func createPanelDivider(for indexedPanel: PanelIndex) {
-        guard indexedPanel.index != 0 else { return } // we cannot create a panel divider for central panel
+        // we cannot create a panel divider for central panel
+        guard indexedPanel.index != 0 else { return }
+        
+        // panel dividers are not usable in single-panel mode because
+        // panel dividers are used to resize each panel
+        guard !isSinglePanelMode else { return }
         
         if let existingPanelDivider = dividerMappings[indexedPanel] {
             existingPanelDivider.removeFromSuperview()

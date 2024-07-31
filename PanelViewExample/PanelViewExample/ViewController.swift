@@ -48,7 +48,7 @@ class ViewController: UIViewController {
         panelView.delegate = self
         
         var customConfig = PanelViewConfiguration()
-        customConfig.numberOfPanelsToPrime = 3
+        customConfig.numberOfPanelsToPrime = 5
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
         customConfig.interPanelSpacing = 20
