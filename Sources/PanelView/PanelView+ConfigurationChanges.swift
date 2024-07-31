@@ -38,6 +38,8 @@ extension PanelView {
                 }
             }
             
+            mainStackView.layoutIfNeeded()
+            
             // re-create panel dividers if in multi-panel mode
             if !isSinglePanelMode {
                 visiblePanels.forEach { eachVisiblePanelIndex in
@@ -67,7 +69,7 @@ extension PanelView {
                         // hide everything but the last indexed panel
                         if eachPanelIndex != panelWithTheHighestIndex {
                             // hide but do not release the view controller from the view
-                            hide(panel: eachPanelIndex, animated: true, releaseViewController: .false)
+                            hide(panel: eachPanelIndex, animated: false, releaseViewController: .false)
                         }
                     }
                 } else {
@@ -89,6 +91,7 @@ extension PanelView {
                     createPanelDivider(for: eachPanel)
                 }
             }
+            mainStackView.layoutIfNeeded()
         }
         
         if oldConfig.interPanelSpacing != newConfig.interPanelSpacing {

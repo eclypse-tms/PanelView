@@ -12,8 +12,7 @@ import MultiSelectSegmentedControl
 
 class ViewController: UIViewController {
     
-    @IBOutlet private var buttonGroup: UIStackView!
-    @IBOutlet private var buttonGroupContainer: UIView!
+    @IBOutlet private var leadingButtonGroupContainer: UIStackView!
     
     @IBOutlet private var lhsMultiSelect: MultiSelectSegmentedControl!
     @IBOutlet private var rhsMultiSelect: MultiSelectSegmentedControl!
@@ -51,7 +50,7 @@ class ViewController: UIViewController {
         customConfig.numberOfPanelsToPrime = 5
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
-        customConfig.interPanelSpacing = 20
+        customConfig.interPanelSpacing = 1
         customConfig.panelMode = .multi
         customConfig.autoReleaseViewControllers = true
         customConfig.emptyStateView = configureEmptyView()
@@ -259,7 +258,7 @@ class ViewController: UIViewController {
         }
         
         addChild(panelView)
-        view.insertSubview(panelView.view, belowSubview: buttonGroupContainer)
+        view.insertSubview(panelView.view, belowSubview: leadingButtonGroupContainer)
         
         panelView.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

@@ -33,7 +33,7 @@ extension PanelView {
         
         let viewDivider = UIView()
         viewDivider.tag = indexedPanel.index
-        viewDivider.backgroundColor = .green
+        // viewDivider.backgroundColor = .green
         viewDivider.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(viewDivider)
         

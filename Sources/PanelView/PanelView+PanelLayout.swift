@@ -195,11 +195,14 @@ extension PanelView {
             // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
+        
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
             // pendingMinimumWidth[indexedPanel] = aConstraint.constant
-            aConstraint.isActive = false
+            // aConstraint.isActive = false
+            // aConstraint.constant = 0
             // panelMinWidthMappings.removeValue(forKey: indexedPanel)
         }
+        
         
         if let aConstraint = panelWidthMappings[indexedPanel] {
             aConstraint.isActive = false

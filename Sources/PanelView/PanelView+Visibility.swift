@@ -24,6 +24,7 @@ public extension PanelView {
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
+        /*
         func reestablishDividerConstaintIfNecessary(for acompanyingView: UIView) {
             if let associatedDivider = dividerMappings[panel], panel.index > 0 {
                 // when running in multi panel mode, we need to re-establish the constraints for panel dividers
@@ -34,21 +35,21 @@ public extension PanelView {
                         if panel.index < 0 {
                             // this is a horizonal layout and the panel is on the left hand side (leading side)
                             // resizer needs to be aligned to the trailing side of the panel
-                            reestablishedConstraint = associatedDivider.trailingAnchor.constraint(equalTo: acompanyingView.trailingAnchor, constant: panelDividerWidth/2.0)
+                            reestablishedConstraint = associatedDivider.trailingAnchor.constraint(equalTo: acompanyingView.trailingAnchor, constant: (panelDividerWidth-1))
                         } else {
                             // this is a horizonal layout and the panel is on the right hand side (trailing side)
                             // resizer needs to be aligned to the leading side of the panel
-                            reestablishedConstraint = associatedDivider.leadingAnchor.constraint(equalTo: acompanyingView.leadingAnchor, constant: -panelDividerWidth/2.0)
+                            reestablishedConstraint = associatedDivider.leadingAnchor.constraint(equalTo: acompanyingView.leadingAnchor, constant: -(panelDividerWidth-1))
                         }
                     } else {
                         if panel.index < 0 {
                             // this is a vertical layout and the panel is on the top side
                             // resizer needs to be aligned to the bottom side of the panel
-                            reestablishedConstraint = associatedDivider.bottomAnchor.constraint(equalTo: acompanyingView.bottomAnchor, constant: panelDividerWidth/2.0)
+                            reestablishedConstraint = associatedDivider.bottomAnchor.constraint(equalTo: acompanyingView.bottomAnchor, constant: (panelDividerWidth-1))
                         } else {
                             // this is a vertical layout and the panel is on the bottom
                             // resizer needs to be aligned to the top side of the panel
-                            reestablishedConstraint = associatedDivider.topAnchor.constraint(equalTo: acompanyingView.topAnchor, constant: panelDividerWidth/2.0)
+                            reestablishedConstraint = associatedDivider.topAnchor.constraint(equalTo: acompanyingView.topAnchor, constant: -(panelDividerWidth-1))
                         }
                     }
                     reestablishedConstraint.identifier = "\(_dividerConstraintIdentifier)\(associatedDivider.tag)"
@@ -59,13 +60,18 @@ public extension PanelView {
                 // there is no associated divider for this panel or panel was not reinserted back to the stackview,
             }
         }
+        */
         
         func animatableBlock(acompanyingView: UIView) {
             if isSinglePanelMode {
                 // when running in single panel mode, we hide all other visible panels
                 visiblePanels.forEach { eachPanel in
-                    if let panelContainer = panelMappings[eachPanel] {
-                        panelContainer.isHidden = true
+                    if let associatedView = panelMappings[eachPanel] {
+                        if associatedView == acompanyingView {
+                            // we shouldn't be hiding the acompanying view
+                        } else {
+                            associatedView.isHidden = true
+                        }
                     }
                 }
             }
