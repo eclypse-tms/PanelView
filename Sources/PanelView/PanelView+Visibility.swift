@@ -109,7 +109,7 @@ public extension PanelView {
             UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
                 animatableBlock(acompanyingView: aPanelToShow)
             }, completion: { _ in
-                self.mainStackView.layoutIfNeeded()
+                // self.mainStackView.layoutIfNeeded()
                 completion?()
             })
         } else if panel.index == 0, visiblePanels.isEmpty {
@@ -118,7 +118,7 @@ public extension PanelView {
             completion?()
         } else {
             animatableBlock(acompanyingView: aPanelToShow)
-            self.mainStackView.layoutIfNeeded()
+            // self.mainStackView.layoutIfNeeded()
             completion?()
         }
     }

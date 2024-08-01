@@ -99,12 +99,13 @@ public class PanelView: UIViewController, ResizablePanel {
         self.view.backgroundColor = .systemBackground
         
         configurePrimaryStackView()
+        
         if let validEmptyStateView = configuration.emptyStateView {
             configure(emptyStateView: validEmptyStateView)
-        } else {
-            removeEmptyStateView()
         }
+        
         configureInitialPanels()
+        configureConstraintsForMainPanel()
         
         attachedToWindowSubject.send()
         isAttachedToWindow = true
@@ -150,6 +151,18 @@ public class PanelView: UIViewController, ResizablePanel {
             let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
             mainStackView.addArrangedSubview(newlyCreatedPanel)
             newlyCreatedPanel.isHidden = true
+        }
+    }
+    
+    /// some min and max constraints for the main panel prevents UINavigationBar from 
+    /// complaining that there is something wrong with the autolayout (Unsatisfiable constraint error)
+    open func configureConstraintsForMainPanel() {
+        let onTheFlyIndex = PanelIndex(index: 0)
+        if let centerPanel = panelMappings[onTheFlyIndex] {
+            NSLayoutConstraint.activate([
+                centerPanel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
+                centerPanel.heightAnchor.constraint(greaterThanOrEqualToConstant: 100)
+            ])
         }
     }
     
