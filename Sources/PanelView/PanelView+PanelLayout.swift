@@ -111,6 +111,7 @@ extension PanelView {
                                                     attribute: .notAnAttribute,
                                                     multiplier: 1.0,
                                                     constant: effectiveMaxWidthConstantForPanel)
+        maxWidthConstraint.priority = UILayoutPriority(999.0)
         maxWidthConstraint.isActive = true
         maxWidthConstraint.identifier = "max \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
@@ -154,6 +155,12 @@ extension PanelView {
                 } else {
                     print("there is no corresponding panel view for the index: \(indexedPanel.index)")
                 }
+            }
+        } else {
+            if let correspondingView = panelMappings[indexedPanel] {
+                applyMaxWidthConstraint(for: correspondingView, using: indexedPanel)
+            } else {
+                print("there is no corresponding panel view for the index: \(indexedPanel.index)")
             }
         }
         
