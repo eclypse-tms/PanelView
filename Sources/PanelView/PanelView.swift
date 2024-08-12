@@ -213,10 +213,28 @@ public class PanelView: UIViewController, ResizablePanel {
             let emptyViewContainer = UIStackView()
             emptyViewContainer.translatesAutoresizingMaskIntoConstraints = false
             _emptyStateBackgroundView!.addSubview(emptyViewContainer)
-            NSLayoutConstraint.activate([
-                emptyViewContainer.centerXAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerXAnchor),
-                emptyViewContainer.centerYAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerYAnchor)
-            ])
+            
+            var emptyStateViewConstraints = [NSLayoutConstraint]()
+            emptyStateViewConstraints.append(emptyViewContainer.centerXAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerXAnchor))
+            
+            if let providedVerticalAdjustment = configuration.emptyViewVerticalAdjustment {
+                
+                // clean the incorrect values
+                let effectiveVerticalAdjustment: CGFloat
+                if providedVerticalAdjustment < -1.0 {
+                    effectiveVerticalAdjustment = -1.0
+                } else if providedVerticalAdjustment > 1.0 {
+                    effectiveVerticalAdjustment = 1.0
+                } else {
+                    effectiveVerticalAdjustment = providedVerticalAdjustment
+                }
+                
+                emptyStateViewConstraints.append(NSLayoutConstraint(item: emptyViewContainer, attribute: .centerY, relatedBy: .equal, toItem: _emptyStateBackgroundView, attribute: .centerY, multiplier: effectiveVerticalAdjustment, constant: 0))
+            } else {
+                emptyStateViewConstraints.append(emptyViewContainer.centerYAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerYAnchor))
+            }
+            NSLayoutConstraint.activate(emptyStateViewConstraints)
+            
             _emptyViewContainerStack = emptyViewContainer
         }
         

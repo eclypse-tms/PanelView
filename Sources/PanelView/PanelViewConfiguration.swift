@@ -16,6 +16,16 @@ public struct PanelViewConfiguration {
     
     /// the view to display when there are no panels visible.
     public var emptyStateView: UIView?
+    
+    /// adjusts the positioning of the empty state view vertically. acceptable
+    /// values are from -1 to +1.
+    ///
+    /// * +1 puts the empty view all the way to the top of the screen
+    /// * 0 places the empty view at the center
+    /// * -1 puts the empty view all the way to the bottom of the screen
+    ///
+    /// default value is 0.
+    public var emptyViewVerticalAdjustment: CGFloat?
         
     /// the color to highlight panel dividers when a pointer hovers over them.
     ///

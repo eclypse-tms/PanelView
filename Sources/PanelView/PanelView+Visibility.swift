@@ -24,97 +24,61 @@ public extension PanelView {
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
-        /*
-        func reestablishDividerConstaintIfNecessary(for acompanyingView: UIView) {
-            if let associatedDivider = dividerMappings[panel], panel.index > 0 {
-                // when running in multi panel mode, we need to re-establish the constraints for panel dividers
-                // note that center panel does not have a divider that is used for resizing the panel
-                if panel.index != 0 {
-                    let reestablishedConstraint: NSLayoutConstraint
-                    if mainStackView.axis == .horizontal {
-                        if panel.index < 0 {
-                            // this is a horizonal layout and the panel is on the left hand side (leading side)
-                            // resizer needs to be aligned to the trailing side of the panel
-                            reestablishedConstraint = associatedDivider.trailingAnchor.constraint(equalTo: acompanyingView.trailingAnchor, constant: (panelDividerWidth-1))
-                        } else {
-                            // this is a horizonal layout and the panel is on the right hand side (trailing side)
-                            // resizer needs to be aligned to the leading side of the panel
-                            reestablishedConstraint = associatedDivider.leadingAnchor.constraint(equalTo: acompanyingView.leadingAnchor, constant: -(panelDividerWidth-1))
-                        }
-                    } else {
-                        if panel.index < 0 {
-                            // this is a vertical layout and the panel is on the top side
-                            // resizer needs to be aligned to the bottom side of the panel
-                            reestablishedConstraint = associatedDivider.bottomAnchor.constraint(equalTo: acompanyingView.bottomAnchor, constant: (panelDividerWidth-1))
-                        } else {
-                            // this is a vertical layout and the panel is on the bottom
-                            // resizer needs to be aligned to the top side of the panel
-                            reestablishedConstraint = associatedDivider.topAnchor.constraint(equalTo: acompanyingView.topAnchor, constant: -(panelDividerWidth-1))
-                        }
-                    }
-                    reestablishedConstraint.identifier = "\(_dividerConstraintIdentifier)\(associatedDivider.tag)"
-                    reestablishedConstraint.isActive = true
-                    associatedDivider.isHidden = false
-                }
-            } else {
-                // there is no associated divider for this panel or panel was not reinserted back to the stackview,
-            }
-        }
-        */
-        
-        func animatableBlock(acompanyingView: UIView) {
-            acompanyingView.isHidden = false
+        func animatableBlock(accompanyingPanel: UIView) {
+            
+            
             if isSinglePanelMode {
                 // when running in single panel mode,
                 // all dividers are ignored - so we don't have to re-establish the divider constraints
                 
                 // we hide all other visible panels
                 visiblePanels.forEach { eachPanel in
-                    if let associatedView = panelMappings[eachPanel] {
-                        if associatedView == acompanyingView {
-                            // we shouldn't be hiding the acompanying view
+                    if let eachPanel = panelMappings[eachPanel] {
+                        if eachPanel == accompanyingPanel {
+                            // we shouldn't be hiding the acompanying panel
                         } else {
-                            associatedView.isHidden = true
+                            eachPanel.isHidden = true
                         }
                     }
                 }
+                accompanyingPanel.isHidden = false
             } else {
-                
+                // we are running in multi-panel mode,
+                // all we have to do is to show the panel
+                accompanyingPanel.isHidden = false
             }
         }
         
         let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
         
         
-        if panel.index > 0 {
+        //if panel.index > 0 {
             // in order for animations to run correctly for the stackview, we need to first remove the panel
             // from the superview and re-insert it later on
             aPanelToShow.removeFromSuperview()
             let subViewIndex = calculateAppropriateIndex(for: panel)
             mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
-        }
+        //}
         
         // reattach its accompanying view divider if necessary
         if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !isSinglePanelMode {
             createPanelDivider(for: panel)
         }
         
-        // reestablishDividerConstaintIfNecessary(for: aPanelToShow)
-        
         if panel.index != 0, animated {
             UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
-                animatableBlock(acompanyingView: aPanelToShow)
+                animatableBlock(accompanyingPanel: aPanelToShow)
             }, completion: { _ in
-                // self.mainStackView.layoutIfNeeded()
+                //self.mainStackView.layoutIfNeeded()
                 completion?()
             })
         } else if panel.index == 0, visiblePanels.isEmpty {
-            animatableBlock(acompanyingView: aPanelToShow)
-            // self.mainStackView.layoutIfNeeded()
+            animatableBlock(accompanyingPanel: aPanelToShow)
+            //self.mainStackView.layoutIfNeeded()
             completion?()
         } else {
-            animatableBlock(acompanyingView: aPanelToShow)
-            // self.mainStackView.layoutIfNeeded()
+            animatableBlock(accompanyingPanel: aPanelToShow)
+            //self.mainStackView.layoutIfNeeded()
             completion?()
         }
     }
