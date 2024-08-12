@@ -78,8 +78,6 @@ public extension PanelView {
                         }
                     }
                 }
-                // trying to see if this makes any sense
-                self.mainStackView.layoutIfNeeded()
             } else {
                 
             }
