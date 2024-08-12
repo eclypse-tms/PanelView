@@ -16,22 +16,21 @@ public extension PanelView {
             // show the empty view
             self.view.bringSubviewToFront(validEmptyStateView)
             validEmptyStateView.isHidden = false
-            
-            // we are showing the empty state view - switch the background back to the system color
-            self.view.backgroundColor = .systemBackground
         }
+        // we are showing the empty state view - switch the background back to the system color
+        self.view.backgroundColor = .systemBackground
     }
     
-    /// hides the empty state from the view
+    /// hides the empty state from the view - if one was already provided.
     func hideEmptyState() {
         if let validEmptyStateView = _emptyStateBackgroundView {
             if let currentEmptyStateViewIndex = self.view.subviews.firstIndex(of: validEmptyStateView),
                currentEmptyStateViewIndex > 0 {
                 self.view.sendSubviewToBack(validEmptyStateView)
                 validEmptyStateView.isHidden = true
-                self.view.backgroundColor = configuration.panelDividerColor
             }
         }
+        self.view.backgroundColor = configuration.panelDividerColor
     }
 }
 
