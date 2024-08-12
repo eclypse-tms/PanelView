@@ -63,8 +63,12 @@ public extension PanelView {
         */
         
         func animatableBlock(acompanyingView: UIView) {
+            acompanyingView.isHidden = false
             if isSinglePanelMode {
-                // when running in single panel mode, we hide all other visible panels
+                // when running in single panel mode,
+                // all dividers are ignored - so we don't have to re-establish the divider constraints
+                
+                // we hide all other visible panels
                 visiblePanels.forEach { eachPanel in
                     if let associatedView = panelMappings[eachPanel] {
                         if associatedView == acompanyingView {
@@ -74,14 +78,8 @@ public extension PanelView {
                         }
                     }
                 }
-            }
-            
-            acompanyingView.isHidden = false
-            if isSinglePanelMode {
-                // when running in single panel mode,
-                // all dividers are ignored - so we don't have to re-establish
-                // divider constraints
-                // self.mainStackView.layoutIfNeeded()
+                // trying to see if this makes any sense
+                self.mainStackView.layoutIfNeeded()
             } else {
                 
             }
