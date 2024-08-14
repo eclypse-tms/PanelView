@@ -80,7 +80,12 @@ panelView.show(vc3, for: .inspector)
 ```
 
 ## Example App
-The repository contains [an example app](./PanelViewExample). You are encouraged to run the example to get a better sense of how the PanelView works.
+The repository contains [an example app](./PanelViewExample). You are encouraged to run the example to get a better sense of how the PanelView works. Example app demonstrates the following functionality:
+
+1. Managing multiple panels on each side of the center view
+1. Changing PanelView's orientation from horizontal to vertical
+1. Switching to single panel mode from the multi panel mode. Single panel mode can be used when there is not sufficient screen real estate.
+1. Showing an empty view (a.k.a. loading state view)
 
 <p align="center">
     <img src="./assets/example_app.png" width="475.5" height="361.5">
