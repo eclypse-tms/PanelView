@@ -34,6 +34,10 @@ extension PanelView {
         }
     }
     
+    func layoutIfNeeded() {
+        mainStackView.layoutIfNeeded()
+    }
+    
     @discardableResult
     func createPanel(for indexedPanel: PanelIndex) -> UIView {
         let aNewPanel = UIView()
@@ -111,7 +115,7 @@ extension PanelView {
                                                     attribute: .notAnAttribute,
                                                     multiplier: 1.0,
                                                     constant: effectiveMaxWidthConstantForPanel)
-        maxWidthConstraint.priority = UILayoutPriority(999.0)
+        maxWidthConstraint.priority = UILayoutPriority(998.0)
         maxWidthConstraint.isActive = true
         maxWidthConstraint.identifier = "max \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
@@ -139,7 +143,8 @@ extension PanelView {
                                                     attribute: .notAnAttribute,
                                                     multiplier: 1.0,
                                                     constant: effectiveWidthConstantForPanel)
-        widthConstraint.priority = .defaultHigh
+        
+        widthConstraint.priority = UILayoutPriority(999.0)
         widthConstraint.isActive = true
         widthConstraint.identifier = "\(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelWidthMappings[indexedPanel] = widthConstraint
