@@ -21,11 +21,9 @@ public struct PanelViewConfiguration {
     /// values are from -1 to +1.
     ///
     /// * +1 puts the empty view all the way to the top of the screen
-    /// * 0 places the empty view at the center
+    /// * 0 places the empty view at the center. the default value.
     /// * -1 puts the empty view all the way to the bottom of the screen
-    ///
-    /// default value is 0.
-    public var emptyViewVerticalAdjustment: CGFloat?
+    public var emptyViewVerticalAdjustment: CGFloat
         
     /// the color to highlight panel dividers when a pointer hovers over them.
     ///
@@ -83,5 +81,6 @@ public extension PanelViewConfiguration {
         self.panelDividerHoverColor = nil
         self.autoReleaseViewControllers = false
         self.panelMode = .multi
+        self.emptyViewVerticalAdjustment = 0
     }
 }

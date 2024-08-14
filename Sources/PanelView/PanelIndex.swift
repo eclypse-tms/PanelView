@@ -68,8 +68,4 @@ open class PanelIndex: Hashable, Comparable, CustomDebugStringConvertible {
             return "tag: \(tag), panel index: \(index)"
         }
     }
-    
-    public static var center: PanelIndex {
-        return PanelIndex(index: 0, tag: "center")
-    }
 }

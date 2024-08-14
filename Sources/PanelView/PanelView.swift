@@ -217,21 +217,20 @@ public class PanelView: UIViewController, ResizablePanel {
             var emptyStateViewConstraints = [NSLayoutConstraint]()
             emptyStateViewConstraints.append(emptyViewContainer.centerXAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerXAnchor))
             
-            if let providedVerticalAdjustment = configuration.emptyViewVerticalAdjustment {
-                
+            if configuration.emptyViewVerticalAdjustment == 0.0 {
+                emptyStateViewConstraints.append(emptyViewContainer.centerYAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerYAnchor))
+            } else {
                 // clean the incorrect values
                 let effectiveVerticalAdjustment: CGFloat
-                if providedVerticalAdjustment < -1.0 {
+                if configuration.emptyViewVerticalAdjustment < -1.0 {
                     effectiveVerticalAdjustment = -1.0
-                } else if providedVerticalAdjustment > 1.0 {
+                } else if configuration.emptyViewVerticalAdjustment > 1.0 {
                     effectiveVerticalAdjustment = 1.0
                 } else {
-                    effectiveVerticalAdjustment = providedVerticalAdjustment
+                    effectiveVerticalAdjustment = configuration.emptyViewVerticalAdjustment
                 }
                 
                 emptyStateViewConstraints.append(NSLayoutConstraint(item: emptyViewContainer, attribute: .centerY, relatedBy: .equal, toItem: _emptyStateBackgroundView, attribute: .centerY, multiplier: effectiveVerticalAdjustment, constant: 0))
-            } else {
-                emptyStateViewConstraints.append(emptyViewContainer.centerYAnchor.constraint(equalTo: _emptyStateBackgroundView!.centerYAnchor))
             }
             NSLayoutConstraint.activate(emptyStateViewConstraints)
             

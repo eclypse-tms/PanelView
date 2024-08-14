@@ -79,6 +79,13 @@ panelView.show(vc3, for: .inspector)
 
 ```
 
+## Example App
+The repository contains [an example app](./PanelViewExample). You are encouraged to run the example to get a better sense of how the PanelView works.
+
+<p align="center">
+    <img src="./assets/example_app.png" width="475.5" height="361.5">
+</p>
+
 # Full API
 
 ## Adding PanelView to a View Hiearchy
@@ -95,8 +102,6 @@ func scene(_ scene: UIScene,
 
   // instantiate PanelView
   let panelView = PanelView()
-  // now configure the PanelView according to your needs
-  ...
 
   window = UIWindow(windowScene: windowScene)
   window?.rootViewController = panelView
@@ -116,9 +121,6 @@ override func viewDidLoad() {
   
   // instantiate PanelView
   let panelView = PanelView()
-
-  // now configure the PanelView according to your needs
-  ...
 
   // make the PanelView child of this ViewController
   // and take up the entire available space
@@ -335,6 +337,14 @@ public struct PanelViewConfiguration {
   
   /// the view to display when there are no panels visible.
   public var emptyStateView: UIView?
+
+  /// adjusts the positioning of the empty state view vertically. acceptable
+  /// values are from -1 to +1.
+  ///
+  /// * +1 puts the empty view all the way to the top of the screen
+  /// * 0 places the empty view at the center. the default value.
+  /// * -1 puts the empty view all the way to the bottom of the screen
+  public var emptyViewVerticalAdjustment: CGFloat?
     
   /// when this value is not nil, the view dividers will be highlighted when
   /// a pointer hovers over them. when this value is nil, no highlighting will
