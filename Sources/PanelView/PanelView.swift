@@ -10,7 +10,59 @@ import Combine
 import SwiftUI
 
 public class PanelView: UIViewController, ResizablePanel {
-    var mainStackView: UIStackView!
+    @IBOutlet var mainStackView: UIStackView!
+    
+    @IBOutlet var panelMinus5: UIView!
+    @IBOutlet var panelMinus4: UIView!
+    @IBOutlet var panelMinus3: UIView!
+    @IBOutlet var panelMinus2: UIView!
+    @IBOutlet var panelMinus1: UIView!
+    @IBOutlet var panelCenter: UIView!
+    @IBOutlet var panelPlus1: UIView!
+    @IBOutlet var panelPlus2: UIView!
+    @IBOutlet var panelPlus3: UIView!
+    @IBOutlet var panelPlus4: UIView!
+    @IBOutlet var panelPlus5: UIView!
+    
+    @IBOutlet var panelMinus5MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus5MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus5Width: NSLayoutConstraint!
+    @IBOutlet var panelMinus4MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus4MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus4Width: NSLayoutConstraint!
+    @IBOutlet var panelMinus3MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus3MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus3Width: NSLayoutConstraint!
+    @IBOutlet var panelMinus2MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus2MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus2Width: NSLayoutConstraint!
+    @IBOutlet var panelMinus1MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus1MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelMinus1Width: NSLayoutConstraint!
+    
+    @IBOutlet var panelPlus5MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus5MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus5Width: NSLayoutConstraint!
+    @IBOutlet var panelPlus4MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus4MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus4Width: NSLayoutConstraint!
+    @IBOutlet var panelPlus3MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus3MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus3Width: NSLayoutConstraint!
+    @IBOutlet var panelPlus2MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus2MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus2Width: NSLayoutConstraint!
+    @IBOutlet var panelPlus1MinWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus1MaxWidth: NSLayoutConstraint!
+    @IBOutlet var panelPlus1Width: NSLayoutConstraint!
+    
+    public init() {
+        super.init(nibName: String(describing: PanelView.self), bundle: PanelView.assetBundle)
+    }
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
     
     var _emptyStateBackgroundView: UIView?
     var _emptyViewContainerStack: UIStackView?
@@ -121,37 +173,135 @@ public class PanelView: UIViewController, ResizablePanel {
             pendingViewControllers.removeAll()
         }
          
-        /*
+        
         if !pendingMinimumWidth.isEmpty {
             for (eachPanel, eachMinWidth) in pendingMinimumWidth {
                 self.minimumWidth(eachMinWidth, for: eachPanel)
             }
-            //pendingMinimumWidth.removeAll()
+            pendingMinimumWidth.removeAll()
         }
         
         if !pendingMaximumWidth.isEmpty {
             for (eachPanel, eachMaxWidth) in pendingMaximumWidth {
                 self.maximumWidth(eachMaxWidth, for: eachPanel)
             }
-            //pendingMaximumWidth.removeAll()
+            pendingMaximumWidth.removeAll()
         }
         
         if !pendingWidthFraction.isEmpty {
             for (eachPanel, widthFraction) in pendingWidthFraction {
                 self.preferredWidthFraction(widthFraction, for: eachPanel)
             }
-            //pendingWidthFraction.removeAll()
+            pendingWidthFraction.removeAll()
         }
-        */
+        
     }
     
     private func configureInitialPanels() {
-        for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
-            let onTheFlyPanelIndex = PanelIndex(index: index)
-            let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
-            mainStackView.addArrangedSubview(newlyCreatedPanel)
-            newlyCreatedPanel.isHidden = true
-        }
+        panelMinus5.isHidden = true
+        panelMinus4.isHidden = true
+        panelMinus3.isHidden = true
+        panelMinus2.isHidden = true
+        panelMinus1.isHidden = true
+        panelCenter.isHidden = true
+        panelPlus1.isHidden = true
+        panelPlus2.isHidden = true
+        panelPlus3.isHidden = true
+        panelPlus4.isHidden = true
+        panelPlus5.isHidden = true
+        
+        
+        panelMappings[PanelIndex(index: -5)] = panelMinus5
+        panelMappings[PanelIndex(index: -4)] = panelMinus4
+        panelMappings[PanelIndex(index: -3)] = panelMinus3
+        panelMappings[PanelIndex(index: -2)] = panelMinus2
+        panelMappings[PanelIndex(index: -1)] = panelMinus1
+        panelMappings[PanelIndex(index: 0)] = panelCenter
+        panelMappings[PanelIndex(index: 1)] = panelPlus1
+        panelMappings[PanelIndex(index: 2)] = panelPlus2
+        panelMappings[PanelIndex(index: 3)] = panelPlus3
+        panelMappings[PanelIndex(index: 4)] = panelPlus4
+        panelMappings[PanelIndex(index: 5)] = panelPlus5
+        
+        panelMinus5.layer.zPosition = -5
+        panelMinus4.layer.zPosition = -4
+        panelMinus3.layer.zPosition = -3
+        panelMinus2.layer.zPosition = -2
+        panelMinus1.layer.zPosition = -1
+        panelCenter.layer.zPosition = 0
+        panelPlus1.layer.zPosition = 1
+        panelPlus2.layer.zPosition = 2
+        panelPlus3.layer.zPosition = 3
+        panelPlus4.layer.zPosition = 4
+        panelPlus5.layer.zPosition = 5
+        
+        
+        panelMaxWidthMappings[PanelIndex(index: -5)] = panelMinus5MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: -4)] = panelMinus4MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: -3)] = panelMinus3MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: -2)] = panelMinus2MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: -1)] = panelMinus1MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: 5)] = panelPlus5MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: 4)] = panelPlus4MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: 3)] = panelPlus3MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: 2)] = panelPlus2MaxWidth
+        panelMaxWidthMappings[PanelIndex(index: 1)] = panelPlus1MaxWidth
+        
+        panelMinWidthMappings[PanelIndex(index: -5)] = panelMinus5MinWidth
+        panelMinWidthMappings[PanelIndex(index: -4)] = panelMinus4MinWidth
+        panelMinWidthMappings[PanelIndex(index: -3)] = panelMinus3MinWidth
+        panelMinWidthMappings[PanelIndex(index: -2)] = panelMinus2MinWidth
+        panelMinWidthMappings[PanelIndex(index: -1)] = panelMinus1MinWidth
+        panelMinWidthMappings[PanelIndex(index: 5)] = panelPlus5MinWidth
+        panelMinWidthMappings[PanelIndex(index: 4)] = panelPlus4MinWidth
+        panelMinWidthMappings[PanelIndex(index: 3)] = panelPlus3MinWidth
+        panelMinWidthMappings[PanelIndex(index: 2)] = panelPlus2MinWidth
+        panelMinWidthMappings[PanelIndex(index: 1)] = panelPlus1MinWidth
+        
+        panelWidthMappings[PanelIndex(index: -5)] = panelMinus5Width
+        panelWidthMappings[PanelIndex(index: -4)] = panelMinus4Width
+        panelWidthMappings[PanelIndex(index: -3)] = panelMinus3Width
+        panelWidthMappings[PanelIndex(index: -2)] = panelMinus2Width
+        panelWidthMappings[PanelIndex(index: -1)] = panelMinus1Width
+        panelWidthMappings[PanelIndex(index: 5)] = panelPlus5Width
+        panelWidthMappings[PanelIndex(index: 4)] = panelPlus4Width
+        panelWidthMappings[PanelIndex(index: 3)] = panelPlus3Width
+        panelWidthMappings[PanelIndex(index: 2)] = panelPlus2Width
+        panelWidthMappings[PanelIndex(index: 1)] = panelPlus1Width
+        
+        panelMinus5MaxWidth.identifier = "Panel: \(-5) max width"
+        panelMinus4MaxWidth.identifier = "Panel: \(-4) max width"
+        panelMinus3MaxWidth.identifier = "Panel: \(-3) max width"
+        panelMinus2MaxWidth.identifier = "Panel: \(-2) max width"
+        panelMinus1MaxWidth.identifier = "Panel: \(-1) max width"
+        panelPlus5MaxWidth.identifier = "Panel: \(5) max width"
+        panelPlus4MaxWidth.identifier = "Panel: \(4) max width"
+        panelPlus3MaxWidth.identifier = "Panel: \(3) max width"
+        panelPlus2MaxWidth.identifier = "Panel: \(2) max width"
+        panelPlus1MaxWidth.identifier = "Panel: \(1) max width"
+        
+        panelMinus5MinWidth.identifier = "Panel: \(-5) min width"
+        panelMinus4MinWidth.identifier = "Panel: \(-4) min width"
+        panelMinus3MinWidth.identifier = "Panel: \(-3) min width"
+        panelMinus2MinWidth.identifier = "Panel: \(-2) min width"
+        panelMinus1MinWidth.identifier = "Panel: \(-1) min width"
+        panelPlus5MinWidth.identifier = "Panel: \(5) min width"
+        panelPlus4MinWidth.identifier = "Panel: \(4) min width"
+        panelPlus3MinWidth.identifier = "Panel: \(3) min width"
+        panelPlus2MinWidth.identifier = "Panel: \(2) min width"
+        panelPlus1MinWidth.identifier = "Panel: \(1) min width"
+        
+        panelMinus5Width.identifier = "Panel: \(-5) width"
+        panelMinus4Width.identifier = "Panel: \(-4) width"
+        panelMinus3Width.identifier = "Panel: \(-3) width"
+        panelMinus2Width.identifier = "Panel: \(-2) width"
+        panelMinus1Width.identifier = "Panel: \(-1) width"
+        panelPlus5Width.identifier = "Panel: \(5) width"
+        panelPlus4Width.identifier = "Panel: \(4) width"
+        panelPlus3Width.identifier = "Panel: \(3) width"
+        panelPlus2Width.identifier = "Panel: \(2) width"
+        panelPlus1Width.identifier = "Panel: \(1) width"
+        
     }
     
     /// some min and max constraints for the main panel prevents UINavigationBar from 
@@ -168,6 +318,8 @@ public class PanelView: UIViewController, ResizablePanel {
     
     /// adds the stackview to the view hierarchy
     private func configurePrimaryStackView() {
+        // nothing to do here
+        /*
         let primaryStackView = UIStackView()
         switch configuration.orientation {
         case .horizontal:
@@ -188,6 +340,7 @@ public class PanelView: UIViewController, ResizablePanel {
             primaryStackView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ])
         mainStackView = primaryStackView
+        */
     }
     
     // MARK: empty view
@@ -273,7 +426,6 @@ public class PanelView: UIViewController, ResizablePanel {
             parentView.topAnchor.constraint(equalTo: childNavController.view.topAnchor),
             parentView.bottomAnchor.constraint(equalTo: childNavController.view.bottomAnchor)]
         )
-        
         
         childNavController.didMove(toParent: self)
         

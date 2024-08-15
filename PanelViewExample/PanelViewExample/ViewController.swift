@@ -9,6 +9,7 @@ import UIKit
 import PanelView
 import Combine
 import MultiSelectSegmentedControl
+import Composure
 
 class ViewController: UIViewController {
     
@@ -24,12 +25,15 @@ class ViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
     private var panelView: PanelView!
+    private var intToLayoutConverter: IntToLayoutConverter!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        intToLayoutConverter = IntToLayoutConverter()
         addPanelView()
+        
         // configureBindings()
         
         lhsMultiSelect.items = ["5", "4", "3", "2", "1"]
@@ -47,7 +51,6 @@ class ViewController: UIViewController {
         panelView.delegate = self
         
         var customConfig = PanelViewConfiguration()
-        customConfig.numberOfPanelsToPrime = 5
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
         customConfig.interPanelSpacing = 1
@@ -59,14 +62,14 @@ class ViewController: UIViewController {
         panelView.configuration = customConfig
         
         
-        for index in -panelView.configuration.numberOfPanelsToPrime...panelView.configuration.numberOfPanelsToPrime {
+        for index in -5...5 {
             if index == 0 {
                 continue
             }
             let onTheFlyPanelIndex = PanelIndex(index: index)
-            panelView.minimumWidth(100, for: onTheFlyPanelIndex)
+            panelView.minimumWidth(300, for: onTheFlyPanelIndex)
             panelView.maximumWidth(600, for: onTheFlyPanelIndex)
-            panelView.preferredWidthFraction(0.1, at: index)
+            panelView.preferredWidthFraction(0.2, at: index)
         }
         
         
@@ -287,16 +290,20 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
         func showOrHidePanel(panelIndex: Int, panelLabel: String) {
             if value {
                 // show a new panel with a new view controller
-                let aNewVC = UIViewController()
-                aNewVC.navigationController?.setNavigationBarHidden(true, animated: false)
                 if panelIndex == 0 {
+                    let aNewVC = UIViewController()
+                    aNewVC.navigationController?.setNavigationBarHidden(true, animated: false)
                     aNewVC.view.backgroundColor = .systemBackground
                     addLabel(to: aNewVC, labelText: "Main")
+                    panelView.show(viewController: aNewVC, at: panelIndex)
                 } else {
-                    aNewVC.view.backgroundColor = randomSystemColor() //.systemBackground
-                    addLabel(to: aNewVC, labelText: panelLabel)
+                    let aNewVC = SimpleViewController()
+                    aNewVC.register(layoutOption: intToLayoutConverter.convert(intValue: Int.random(in: 0...13)))
+                    aNewVC.title = "Panel: \(panelIndex)"
+                    aNewVC.navigationController?.setNavigationBarHidden(true, animated: false)
+                    panelView.show(viewController: aNewVC, at: panelIndex)
                 }
-                panelView.show(viewController: aNewVC, at: panelIndex)
+                
             } else {
                 // hide the panel
                 panelView.hide(index: panelIndex)

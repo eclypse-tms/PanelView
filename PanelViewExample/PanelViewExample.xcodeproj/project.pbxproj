@@ -15,6 +15,19 @@
 		B1066FB22C41C764004EC355 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1066FB02C41C764004EC355 /* LaunchScreen.storyboard */; };
 		B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */ = {isa = PBXBuildFile; productRef = B1066FBB2C41C7D1004EC355 /* PanelView */; };
 		B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */; };
+		B12ADCA42C6E832400680C68 /* ImageAndLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADC9E2C6E832400680C68 /* ImageAndLabelCell.swift */; };
+		B12ADCA52C6E832400680C68 /* SimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADC9F2C6E832400680C68 /* SimpleViewController.swift */; };
+		B12ADCA62C6E832400680C68 /* SimpleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B12ADCA02C6E832400680C68 /* SimpleViewController.xib */; };
+		B12ADCA72C6E832400680C68 /* SimpleViewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCA12C6E832400680C68 /* SimpleViewSection.swift */; };
+		B12ADCA82C6E832400680C68 /* ImageAndLabelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B12ADCA22C6E832400680C68 /* ImageAndLabelCell.xib */; };
+		B12ADCA92C6E832400680C68 /* ImageAndLabelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCA32C6E832400680C68 /* ImageAndLabelViewModel.swift */; };
+		B12ADCB02C6E834E00680C68 /* RandomImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAB2C6E834E00680C68 /* RandomImage.swift */; };
+		B12ADCB12C6E834E00680C68 /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAC2C6E834E00680C68 /* NibLoadable.swift */; };
+		B12ADCB22C6E834E00680C68 /* IntToLayoutConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAD2C6E834E00680C68 /* IntToLayoutConverter.swift */; };
+		B12ADCB32C6E834E00680C68 /* RandomImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAE2C6E834E00680C68 /* RandomImageGenerator.swift */; };
+		B12ADCB42C6E834E00680C68 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAF2C6E834E00680C68 /* BorderedView.swift */; };
+		B12ADCB72C6E835B00680C68 /* LoremIpsum in Frameworks */ = {isa = PBXBuildFile; productRef = B12ADCB62C6E835B00680C68 /* LoremIpsum */; };
+		B12ADCBA2C6E836100680C68 /* Composure in Frameworks */ = {isa = PBXBuildFile; productRef = B12ADCB92C6E836100680C68 /* Composure */; };
 		B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +42,17 @@
 		B1066FB32C41C764004EC355 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B1066FB92C41C7AA004EC355 /* PanelViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PanelViewExample.entitlements; sourceTree = "<group>"; };
 		B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtensions.swift; sourceTree = "<group>"; };
+		B12ADC9E2C6E832400680C68 /* ImageAndLabelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAndLabelCell.swift; sourceTree = "<group>"; };
+		B12ADC9F2C6E832400680C68 /* SimpleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleViewController.swift; sourceTree = "<group>"; };
+		B12ADCA02C6E832400680C68 /* SimpleViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SimpleViewController.xib; sourceTree = "<group>"; };
+		B12ADCA12C6E832400680C68 /* SimpleViewSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleViewSection.swift; sourceTree = "<group>"; };
+		B12ADCA22C6E832400680C68 /* ImageAndLabelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageAndLabelCell.xib; sourceTree = "<group>"; };
+		B12ADCA32C6E832400680C68 /* ImageAndLabelViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAndLabelViewModel.swift; sourceTree = "<group>"; };
+		B12ADCAB2C6E834E00680C68 /* RandomImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImage.swift; sourceTree = "<group>"; };
+		B12ADCAC2C6E834E00680C68 /* NibLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
+		B12ADCAD2C6E834E00680C68 /* IntToLayoutConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntToLayoutConverter.swift; sourceTree = "<group>"; };
+		B12ADCAE2C6E834E00680C68 /* RandomImageGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImageGenerator.swift; sourceTree = "<group>"; };
+		B12ADCAF2C6E834E00680C68 /* BorderedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +62,8 @@
 			files = (
 				B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */,
 				B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */,
+				B12ADCBA2C6E836100680C68 /* Composure in Frameworks */,
+				B12ADCB72C6E835B00680C68 /* LoremIpsum in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +89,8 @@
 		B1066FA42C41C763004EC355 /* PanelViewExample */ = {
 			isa = PBXGroup;
 			children = (
+				B12ADCAA2C6E833D00680C68 /* utils */,
+				B12ADC9D2C6E830F00680C68 /* simple */,
 				B1066FB92C41C7AA004EC355 /* PanelViewExample.entitlements */,
 				B1066FA52C41C763004EC355 /* AppDelegate.swift */,
 				B1066FA72C41C763004EC355 /* SceneDelegate.swift */,
@@ -74,6 +102,31 @@
 				B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */,
 			);
 			path = PanelViewExample;
+			sourceTree = "<group>";
+		};
+		B12ADC9D2C6E830F00680C68 /* simple */ = {
+			isa = PBXGroup;
+			children = (
+				B12ADC9E2C6E832400680C68 /* ImageAndLabelCell.swift */,
+				B12ADCA22C6E832400680C68 /* ImageAndLabelCell.xib */,
+				B12ADCA32C6E832400680C68 /* ImageAndLabelViewModel.swift */,
+				B12ADC9F2C6E832400680C68 /* SimpleViewController.swift */,
+				B12ADCA02C6E832400680C68 /* SimpleViewController.xib */,
+				B12ADCA12C6E832400680C68 /* SimpleViewSection.swift */,
+			);
+			path = simple;
+			sourceTree = "<group>";
+		};
+		B12ADCAA2C6E833D00680C68 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				B12ADCAF2C6E834E00680C68 /* BorderedView.swift */,
+				B12ADCAD2C6E834E00680C68 /* IntToLayoutConverter.swift */,
+				B12ADCAC2C6E834E00680C68 /* NibLoadable.swift */,
+				B12ADCAB2C6E834E00680C68 /* RandomImage.swift */,
+				B12ADCAE2C6E834E00680C68 /* RandomImageGenerator.swift */,
+			);
+			path = utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -95,6 +148,8 @@
 			packageProductDependencies = (
 				B1066FBB2C41C7D1004EC355 /* PanelView */,
 				B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */,
+				B12ADCB62C6E835B00680C68 /* LoremIpsum */,
+				B12ADCB92C6E836100680C68 /* Composure */,
 			);
 			productName = PanelViewExample;
 			productReference = B1066FA22C41C763004EC355 /* PanelViewExample.app */;
@@ -127,6 +182,8 @@
 			packageReferences = (
 				B1066FBA2C41C7D1004EC355 /* XCLocalSwiftPackageReference ".." */,
 				B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */,
+				B12ADCB52C6E835B00680C68 /* XCRemoteSwiftPackageReference "LoremIpsum" */,
+				B12ADCB82C6E836100680C68 /* XCRemoteSwiftPackageReference "Composure" */,
 			);
 			productRefGroup = B1066FA32C41C763004EC355 /* Products */;
 			projectDirPath = "";
@@ -143,7 +200,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1066FB22C41C764004EC355 /* LaunchScreen.storyboard in Resources */,
+				B12ADCA82C6E832400680C68 /* ImageAndLabelCell.xib in Resources */,
 				B1066FAF2C41C764004EC355 /* Assets.xcassets in Resources */,
+				B12ADCA62C6E832400680C68 /* SimpleViewController.xib in Resources */,
 				B1066FAD2C41C763004EC355 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -155,9 +214,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B12ADCA42C6E832400680C68 /* ImageAndLabelCell.swift in Sources */,
+				B12ADCB02C6E834E00680C68 /* RandomImage.swift in Sources */,
+				B12ADCA92C6E832400680C68 /* ImageAndLabelViewModel.swift in Sources */,
+				B12ADCB22C6E834E00680C68 /* IntToLayoutConverter.swift in Sources */,
+				B12ADCB32C6E834E00680C68 /* RandomImageGenerator.swift in Sources */,
+				B12ADCB42C6E834E00680C68 /* BorderedView.swift in Sources */,
+				B12ADCB12C6E834E00680C68 /* NibLoadable.swift in Sources */,
 				B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */,
+				B12ADCA52C6E832400680C68 /* SimpleViewController.swift in Sources */,
 				B1066FAA2C41C763004EC355 /* ViewController.swift in Sources */,
 				B1066FA62C41C763004EC355 /* AppDelegate.swift in Sources */,
+				B12ADCA72C6E832400680C68 /* SimpleViewSection.swift in Sources */,
 				B1066FA82C41C763004EC355 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +472,22 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B12ADCB52C6E835B00680C68 /* XCRemoteSwiftPackageReference "LoremIpsum" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukaskubanek/LoremIpsum";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		B12ADCB82C6E836100680C68 /* XCRemoteSwiftPackageReference "Composure" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/eclypse-tms/Composure";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.3;
+			};
+		};
 		B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/yonat/MultiSelectSegmentedControl";
@@ -418,6 +502,16 @@
 		B1066FBB2C41C7D1004EC355 /* PanelView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PanelView;
+		};
+		B12ADCB62C6E835B00680C68 /* LoremIpsum */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B12ADCB52C6E835B00680C68 /* XCRemoteSwiftPackageReference "LoremIpsum" */;
+			productName = LoremIpsum;
+		};
+		B12ADCB92C6E836100680C68 /* Composure */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B12ADCB82C6E836100680C68 /* XCRemoteSwiftPackageReference "Composure" */;
+			productName = Composure;
 		};
 		B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */ = {
 			isa = XCSwiftPackageProductDependency;

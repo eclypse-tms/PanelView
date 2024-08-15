@@ -38,14 +38,6 @@ public struct PanelViewConfiguration {
     /// The space in the between the panels.
     public var interPanelSpacing: CGFloat
     
-    /// Number of panels on each side that are created and added to the view hiearchy.
-    /// The default value is 4. This means 4 panels on each side of the main panel
-    /// for a total of 9 panels are added to the view hierarchy. Priming panels
-    /// before hand helps with animations and transitions to work correctly. If you know
-    /// that you will need more than 9 panels adjust this number accordingly otherwise
-    /// leave it as-is.
-    public var numberOfPanelsToPrime: Int
-    
     /// the animation duration when inserting and removing panels from the view
     public var panelTransitionDuration: Double
     
@@ -74,7 +66,6 @@ public extension PanelViewConfiguration {
         self.orientation = .horizontal
         self.emptyStateView = nil
         self.panelDividerColor = UIColor.opaqueSeparator
-        self.numberOfPanelsToPrime = 4
         self.panelTransitionDuration = 0.333333
         self.allowsUIPanelSizeAdjustment = true
         self.interPanelSpacing = 1.0

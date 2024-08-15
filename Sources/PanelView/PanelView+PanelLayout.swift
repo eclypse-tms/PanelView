@@ -40,6 +40,8 @@ extension PanelView {
     
     @discardableResult
     func createPanel(for indexedPanel: PanelIndex) -> UIView {
+        return panelMappings[indexedPanel]!
+        /*
         let aNewPanel = UIView()
         aNewPanel.translatesAutoresizingMaskIntoConstraints = false
         aNewPanel.tag = indexedPanel.index
@@ -73,9 +75,11 @@ extension PanelView {
             }
         }
         return aNewPanel
+        */
     }
     
     func applyMinWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+        /*
         var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
         if let existingMinWidthConstraint = panelMinWidthMappings[indexedPanel] {
             effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
@@ -96,9 +100,11 @@ extension PanelView {
         minWidthConstraint.isActive = true
         minWidthConstraint.identifier = "min \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMinWidthMappings[indexedPanel] = minWidthConstraint
+        */
     }
     
     func applyMaxWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+        /*
         var effectiveMaxWidthConstantForPanel: CGFloat = defaultPanelMaxWidth
         if let existingMaxWidthConstraint = panelMaxWidthMappings[indexedPanel] {
             effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
@@ -119,9 +125,11 @@ extension PanelView {
         maxWidthConstraint.isActive = true
         maxWidthConstraint.identifier = "max \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
+         */
     }
     
     func applyPreferredWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+        /*
         var effectiveWidthConstantForPanel: CGFloat = 475
         
         if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
@@ -148,6 +156,7 @@ extension PanelView {
         widthConstraint.isActive = true
         widthConstraint.identifier = "\(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelWidthMappings[indexedPanel] = widthConstraint
+         */
     }
     
     func activatePanelLayoutConstraintsIfNecessary(for indexedPanel: PanelIndex) {
