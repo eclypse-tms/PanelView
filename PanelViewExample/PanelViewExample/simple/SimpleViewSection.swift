@@ -44,7 +44,7 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
         case .section0:
             return .dynamicWidthFixedHeight(estimatedWidth: 240, fixedHeight: 54)
         case .section1:
-            return .dynamicWidthDynamicHeight(estimatedWidth: 280, estimatedHeight: 95)
+            return .dynamicWidthDynamicHeight(estimatedWidth: 275, estimatedHeight: 95)
         case .section2:
             return .fixedWidthFixedHeight(fixedWidth: 150, fixedHeight: 150)
         case .section3:
@@ -58,13 +58,13 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
         case .section7:
             return .fullWidthDynamicHeight(estimatedHeight: 180)
         case .section8:
-            return .centeredFixedHeight(maxWidth: 280, fixedHeight: 105)
+            return .centeredFixedHeight(maxWidth: 225, fixedHeight: 105)
         case .section9:
             return .centeredDynamicHeight(maxWidth: 240, estimatedHeight: 75)
         case .section10:
             return .minWidthFixedHeight(minWidth: 210, fixedHeight: 150)
         case .section11:
-            return .minWidthDynamicHeight(minWidth: 300, estimatedHeight: 210)
+            return .minWidthDynamicHeight(minWidth: 275, estimatedHeight: 210)
         case .section12:
             return .multipleCenteredFixedHeight(numberOfCells: 2, totalMaxWidthOfAllCells: 450, fixedHeight: 180)
         case .section13:
@@ -78,10 +78,10 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
     }
     
     var interItemSpacing: CGFloat {
-        return 12
+        return 8
     }
     
     var interGroupSpacing: CGFloat {
-        return 12
+        return 8
     }
 }
