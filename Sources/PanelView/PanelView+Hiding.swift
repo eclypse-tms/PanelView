@@ -15,7 +15,7 @@ public extension PanelView {
     ///   - releaseViewController: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
     ///   - completion: notifies the called that hiding is complete.
     func hidePanel(containing viewController: UIViewController, animated: Bool = true, releaseViewController: Trilean = .default, completion: (() -> Void)? = nil) {
-        let panelToHide: PanelIndex? = presents(viewController: viewController)
+        let panelToHide: PanelIndex? = index(of: viewController)
         
         if let discoveredPanelToHide = panelToHide {
             hide(panel: discoveredPanelToHide, animated: animated, completion: completion)

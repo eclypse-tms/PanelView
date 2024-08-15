@@ -185,7 +185,7 @@ public extension PanelView {
     }
     
     /// checks whether the provided viewController is currently being presented in one of the panels
-    func presents(viewController: UIViewController) -> PanelIndex? {
+    func index(of viewController: UIViewController) -> PanelIndex? {
         var vcPresentedIn: PanelIndex?
         for (eachPanel, eachNavController) in viewControllers {
             if eachNavController.viewControllers.contains(viewController) {

@@ -74,7 +74,7 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
     }
     
     func sectionInsets(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSDirectionalEdgeInsets {
-        return NSDirectionalEdgeInsets(top: 4, leading: 12, bottom: 0, trailing: 12)
+        return NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 0, trailing: 4)
     }
     
     var interItemSpacing: CGFloat {

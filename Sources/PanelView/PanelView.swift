@@ -318,29 +318,15 @@ public class PanelView: UIViewController, ResizablePanel {
     
     /// adds the stackview to the view hierarchy
     private func configurePrimaryStackView() {
-        // nothing to do here
-        /*
-        let primaryStackView = UIStackView()
         switch configuration.orientation {
         case .horizontal:
-            primaryStackView.axis = .horizontal
+            mainStackView.axis = .horizontal
         case .vertical:
-            primaryStackView.axis = .vertical
+            mainStackView.axis = .vertical
         }
         
-        primaryStackView.spacing = configuration.interPanelSpacing
-        primaryStackView.backgroundColor = .clear
-        primaryStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.view.addSubview(primaryStackView)
-        NSLayoutConstraint.activate([
-            primaryStackView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            primaryStackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            primaryStackView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            primaryStackView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-        ])
-        mainStackView = primaryStackView
-        */
+        mainStackView.spacing = configuration.interPanelSpacing
+        mainStackView.backgroundColor = .clear
     }
     
     // MARK: empty view
