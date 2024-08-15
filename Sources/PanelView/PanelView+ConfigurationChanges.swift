@@ -20,9 +20,7 @@ extension PanelView {
                     removePanelDivider(for: indexedPanel)
                 }
             }
-            
-            mainStackView.axis = newConfig.orientation.axis
-            
+                        
             mainStackView.layoutIfNeeded()
             
             panelMappings.forEach { (indexedPanel, existingPanel) in
@@ -95,7 +93,7 @@ extension PanelView {
         }
         
         if oldConfig.interPanelSpacing != newConfig.interPanelSpacing {
-            mainStackView.spacing = newConfig.interPanelSpacing
+            // mainStackView.spacing = newConfig.interPanelSpacing
         }
         
         if oldConfig.allowsUIPanelSizeAdjustment != newConfig.allowsUIPanelSizeAdjustment {

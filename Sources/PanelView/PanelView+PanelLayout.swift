@@ -18,7 +18,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttribute: NSLayoutConstraint.Attribute {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return .width
         } else {
             return .height
@@ -27,7 +27,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttributeIdentifier: String {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return "width"
         } else {
             return "height"
@@ -45,15 +45,15 @@ extension PanelView {
         aNewPanel.tag = indexedPanel.index
         aNewPanel.isHidden = true
         panelMappings[indexedPanel] = aNewPanel
-        mainStackView.addArrangedSubview(aNewPanel)
+        mainStackView.addSubview(aNewPanel)
         
         if indexedPanel.index != 0 {
             
             if isSinglePanelMode {
-                // when running in single panel mode
-                // we do not need to apply any constraints to any
-                // panel because there is only one panel and it takes
-                // up the entirity of the screen
+                // when running in single panel mode, we need to create the panel outside of the viewport
+                // then with animations we will bring the panel back into the viewport
+                
+                
             } else {
                 // Configure min width
                 applyMinWidthConstraint(for: aNewPanel, using: indexedPanel)
@@ -74,6 +74,14 @@ extension PanelView {
         }
         return aNewPanel
     }
+    
+    func applySizeConstraintsOnTheLeftSideOfTheViewPort(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+        NSLayoutConstraint.activate([
+            aNewPanel.
+        ])
+    }
+    
+    
     
     func applyMinWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
         var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
@@ -127,7 +135,7 @@ extension PanelView {
         if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
             effectiveWidthConstantForPanel = existingWidthConstraint.constant
         } else if let savedWidthFraction = pendingWidthFraction[indexedPanel] {
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
             } else {
                 effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction

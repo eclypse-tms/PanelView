@@ -57,7 +57,7 @@ public extension PanelView {
             // from the superview and re-insert it later on
             aPanelToShow.removeFromSuperview()
             let subViewIndex = calculateAppropriateIndex(for: panel)
-            mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
+            mainStackView.insertSubview(aPanelToShow, at: subViewIndex)
         //}
         
         // reattach its accompanying view divider if necessary
