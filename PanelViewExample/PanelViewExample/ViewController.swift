@@ -24,12 +24,14 @@ class ViewController: UIViewController {
     
     private var cancellables = Set<AnyCancellable>()
     private var panelView: PanelView!
+    private var intToLayoutConverter: IntToLayoutConverter!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
         addPanelView()
+        intToLayoutConverter = IntToLayoutConverter()
         // configureBindings()
         
         lhsMultiSelect.items = ["5", "4", "3", "2", "1"]
@@ -66,7 +68,7 @@ class ViewController: UIViewController {
             let onTheFlyPanelIndex = PanelIndex(index: index)
             panelView.minimumWidth(100, for: onTheFlyPanelIndex)
             panelView.maximumWidth(600, for: onTheFlyPanelIndex)
-            panelView.preferredWidthFraction(0.1, at: index)
+            panelView.preferredWidthFraction(0.35, at: index)
         }
         
         
@@ -215,15 +217,28 @@ class ViewController: UIViewController {
     }
     
     private func addLabel(to vc: UIViewController, labelText: String) {
-        let centerViewIndicator = UILabel()
-        centerViewIndicator.translatesAutoresizingMaskIntoConstraints = false
-        centerViewIndicator.text = labelText
-        centerViewIndicator.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        let panelLabel = UILabel()
+        panelLabel.translatesAutoresizingMaskIntoConstraints = false
+        panelLabel.text = labelText
+        panelLabel.font = UIFont.preferredFont(forTextStyle: .largeTitle)
+        // panelLabel.textColor =
         
-        vc.view.addSubview(centerViewIndicator)
+        let labelContainer = UIView()
+        labelContainer.translatesAutoresizingMaskIntoConstraints = false
+        labelContainer.backgroundColor = .tertiarySystemBackground
+        
+        labelContainer.addSubview(panelLabel)
         NSLayoutConstraint.activate([
-            centerViewIndicator.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
-            centerViewIndicator.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor),
+            panelLabel.leadingAnchor.constraint(equalTo: labelContainer.leadingAnchor, constant: 20),
+            panelLabel.trailingAnchor.constraint(equalTo: labelContainer.trailingAnchor, constant: -20),
+            panelLabel.topAnchor.constraint(equalTo: labelContainer.topAnchor, constant: 20),
+            panelLabel.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor, constant: -20),
+        ])
+        
+        vc.view.addSubview(labelContainer)
+        NSLayoutConstraint.activate([
+            labelContainer.centerXAnchor.constraint(equalTo: vc.view.centerXAnchor),
+            labelContainer.centerYAnchor.constraint(equalTo: vc.view.centerYAnchor),
         ])
     }
     
@@ -287,14 +302,16 @@ extension ViewController: MultiSelectSegmentedControlDelegate {
         func showOrHidePanel(panelIndex: Int, panelLabel: String) {
             if value {
                 // show a new panel with a new view controller
-                let aNewVC = UIViewController()
+                let aNewVC = SimpleViewController()
+                aNewVC.register(layoutOption: intToLayoutConverter.convert(intValue: Int.random(in: 0...13)))
                 aNewVC.navigationController?.setNavigationBarHidden(true, animated: false)
                 if panelIndex == 0 {
                     aNewVC.view.backgroundColor = .systemBackground
                     addLabel(to: aNewVC, labelText: "Main")
                 } else {
-                    aNewVC.view.backgroundColor = randomSystemColor() //.systemBackground
-                    addLabel(to: aNewVC, labelText: panelLabel)
+                    aNewVC.title = "Panel: \(panelIndex)"
+                    // aNewVC.view.backgroundColor = randomSystemColor() //.systemBackground
+                    // addLabel(to: aNewVC, labelText: panelLabel)
                 }
                 panelView.show(viewController: aNewVC, at: panelIndex)
             } else {
