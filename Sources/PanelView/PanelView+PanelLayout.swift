@@ -43,6 +43,7 @@ extension PanelView {
         let aNewPanel = UIView()
         aNewPanel.translatesAutoresizingMaskIntoConstraints = false
         aNewPanel.tag = indexedPanel.index
+        aNewPanel.layer.zPosition = CGFloat(100 + indexedPanel.index)
         aNewPanel.isHidden = true
         panelMappings[indexedPanel] = aNewPanel
         mainStackView.addArrangedSubview(aNewPanel)
