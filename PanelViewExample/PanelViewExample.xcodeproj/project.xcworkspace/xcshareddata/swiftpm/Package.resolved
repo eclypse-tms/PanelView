@@ -1,6 +1,24 @@
 {
   "pins" : [
     {
+      "identity" : "composure",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eclypse-tms/Composure",
+      "state" : {
+        "revision" : "3ba746336f11ac15d98a7da4638c0d582b0c2f28",
+        "version" : "1.2.3"
+      }
+    },
+    {
+      "identity" : "loremipsum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lukaskubanek/LoremIpsum",
+      "state" : {
+        "branch" : "master",
+        "revision" : "3c739014fd11bcf0a3b2263b95b89d12f1257579"
+      }
+    },
+    {
       "identity" : "multiselectsegmentedcontrol",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/yonat/MultiSelectSegmentedControl",

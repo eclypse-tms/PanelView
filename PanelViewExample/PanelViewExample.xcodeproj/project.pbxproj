@@ -15,6 +15,19 @@
 		B1066FB22C41C764004EC355 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1066FB02C41C764004EC355 /* LaunchScreen.storyboard */; };
 		B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */ = {isa = PBXBuildFile; productRef = B1066FBB2C41C7D1004EC355 /* PanelView */; };
 		B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */; };
+		B14637E42C724B60009A7EDD /* ImageAndLabelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637DE2C724B60009A7EDD /* ImageAndLabelViewModel.swift */; };
+		B14637E52C724B60009A7EDD /* ComplexViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637DF2C724B60009A7EDD /* ComplexViewController.swift */; };
+		B14637E62C724B60009A7EDD /* ImageAndLabelCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637E02C724B60009A7EDD /* ImageAndLabelCell.swift */; };
+		B14637E72C724B60009A7EDD /* ComplexViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B14637E12C724B60009A7EDD /* ComplexViewController.xib */; };
+		B14637E82C724B60009A7EDD /* ImageAndLabelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B14637E22C724B60009A7EDD /* ImageAndLabelCell.xib */; };
+		B14637E92C724B60009A7EDD /* ComplexViewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637E32C724B60009A7EDD /* ComplexViewSection.swift */; };
+		B14637EF2C724B72009A7EDD /* RandomImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637EA2C724B72009A7EDD /* RandomImageGenerator.swift */; };
+		B14637F02C724B72009A7EDD /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637EB2C724B72009A7EDD /* BorderedView.swift */; };
+		B14637F12C724B72009A7EDD /* RandomImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637EC2C724B72009A7EDD /* RandomImage.swift */; };
+		B14637F22C724B72009A7EDD /* IntToLayoutConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637ED2C724B72009A7EDD /* IntToLayoutConverter.swift */; };
+		B14637F32C724B72009A7EDD /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637EE2C724B72009A7EDD /* NibLoadable.swift */; };
+		B14637F62C724D8F009A7EDD /* Composure in Frameworks */ = {isa = PBXBuildFile; productRef = B14637F52C724D8F009A7EDD /* Composure */; };
+		B14637F92C724D95009A7EDD /* LoremIpsum in Frameworks */ = {isa = PBXBuildFile; productRef = B14637F82C724D95009A7EDD /* LoremIpsum */; };
 		B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +42,17 @@
 		B1066FB32C41C764004EC355 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B1066FB92C41C7AA004EC355 /* PanelViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PanelViewExample.entitlements; sourceTree = "<group>"; };
 		B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtensions.swift; sourceTree = "<group>"; };
+		B14637DE2C724B60009A7EDD /* ImageAndLabelViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAndLabelViewModel.swift; sourceTree = "<group>"; };
+		B14637DF2C724B60009A7EDD /* ComplexViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplexViewController.swift; sourceTree = "<group>"; };
+		B14637E02C724B60009A7EDD /* ImageAndLabelCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAndLabelCell.swift; sourceTree = "<group>"; };
+		B14637E12C724B60009A7EDD /* ComplexViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ComplexViewController.xib; sourceTree = "<group>"; };
+		B14637E22C724B60009A7EDD /* ImageAndLabelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageAndLabelCell.xib; sourceTree = "<group>"; };
+		B14637E32C724B60009A7EDD /* ComplexViewSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplexViewSection.swift; sourceTree = "<group>"; };
+		B14637EA2C724B72009A7EDD /* RandomImageGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImageGenerator.swift; sourceTree = "<group>"; };
+		B14637EB2C724B72009A7EDD /* BorderedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
+		B14637EC2C724B72009A7EDD /* RandomImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImage.swift; sourceTree = "<group>"; };
+		B14637ED2C724B72009A7EDD /* IntToLayoutConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntToLayoutConverter.swift; sourceTree = "<group>"; };
+		B14637EE2C724B72009A7EDD /* NibLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +61,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1066FBC2C41C7D1004EC355 /* PanelView in Frameworks */,
+				B14637F62C724D8F009A7EDD /* Composure in Frameworks */,
 				B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */,
+				B14637F92C724D95009A7EDD /* LoremIpsum in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +89,8 @@
 		B1066FA42C41C763004EC355 /* PanelViewExample */ = {
 			isa = PBXGroup;
 			children = (
+				B14637DD2C724B31009A7EDD /* cv */,
+				B14637DC2C724B28009A7EDD /* utils */,
 				B1066FB92C41C7AA004EC355 /* PanelViewExample.entitlements */,
 				B1066FA52C41C763004EC355 /* AppDelegate.swift */,
 				B1066FA72C41C763004EC355 /* SceneDelegate.swift */,
@@ -74,6 +102,31 @@
 				B11ACDFB2C540A64009D969A /* UIViewControllerExtensions.swift */,
 			);
 			path = PanelViewExample;
+			sourceTree = "<group>";
+		};
+		B14637DC2C724B28009A7EDD /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				B14637EB2C724B72009A7EDD /* BorderedView.swift */,
+				B14637ED2C724B72009A7EDD /* IntToLayoutConverter.swift */,
+				B14637EE2C724B72009A7EDD /* NibLoadable.swift */,
+				B14637EC2C724B72009A7EDD /* RandomImage.swift */,
+				B14637EA2C724B72009A7EDD /* RandomImageGenerator.swift */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		B14637DD2C724B31009A7EDD /* cv */ = {
+			isa = PBXGroup;
+			children = (
+				B14637E02C724B60009A7EDD /* ImageAndLabelCell.swift */,
+				B14637E22C724B60009A7EDD /* ImageAndLabelCell.xib */,
+				B14637DE2C724B60009A7EDD /* ImageAndLabelViewModel.swift */,
+				B14637DF2C724B60009A7EDD /* ComplexViewController.swift */,
+				B14637E12C724B60009A7EDD /* ComplexViewController.xib */,
+				B14637E32C724B60009A7EDD /* ComplexViewSection.swift */,
+			);
+			path = cv;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -95,6 +148,8 @@
 			packageProductDependencies = (
 				B1066FBB2C41C7D1004EC355 /* PanelView */,
 				B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */,
+				B14637F52C724D8F009A7EDD /* Composure */,
+				B14637F82C724D95009A7EDD /* LoremIpsum */,
 			);
 			productName = PanelViewExample;
 			productReference = B1066FA22C41C763004EC355 /* PanelViewExample.app */;
@@ -127,6 +182,8 @@
 			packageReferences = (
 				B1066FBA2C41C7D1004EC355 /* XCLocalSwiftPackageReference ".." */,
 				B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */,
+				B14637F42C724D8F009A7EDD /* XCRemoteSwiftPackageReference "Composure" */,
+				B14637F72C724D95009A7EDD /* XCRemoteSwiftPackageReference "LoremIpsum" */,
 			);
 			productRefGroup = B1066FA32C41C763004EC355 /* Products */;
 			projectDirPath = "";
@@ -143,7 +200,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1066FB22C41C764004EC355 /* LaunchScreen.storyboard in Resources */,
+				B14637E82C724B60009A7EDD /* ImageAndLabelCell.xib in Resources */,
 				B1066FAF2C41C764004EC355 /* Assets.xcassets in Resources */,
+				B14637E72C724B60009A7EDD /* ComplexViewController.xib in Resources */,
 				B1066FAD2C41C763004EC355 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,8 +215,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */,
+				B14637F02C724B72009A7EDD /* BorderedView.swift in Sources */,
 				B1066FAA2C41C763004EC355 /* ViewController.swift in Sources */,
+				B14637E52C724B60009A7EDD /* ComplexViewController.swift in Sources */,
 				B1066FA62C41C763004EC355 /* AppDelegate.swift in Sources */,
+				B14637EF2C724B72009A7EDD /* RandomImageGenerator.swift in Sources */,
+				B14637E92C724B60009A7EDD /* ComplexViewSection.swift in Sources */,
+				B14637F12C724B72009A7EDD /* RandomImage.swift in Sources */,
+				B14637E42C724B60009A7EDD /* ImageAndLabelViewModel.swift in Sources */,
+				B14637F22C724B72009A7EDD /* IntToLayoutConverter.swift in Sources */,
+				B14637E62C724B60009A7EDD /* ImageAndLabelCell.swift in Sources */,
+				B14637F32C724B72009A7EDD /* NibLoadable.swift in Sources */,
 				B1066FA82C41C763004EC355 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +472,22 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B14637F42C724D8F009A7EDD /* XCRemoteSwiftPackageReference "Composure" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/eclypse-tms/Composure";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.3;
+			};
+		};
+		B14637F72C724D95009A7EDD /* XCRemoteSwiftPackageReference "LoremIpsum" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukaskubanek/LoremIpsum";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B1FBB39D2C51655D0090CEF0 /* XCRemoteSwiftPackageReference "MultiSelectSegmentedControl" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/yonat/MultiSelectSegmentedControl";
@@ -418,6 +502,16 @@
 		B1066FBB2C41C7D1004EC355 /* PanelView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PanelView;
+		};
+		B14637F52C724D8F009A7EDD /* Composure */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B14637F42C724D8F009A7EDD /* XCRemoteSwiftPackageReference "Composure" */;
+			productName = Composure;
+		};
+		B14637F82C724D95009A7EDD /* LoremIpsum */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B14637F72C724D95009A7EDD /* XCRemoteSwiftPackageReference "LoremIpsum" */;
+			productName = LoremIpsum;
 		};
 		B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */ = {
 			isa = XCSwiftPackageProductDependency;
