@@ -52,13 +52,13 @@ public extension PanelView {
         let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
         
         
-        //if panel.index > 0 {
-            // in order for animations to run correctly for the stackview, we need to first remove the panel
-            // from the superview and re-insert it later on
-            aPanelToShow.removeFromSuperview()
-            let subViewIndex = calculateAppropriateIndex(for: panel)
-            mainStackView.insertSubview(aPanelToShow, at: subViewIndex)
-        //}
+        // if panel.index > 0 {
+        // in order for animations to run correctly for the stackview, we need to first remove the panel
+        // from the superview and re-insert it later on
+        // aPanelToShow.removeFromSuperview()
+        // let subViewIndex = calculateAppropriateIndex(for: panel)
+        // mainStackView.insertSubview(aPanelToShow, at: subViewIndex)
+        // }
         
         // reattach its accompanying view divider if necessary
         if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !isSinglePanelMode {

@@ -149,9 +149,7 @@ public class PanelView: UIViewController, ResizablePanel {
     private func configureInitialPanels() {
         for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
             let onTheFlyPanelIndex = PanelIndex(index: index)
-            let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
-            mainStackView.addSubview(newlyCreatedPanel)
-            newlyCreatedPanel.isHidden = true
+            createPanel(for: onTheFlyPanelIndex)
         }
     }
     
@@ -249,13 +247,7 @@ public class PanelView: UIViewController, ResizablePanel {
         addChild(childNavController)
         viewControllers[panel] = childNavController
         
-        let parentView: UIView
-        
-        if let existingPanel: UIView = panelMappings[panel] {
-            parentView = existingPanel
-        } else {
-            parentView = createPanel(for: panel)
-        }
+        let parentView = panelMappings[panel] ?? createPanel(for: panel)
         
         // there is already a parent panel, simply add
         parentView.addSubview(childNavController.view)
@@ -267,7 +259,6 @@ public class PanelView: UIViewController, ResizablePanel {
             parentView.topAnchor.constraint(equalTo: childNavController.view.topAnchor),
             parentView.bottomAnchor.constraint(equalTo: childNavController.view.bottomAnchor)]
         )
-        
         
         childNavController.didMove(toParent: self)
         

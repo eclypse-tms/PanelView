@@ -2,7 +2,7 @@
 //  PanelView+EmptyState.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 7/24/24.
+//  Created by eclypse on 7/24/24.
 //
 
 import Foundation
