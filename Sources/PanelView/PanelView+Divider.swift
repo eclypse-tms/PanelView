@@ -27,7 +27,7 @@ extension PanelView {
         if let matchingPanel = panelMappings[indexedPanel] {
             associatedPanel = matchingPanel
         } else {
-            associatedPanel = createPanel(for: indexedPanel)
+            associatedPanel = getPanel(for: indexedPanel)
         }
         
         
@@ -37,7 +37,7 @@ extension PanelView {
         viewDivider.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(viewDivider)
         
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             // the panels are laid out side by side
             var layoutConstraints = [NSLayoutConstraint]()
             layoutConstraints.append(viewDivider.topAnchor.constraint(equalTo: self.view.topAnchor))

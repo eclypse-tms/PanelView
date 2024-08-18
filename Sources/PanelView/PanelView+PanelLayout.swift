@@ -18,7 +18,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttribute: NSLayoutConstraint.Attribute {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return .width
         } else {
             return .height
@@ -27,7 +27,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttributeIdentifier: String {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return "width"
         } else {
             return "height"
@@ -39,7 +39,7 @@ extension PanelView {
     }
     
     @discardableResult
-    func createPanel(for indexedPanel: PanelIndex) -> UIView {
+    func getPanel(for indexedPanel: PanelIndex) -> UIView {
         return panelMappings[indexedPanel]!
         /*
         let aNewPanel = UIView()
@@ -79,14 +79,20 @@ extension PanelView {
     }
     
     func applyMinWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
-        /*
-        var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
+        let effectiveMinWidthConstantForPanel: CGFloat
         if let existingMinWidthConstraint = panelMinWidthMappings[indexedPanel] {
             effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
+            
+            // if there is already an existing constraint deactivate it
+            if existingMinWidthConstraint.isActive {
+                existingMinWidthConstraint.isActive = false
+            }
+            
         } else if let pendingMinWidthConstraint = pendingMinimumWidth[indexedPanel] {
             effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
         } else {
             print("PanelView - we couldn't find minimum width constraint for panel: \(indexedPanel.index). applying default values.")
+            effectiveMinWidthConstantForPanel = defaultPanelMinWidth
         }
         
         let minWidthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -100,18 +106,25 @@ extension PanelView {
         minWidthConstraint.isActive = true
         minWidthConstraint.identifier = "min \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMinWidthMappings[indexedPanel] = minWidthConstraint
-        */
+        
     }
     
     func applyMaxWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
-        /*
-        var effectiveMaxWidthConstantForPanel: CGFloat = defaultPanelMaxWidth
+        
+        let effectiveMaxWidthConstantForPanel: CGFloat
         if let existingMaxWidthConstraint = panelMaxWidthMappings[indexedPanel] {
             effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
+            
+            // if there is already an existing constraint deactivate it
+            if existingMaxWidthConstraint.isActive {
+                existingMaxWidthConstraint.isActive = false
+            }
+            
         } else if let pendingMaxWidthConstraint = pendingMaximumWidth[indexedPanel] {
             effectiveMaxWidthConstantForPanel = pendingMaxWidthConstraint
         } else {
             print("PanelView - we couldn't find maximum width constraint for panel: \(indexedPanel.index). applying default values.")
+            effectiveMaxWidthConstantForPanel = defaultPanelMaxWidth
         }
         
         let maxWidthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -121,27 +134,34 @@ extension PanelView {
                                                     attribute: .notAnAttribute,
                                                     multiplier: 1.0,
                                                     constant: effectiveMaxWidthConstantForPanel)
-        maxWidthConstraint.priority = UILayoutPriority(998.0)
+        maxWidthConstraint.priority = UILayoutPriority(750)
         maxWidthConstraint.isActive = true
         maxWidthConstraint.identifier = "max \(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
-         */
+        
     }
     
     func applyPreferredWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
-        /*
-        var effectiveWidthConstantForPanel: CGFloat = 475
         
+        let effectiveWidthConstantForPanel: CGFloat
+    
         if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
             effectiveWidthConstantForPanel = existingWidthConstraint.constant
+            
+            // if there is already an existing constraint deactivate it
+            if existingWidthConstraint.isActive {
+                existingWidthConstraint.isActive = false
+            }
+            
         } else if let savedWidthFraction = pendingWidthFraction[indexedPanel] {
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
             } else {
                 effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
             }
         } else {
             print("PanelView - we couldn't find width constraint for panel: \(indexedPanel.index). applying default values.")
+            effectiveWidthConstantForPanel = 450
         }
         
         let widthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -152,11 +172,11 @@ extension PanelView {
                                                     multiplier: 1.0,
                                                     constant: effectiveWidthConstantForPanel)
         
-        widthConstraint.priority = UILayoutPriority(999.0)
+        widthConstraint.priority = UILayoutPriority(999)
         widthConstraint.isActive = true
         widthConstraint.identifier = "\(layoutAttributeIdentifier): panel: \(indexedPanel.index)"
         panelWidthMappings[indexedPanel] = widthConstraint
-         */
+        
     }
     
     func activatePanelLayoutConstraintsIfNecessary(for indexedPanel: PanelIndex) {
@@ -211,25 +231,17 @@ extension PanelView {
     
     func deactivatePanelLayoutConstraints(for indexedPanel: PanelIndex) {
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
-            // pendingMaximumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
-        /*
+        
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
-            pendingMinimumWidth[indexedPanel] = aConstraint.constant
-            aConstraint.isActive = false
-            aConstraint.constant = 0
-            panelMinWidthMappings.removeValue(forKey: indexedPanel)
+            // aConstraint.isActive = false
         }
-        */
+        
         
         if let aConstraint = panelWidthMappings[indexedPanel] {
             aConstraint.isActive = false
-            // don't remove this mapping from the backing dictionary
-            // in case this constraint gets activated again
-            //panelWidthMappings.removeValue(forKey: indexedPanel)
         }
     }
 }

@@ -42,9 +42,10 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
     func layoutInfo(using layoutEnvironment: NSCollectionLayoutEnvironment) -> CompositionalLayoutOption {
         switch self {
         case .section0:
-            return .dynamicWidthFixedHeight(estimatedWidth: 240, fixedHeight: 54)
+            return .dynamicWidthFixedHeight(estimatedWidth: 140, fixedHeight: 54)
         case .section1:
-            return .dynamicWidthDynamicHeight(estimatedWidth: 275, estimatedHeight: 95)
+            return .dynamicWidthFixedHeight(estimatedWidth: 181, fixedHeight: 96)
+            // return .dynamicWidthDynamicHeight(estimatedWidth: 180, estimatedHeight: 95)
         case .section2:
             return .fixedWidthFixedHeight(fixedWidth: 150, fixedHeight: 150)
         case .section3:
@@ -56,7 +57,7 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
         case .section6:
             return .fullWidthFixedHeight(fixedHeight: 140)
         case .section7:
-            return .fullWidthDynamicHeight(estimatedHeight: 180)
+            return .fullWidthDynamicHeight(estimatedHeight: 175)
         case .section8:
             return .centeredFixedHeight(maxWidth: 225, fixedHeight: 105)
         case .section9:
@@ -64,9 +65,9 @@ enum SimpleViewSection: Int, CaseIterable, DefinesCompositionalLayout {
         case .section10:
             return .minWidthFixedHeight(minWidth: 210, fixedHeight: 150)
         case .section11:
-            return .minWidthDynamicHeight(minWidth: 275, estimatedHeight: 210)
+            return .minWidthDynamicHeight(minWidth: 230, estimatedHeight: 210)
         case .section12:
-            return .multipleCenteredFixedHeight(numberOfCells: 2, totalMaxWidthOfAllCells: 450, fixedHeight: 180)
+            return .multipleCenteredFixedHeight(numberOfCells: 2, totalMaxWidthOfAllCells: 450, fixedHeight: 185)
         case .section13:
             return .multipleCenteredDynamicHeight(numberOfCells: 3, totalMaxWidthOfAllCells: 600, estimatedHeight: 240)
             

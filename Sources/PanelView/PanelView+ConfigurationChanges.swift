@@ -23,7 +23,7 @@ extension PanelView {
             
             mainStackView.axis = newConfig.orientation.axis
             
-            mainStackView.layoutIfNeeded()
+            // mainStackView.layoutIfNeeded()
             
             panelMappings.forEach { (indexedPanel, existingPanel) in
                 if indexedPanel.index != 0 {
@@ -43,7 +43,7 @@ extension PanelView {
             // re-create panel dividers if in multi-panel mode
             if !isSinglePanelMode {
                 visiblePanels.forEach { eachVisiblePanelIndex in
-                    if let existingPanel = panelMappings[eachVisiblePanelIndex] {
+                    if panelMappings[eachVisiblePanelIndex] != nil {
                         if eachVisiblePanelIndex.index != 0, newConfig.allowsUIPanelSizeAdjustment {
                             createPanelDivider(for: eachVisiblePanelIndex)
                         }

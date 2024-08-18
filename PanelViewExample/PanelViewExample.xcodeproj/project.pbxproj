@@ -21,13 +21,13 @@
 		B12ADCA72C6E832400680C68 /* SimpleViewSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCA12C6E832400680C68 /* SimpleViewSection.swift */; };
 		B12ADCA82C6E832400680C68 /* ImageAndLabelCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B12ADCA22C6E832400680C68 /* ImageAndLabelCell.xib */; };
 		B12ADCA92C6E832400680C68 /* ImageAndLabelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCA32C6E832400680C68 /* ImageAndLabelViewModel.swift */; };
-		B12ADCB02C6E834E00680C68 /* RandomImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAB2C6E834E00680C68 /* RandomImage.swift */; };
-		B12ADCB12C6E834E00680C68 /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAC2C6E834E00680C68 /* NibLoadable.swift */; };
-		B12ADCB22C6E834E00680C68 /* IntToLayoutConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAD2C6E834E00680C68 /* IntToLayoutConverter.swift */; };
-		B12ADCB32C6E834E00680C68 /* RandomImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAE2C6E834E00680C68 /* RandomImageGenerator.swift */; };
-		B12ADCB42C6E834E00680C68 /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B12ADCAF2C6E834E00680C68 /* BorderedView.swift */; };
 		B12ADCB72C6E835B00680C68 /* LoremIpsum in Frameworks */ = {isa = PBXBuildFile; productRef = B12ADCB62C6E835B00680C68 /* LoremIpsum */; };
 		B12ADCBA2C6E836100680C68 /* Composure in Frameworks */ = {isa = PBXBuildFile; productRef = B12ADCB92C6E836100680C68 /* Composure */; };
+		B14637D52C7100D0009A7EDD /* RandomImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637D02C7100D0009A7EDD /* RandomImageGenerator.swift */; };
+		B14637D62C7100D0009A7EDD /* IntToLayoutConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637D12C7100D0009A7EDD /* IntToLayoutConverter.swift */; };
+		B14637D72C7100D0009A7EDD /* NibLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637D22C7100D0009A7EDD /* NibLoadable.swift */; };
+		B14637D82C7100D0009A7EDD /* BorderedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637D32C7100D0009A7EDD /* BorderedView.swift */; };
+		B14637D92C7100D0009A7EDD /* RandomImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14637D42C7100D0009A7EDD /* RandomImage.swift */; };
 		B1FBB39F2C51655D0090CEF0 /* MultiSelectSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = B1FBB39E2C51655D0090CEF0 /* MultiSelectSegmentedControl */; };
 /* End PBXBuildFile section */
 
@@ -48,11 +48,11 @@
 		B12ADCA12C6E832400680C68 /* SimpleViewSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleViewSection.swift; sourceTree = "<group>"; };
 		B12ADCA22C6E832400680C68 /* ImageAndLabelCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImageAndLabelCell.xib; sourceTree = "<group>"; };
 		B12ADCA32C6E832400680C68 /* ImageAndLabelViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageAndLabelViewModel.swift; sourceTree = "<group>"; };
-		B12ADCAB2C6E834E00680C68 /* RandomImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImage.swift; sourceTree = "<group>"; };
-		B12ADCAC2C6E834E00680C68 /* NibLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
-		B12ADCAD2C6E834E00680C68 /* IntToLayoutConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntToLayoutConverter.swift; sourceTree = "<group>"; };
-		B12ADCAE2C6E834E00680C68 /* RandomImageGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImageGenerator.swift; sourceTree = "<group>"; };
-		B12ADCAF2C6E834E00680C68 /* BorderedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
+		B14637D02C7100D0009A7EDD /* RandomImageGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImageGenerator.swift; sourceTree = "<group>"; };
+		B14637D12C7100D0009A7EDD /* IntToLayoutConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IntToLayoutConverter.swift; sourceTree = "<group>"; };
+		B14637D22C7100D0009A7EDD /* NibLoadable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NibLoadable.swift; sourceTree = "<group>"; };
+		B14637D32C7100D0009A7EDD /* BorderedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BorderedView.swift; sourceTree = "<group>"; };
+		B14637D42C7100D0009A7EDD /* RandomImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,11 +120,11 @@
 		B12ADCAA2C6E833D00680C68 /* utils */ = {
 			isa = PBXGroup;
 			children = (
-				B12ADCAF2C6E834E00680C68 /* BorderedView.swift */,
-				B12ADCAD2C6E834E00680C68 /* IntToLayoutConverter.swift */,
-				B12ADCAC2C6E834E00680C68 /* NibLoadable.swift */,
-				B12ADCAB2C6E834E00680C68 /* RandomImage.swift */,
-				B12ADCAE2C6E834E00680C68 /* RandomImageGenerator.swift */,
+				B14637D32C7100D0009A7EDD /* BorderedView.swift */,
+				B14637D12C7100D0009A7EDD /* IntToLayoutConverter.swift */,
+				B14637D22C7100D0009A7EDD /* NibLoadable.swift */,
+				B14637D42C7100D0009A7EDD /* RandomImage.swift */,
+				B14637D02C7100D0009A7EDD /* RandomImageGenerator.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -215,14 +215,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B12ADCA42C6E832400680C68 /* ImageAndLabelCell.swift in Sources */,
-				B12ADCB02C6E834E00680C68 /* RandomImage.swift in Sources */,
+				B14637D62C7100D0009A7EDD /* IntToLayoutConverter.swift in Sources */,
 				B12ADCA92C6E832400680C68 /* ImageAndLabelViewModel.swift in Sources */,
-				B12ADCB22C6E834E00680C68 /* IntToLayoutConverter.swift in Sources */,
-				B12ADCB32C6E834E00680C68 /* RandomImageGenerator.swift in Sources */,
-				B12ADCB42C6E834E00680C68 /* BorderedView.swift in Sources */,
-				B12ADCB12C6E834E00680C68 /* NibLoadable.swift in Sources */,
 				B11ACDFC2C540A64009D969A /* UIViewControllerExtensions.swift in Sources */,
 				B12ADCA52C6E832400680C68 /* SimpleViewController.swift in Sources */,
+				B14637D92C7100D0009A7EDD /* RandomImage.swift in Sources */,
+				B14637D72C7100D0009A7EDD /* NibLoadable.swift in Sources */,
+				B14637D52C7100D0009A7EDD /* RandomImageGenerator.swift in Sources */,
+				B14637D82C7100D0009A7EDD /* BorderedView.swift in Sources */,
 				B1066FAA2C41C763004EC355 /* ViewController.swift in Sources */,
 				B1066FA62C41C763004EC355 /* AppDelegate.swift in Sources */,
 				B12ADCA72C6E832400680C68 /* SimpleViewSection.swift in Sources */,

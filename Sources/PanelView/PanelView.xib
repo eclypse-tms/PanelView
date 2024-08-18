@@ -12,6 +12,10 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PanelView" customModule="PanelView">
             <connections>
                 <outlet property="mainStackView" destination="7EN-cr-9sj" id="AgF-vx-y87"/>
+                <outlet property="mainStackViewBottomConstraint" destination="f3l-ui-hcG" id="1Je-5q-wy5"/>
+                <outlet property="mainStackViewLeadingConstraint" destination="dko-qi-RFv" id="eew-1S-VT2"/>
+                <outlet property="mainStackViewTopConstraint" destination="6LB-kc-KfP" id="p38-Fc-pWK"/>
+                <outlet property="mainStackViewTrailingConstraint" destination="uhe-EH-1nf" id="H33-VU-ndq"/>
                 <outlet property="panelCenter" destination="Al3-A3-4Gt" id="1nj-pB-TEO"/>
                 <outlet property="panelMinus1" destination="0Q2-Zr-eEW" id="b4K-pe-60r"/>
                 <outlet property="panelMinus1MaxWidth" destination="oxn-8a-2t7" id="DgW-cY-W4K"/>
@@ -159,6 +163,7 @@
                             </constraints>
                         </view>
                     </subviews>
+                    <color key="backgroundColor" systemColor="systemRedColor"/>
                 </stackView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
@@ -175,6 +180,9 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

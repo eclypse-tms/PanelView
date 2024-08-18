@@ -10,7 +10,13 @@ import Combine
 import SwiftUI
 
 public class PanelView: UIViewController, ResizablePanel {
+    
     @IBOutlet var mainStackView: UIStackView!
+    @IBOutlet var mainStackViewLeadingConstraint: NSLayoutConstraint!
+    @IBOutlet var mainStackViewTrailingConstraint: NSLayoutConstraint!
+    @IBOutlet var mainStackViewTopConstraint: NSLayoutConstraint!
+    @IBOutlet var mainStackViewBottomConstraint: NSLayoutConstraint!
+    
     
     @IBOutlet var panelMinus5: UIView!
     @IBOutlet var panelMinus4: UIView!
@@ -235,7 +241,6 @@ public class PanelView: UIViewController, ResizablePanel {
         panelPlus4.layer.zPosition = 4
         panelPlus5.layer.zPosition = 5
         
-        
         panelMaxWidthMappings[PanelIndex(index: -5)] = panelMinus5MaxWidth
         panelMaxWidthMappings[PanelIndex(index: -4)] = panelMinus4MaxWidth
         panelMaxWidthMappings[PanelIndex(index: -3)] = panelMinus3MaxWidth
@@ -399,7 +404,7 @@ public class PanelView: UIViewController, ResizablePanel {
         if let existingPanel: UIView = panelMappings[panel] {
             parentView = existingPanel
         } else {
-            parentView = createPanel(for: panel)
+            parentView = getPanel(for: panel)
         }
         
         // there is already a parent panel, simply add
@@ -431,7 +436,7 @@ public class PanelView: UIViewController, ResizablePanel {
                     hoveredSeparator.backgroundColor = highlightColor
                 })
             }
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 NSCursor.resizeLeftRight.set()
             } else {
                 NSCursor.resizeUpDown.set()
@@ -484,7 +489,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 // get first panel's current frame and add the translation
                 
                 let proposedWidthOrHeight: CGFloat
-                if mainStackView.axis == .horizontal {
+                if configuration.orientation == .horizontal {
                     if resizedPanelIndex.index < 0 {
                         proposedWidthOrHeight = originalFrame.width + appliedTranslation.x
                     } else {
@@ -502,7 +507,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 if proposedWidthOrHeight < minWidthConstraint.constant {
                     finalPanelWidth = minWidthConstraint.constant
                     #if targetEnvironment(macCatalyst)
-                    if mainStackView.axis == .horizontal {
+                    if configuration.orientation == .horizontal {
                         NSCursor.resizeRight.set()
                     } else {
                         NSCursor.resizeUp.set()
@@ -512,7 +517,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 } else if proposedWidthOrHeight > maxWidthConstraint.constant {
                     finalPanelWidth = maxWidthConstraint.constant
                     #if targetEnvironment(macCatalyst)
-                    if mainStackView.axis == .horizontal {
+                    if configuration.orientation == .horizontal {
                         NSCursor.resizeLeft.set()
                     } else {
                         NSCursor.resizeDown.set()
@@ -522,7 +527,7 @@ public class PanelView: UIViewController, ResizablePanel {
                     // it is within the min and max
                     finalPanelWidth = proposedWidthOrHeight
                     #if targetEnvironment(macCatalyst)
-                    if mainStackView.axis == .horizontal {
+                    if configuration.orientation == .horizontal {
                         NSCursor.resizeLeftRight.set()
                     } else {
                         NSCursor.resizeUpDown.set()

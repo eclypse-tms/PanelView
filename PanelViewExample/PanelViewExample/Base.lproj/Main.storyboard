@@ -39,7 +39,7 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HTi-z4-6yk" userLabel="Other Controls Container">
-                                <rect key="frame" x="115.33333333333331" y="472.33333333333326" width="183.66666666666669" height="176"/>
+                                <rect key="frame" x="115.33333333333333" y="472.33333333333326" width="183.66666666666669" height="176"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="fTP-oX-fXV" userLabel="Other Controls">
                                         <rect key="frame" x="8" y="8" width="167.66666666666666" height="160"/>
@@ -169,11 +169,11 @@
                             <mask key="constraints">
                                 <exclude reference="54s-bN-EYa"/>
                                 <exclude reference="Jty-T4-jFV"/>
+                                <exclude reference="geH-hq-Bil"/>
+                                <exclude reference="8ux-t0-xL3"/>
                                 <exclude reference="IL4-Hy-0e0"/>
                                 <exclude reference="USn-f1-G8T"/>
                                 <exclude reference="m7W-x9-LDy"/>
-                                <exclude reference="geH-hq-Bil"/>
-                                <exclude reference="8ux-t0-xL3"/>
                                 <exclude reference="wa7-rL-tdu"/>
                                 <exclude reference="fb9-hT-CTj"/>
                                 <exclude reference="uYZ-dM-ISK"/>
@@ -181,8 +181,8 @@
                         </variation>
                         <variation key="widthClass=compact">
                             <mask key="constraints">
-                                <include reference="m7W-x9-LDy"/>
                                 <include reference="geH-hq-Bil"/>
+                                <include reference="m7W-x9-LDy"/>
                                 <include reference="wa7-rL-tdu"/>
                                 <include reference="uYZ-dM-ISK"/>
                             </mask>
@@ -191,9 +191,9 @@
                             <mask key="constraints">
                                 <include reference="54s-bN-EYa"/>
                                 <include reference="Jty-T4-jFV"/>
+                                <include reference="8ux-t0-xL3"/>
                                 <include reference="IL4-Hy-0e0"/>
                                 <include reference="USn-f1-G8T"/>
-                                <include reference="8ux-t0-xL3"/>
                                 <include reference="fb9-hT-CTj"/>
                             </mask>
                         </variation>
