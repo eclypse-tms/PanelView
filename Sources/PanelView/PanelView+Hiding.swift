@@ -114,7 +114,9 @@ public extension PanelView {
         
         // hide everything
         panelMappings.forEach { (eachPanelIndex, panel) in
-            panel.isHidden = true
+            if !panel.isHidden {
+                panel.isHidden = true
+            }
             hideViewDivider(associatedPanel: eachPanelIndex)
         }
         

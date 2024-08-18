@@ -37,49 +37,70 @@ public extension PanelView {
                         if eachPanel == accompanyingPanel {
                             // we shouldn't be hiding the acompanying panel
                         } else {
-                            eachPanel.isHidden = true
+                            if !eachPanel.isHidden {
+                                eachPanel.layer.removeAllAnimations()
+                                eachPanel.isHidden = true
+                            }
                         }
                     }
                 }
+                accompanyingPanel.layer.removeAllAnimations()
                 accompanyingPanel.isHidden = false
             } else {
                 // we are running in multi-panel mode,
                 // all we have to do is to show the panel
+                accompanyingPanel.layer.removeAllAnimations()
                 accompanyingPanel.isHidden = false
             }
         }
         
         let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
         
+        // in order for animations to run correctly for the stackview, we need to first remove the panel
+        // from the superview and then re-insert it at the correct index
+        aPanelToShow.removeFromSuperview()
+        let subViewIndex = calculateAppropriateIndex(for: panel)
+        mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
         
-        //if panel.index > 0 {
-            // in order for animations to run correctly for the stackview, we need to first remove the panel
-            // from the superview and re-insert it later on
-            aPanelToShow.removeFromSuperview()
-            let subViewIndex = calculateAppropriateIndex(for: panel)
-            mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
-        //}
         
         // reattach its accompanying view divider if necessary
         if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !isSinglePanelMode {
             createPanelDivider(for: panel)
         }
         
-        if panel.index != 0, animated {
-            UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
+        if isSinglePanelMode {
+            // in single panel mode, all panels are animatable
+            if animated {
+                let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
+                    animatableBlock(accompanyingPanel: aPanelToShow)
+                })
+                animations.addCompletion({ _ in
+                    completion?()
+                })
+                animations.startAnimation()
+            } else {
                 animatableBlock(accompanyingPanel: aPanelToShow)
-            }, completion: { _ in
-                //self.mainStackView.layoutIfNeeded()
                 completion?()
-            })
-        } else if panel.index == 0, visiblePanels.isEmpty {
-            animatableBlock(accompanyingPanel: aPanelToShow)
-            //self.mainStackView.layoutIfNeeded()
-            completion?()
+            }
         } else {
-            animatableBlock(accompanyingPanel: aPanelToShow)
-            //self.mainStackView.layoutIfNeeded()
-            completion?()
+            // in multi panel mode, only non-zero panels can be animated
+            if panel.index == 0 {
+                animatableBlock(accompanyingPanel: aPanelToShow)
+                completion?()
+            } else {
+                if animated {
+                    let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
+                        animatableBlock(accompanyingPanel: aPanelToShow)
+                    })
+                    animations.addCompletion({ _ in
+                        completion?()
+                    })
+                    animations.startAnimation()
+                } else {
+                    animatableBlock(accompanyingPanel: aPanelToShow)
+                    completion?()
+                }
+            }
         }
     }
     
