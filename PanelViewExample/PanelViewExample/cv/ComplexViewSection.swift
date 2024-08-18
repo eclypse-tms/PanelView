@@ -44,7 +44,8 @@ enum ComplexViewSection: Int, CaseIterable, DefinesCompositionalLayout {
         case .section0:
             return .dynamicWidthFixedHeight(estimatedWidth: 240, fixedHeight: 54)
         case .section1:
-            return .dynamicWidthDynamicHeight(estimatedWidth: 230, estimatedHeight: 95)
+            // return .dynamicWidthDynamicHeight(estimatedWidth: 230, estimatedHeight: 95)
+            return .fixedWidthDynamicHeight(fixedWidth: 230, estimatedHeight: 95)
         case .section2:
             return .fixedWidthFixedHeight(fixedWidth: 150, fixedHeight: 150)
         case .section3:

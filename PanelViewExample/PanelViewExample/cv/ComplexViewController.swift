@@ -120,7 +120,7 @@ class ComplexViewController: UIViewController {
     private func generateContent(contentLength: ContentLength) -> [ImageAndLabelViewModel] {
         var content = [ImageAndLabelViewModel]()
         
-        let numberOfCells = 24
+        let numberOfCells = 48
         for _ in 0..<numberOfCells {
             let title = LoremIpsum.words(withNumber: randomNumber(contentLength: contentLength))
             let vm = ImageAndLabelViewModel(title: title,
