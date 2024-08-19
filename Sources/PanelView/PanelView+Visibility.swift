@@ -24,62 +24,130 @@ public extension PanelView {
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
-        func animatableBlock(accompanyingPanel: UIView) {
-            
-            
+        // this variable holds a temporary equal widths or equal heights constraint
+        // during animations in single panel mode. When the animation is over, this
+        // constraint gets deactivated.
+        var temporaryEqualDimensionsConstraint: NSLayoutConstraint?
+        
+        // this variable only gets filled during single panel mode
+        // it remembers to panel that needs to be hidden after another panel is
+        // completely shown. this variable is only not-nil during the animation 
+        var panelToHide: UIView?
+        
+        func preAnimationBlock(panelToShow: UIView) {
+            if isSinglePanelMode {
+                expandStackView(panelIndexToBeShown: panel)
+                if let currentlyVisiblePanelAndItsIndex = currentlyVisiblePanelAndItsIndex {
+                    
+                    let currentlyVisiblePanelIndex = currentlyVisiblePanelAndItsIndex.0
+                    let currentlyVisiblePanel = currentlyVisiblePanelAndItsIndex.1
+                    panelToHide = currentlyVisiblePanel
+                    
+                    if configuration.orientation == .horizontal {
+                        temporaryEqualDimensionsConstraint = currentlyVisiblePanel.widthAnchor.constraint(equalTo: panelToShow.widthAnchor)
+                    } else {
+                        temporaryEqualDimensionsConstraint = currentlyVisiblePanel.heightAnchor.constraint(equalTo: panelToShow.heightAnchor)
+                    }
+                    temporaryEqualDimensionsConstraint?.identifier = "panel: \(panel.index) \(layoutAttributeIdentifier) = panel :\(currentlyVisiblePanelIndex.index) width"
+                    temporaryEqualDimensionsConstraint?.isActive = true
+                }
+                panelToShow.isHidden = false
+                
+                self.view.layoutIfNeeded()
+            } else {
+                // no need to do anything when in multi-panel mode
+            }
+        }
+        
+        func animatableBlock(panelToShow: UIView) {
+            if isSinglePanelMode {
+                slideStackView()
+                
+            } else {
+                // we are running in multi-panel mode,
+                // all we have to do is to show the panel
+                panelToShow.layer.removeAllAnimations()
+                panelToShow.isHidden = false
+            }
+        }
+        
+        func postAnimationBlock(panelToShow: UIView) {
             if isSinglePanelMode {
                 // when running in single panel mode,
                 // all dividers are ignored - so we don't have to re-establish the divider constraints
                 
-                // we hide all other visible panels
-                visiblePanels.forEach { eachPanel in
-                    if let eachPanel = panelMappings[eachPanel] {
-                        if eachPanel == accompanyingPanel {
-                            // we shouldn't be hiding the acompanying panel
-                        } else {
-                            eachPanel.isHidden = true
-                        }
-                    }
-                }
-                accompanyingPanel.isHidden = false
+                temporaryEqualDimensionsConstraint?.isActive = false
+                panelToHide?.isHidden = true
+                restoreStackViewBackToItsOriginalSize()
+                self.view.layoutIfNeeded()
             } else {
-                // we are running in multi-panel mode,
-                // all we have to do is to show the panel
-                accompanyingPanel.isHidden = false
+                // no need to do anything when in multi-panel mode
             }
         }
         
-        let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
+        let aPanelToShow: UIView
+        if let associatedPanel = panelMappings[panel] {
+            aPanelToShow = associatedPanel
+        } else {
+            aPanelToShow = createPanel(for: panel)
+        }
         
+        // in order for animations to run correctly for the stackview, we need to first remove the panel
+        // from the superview and then re-insert it at the correct index
+        aPanelToShow.removeFromSuperview()
+        let subViewIndex = calculateAppropriateIndex(for: panel)
+        mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
         
-        //if panel.index > 0 {
-            // in order for animations to run correctly for the stackview, we need to first remove the panel
-            // from the superview and re-insert it later on
-            aPanelToShow.removeFromSuperview()
-            let subViewIndex = calculateAppropriateIndex(for: panel)
-            mainStackView.insertArrangedSubview(aPanelToShow, at: subViewIndex)
-        //}
         
         // reattach its accompanying view divider if necessary
         if panel.index != 0, configuration.allowsUIPanelSizeAdjustment, !isSinglePanelMode {
             createPanelDivider(for: panel)
         }
         
-        if panel.index != 0, animated {
-            UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
-                animatableBlock(accompanyingPanel: aPanelToShow)
-            }, completion: { _ in
-                //self.mainStackView.layoutIfNeeded()
+        preAnimationBlock(panelToShow: aPanelToShow)
+        
+        
+        if isSinglePanelMode {
+            // in single panel mode, all panels are animatable
+            if animated {
+                let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
+                    animatableBlock(panelToShow: aPanelToShow)
+                    self.view.layoutIfNeeded()
+                })
+                animations.addCompletion({ _ in
+                    postAnimationBlock(panelToShow: aPanelToShow)
+                    completion?()
+                })
+                animations.startAnimation()
+            } else {
+                self.view.layoutIfNeeded()
+                animatableBlock(panelToShow: aPanelToShow)
+                postAnimationBlock(panelToShow: aPanelToShow)
+                self.view.layoutIfNeeded()
                 completion?()
-            })
-        } else if panel.index == 0, visiblePanels.isEmpty {
-            animatableBlock(accompanyingPanel: aPanelToShow)
-            //self.mainStackView.layoutIfNeeded()
-            completion?()
+            }
         } else {
-            animatableBlock(accompanyingPanel: aPanelToShow)
-            //self.mainStackView.layoutIfNeeded()
-            completion?()
+            // in multi panel mode, only non-zero panels can be animated
+            if panel.index == 0 {
+                animatableBlock(panelToShow: aPanelToShow)
+                postAnimationBlock(panelToShow: aPanelToShow)
+                completion?()
+            } else {
+                if animated {
+                    let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
+                        animatableBlock(panelToShow: aPanelToShow)
+                    })
+                    animations.addCompletion({ _ in
+                        postAnimationBlock(panelToShow: aPanelToShow)
+                        completion?()
+                    })
+                    animations.startAnimation()
+                } else {
+                    animatableBlock(panelToShow: aPanelToShow)
+                    postAnimationBlock(panelToShow: aPanelToShow)
+                    completion?()
+                }
+            }
         }
     }
     
@@ -114,14 +182,14 @@ public extension PanelView {
             // we should hide the empty view stack
             hideEmptyState()
             
+            show(panel: panel, animated: animated, completion: completion)
+            
             if let alreadyEmbeddedInNavController = viewController as? UINavigationController {
                 add(childNavController: alreadyEmbeddedInNavController, on: panel)
             } else {
                 let navController = UINavigationController(rootViewController: viewController)
                 add(childNavController: navController, on: panel)
             }
-            
-            show(panel: panel, animated: animated, completion: completion)
         } else {
             pendingViewControllers[panel] = viewController
             completion?()
@@ -184,8 +252,8 @@ public extension PanelView {
         }
     }
     
-    /// checks whether the provided viewController is currently being presented in one of the panels
-    func presents(viewController: UIViewController) -> PanelIndex? {
+    /// returns the panel index of the provided viewController if it is in the view hierarchy
+    func index(of viewController: UIViewController) -> PanelIndex? {
         var vcPresentedIn: PanelIndex?
         for (eachPanel, eachNavController) in viewControllers {
             if eachNavController.viewControllers.contains(viewController) {
@@ -194,6 +262,29 @@ public extension PanelView {
             }
         }
         return vcPresentedIn
+    }
+    
+    /// this function is only valid if the current mode is single panel
+    /// when called when the current mode is not single, then it returns nil
+    var currentlyVisiblePanelIndex: PanelIndex? {
+        currentlyVisiblePanelAndItsIndex?.0
+    }
+    
+    /// this function is only valid if the current mode is single panel
+    /// when called when the current mode is not single, then it returns nil
+    var currentlyVisiblePanel: UIView? {
+        currentlyVisiblePanelAndItsIndex?.1
+    }
+    
+    /// this function is only valid if the current mode is single panel
+    /// when called when the current mode is not single, then it returns nil
+    var currentlyVisiblePanelAndItsIndex: (PanelIndex, UIView)? {
+        if isSinglePanelMode {
+            let possibleVisiblePanel = panelMappings.first(where: { isVisible(panel: $0.key) })
+            return possibleVisiblePanel
+        } else {
+            return nil
+        }
     }
     
     private func calculateAppropriateIndex(for panel: PanelIndex) -> Int {

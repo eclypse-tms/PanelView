@@ -18,7 +18,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttribute: NSLayoutConstraint.Attribute {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return .width
         } else {
             return .height
@@ -26,8 +26,8 @@ extension PanelView {
     }
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
-    private var layoutAttributeIdentifier: String {
-        if mainStackView.axis == .horizontal {
+    var layoutAttributeIdentifier: String {
+        if configuration.orientation == .horizontal {
             return "width"
         } else {
             return "height"
@@ -36,44 +36,6 @@ extension PanelView {
     
     func layoutIfNeeded() {
         mainStackView.layoutIfNeeded()
-    }
-    
-    @discardableResult
-    func createPanel(for indexedPanel: PanelIndex) -> UIView {
-        let aNewPanel = UIView()
-        aNewPanel.translatesAutoresizingMaskIntoConstraints = false
-        aNewPanel.tag = indexedPanel.index
-        aNewPanel.layer.zPosition = CGFloat(100 + indexedPanel.index)
-        aNewPanel.isHidden = true
-        panelMappings[indexedPanel] = aNewPanel
-        mainStackView.addArrangedSubview(aNewPanel)
-        
-        if indexedPanel.index != 0 {
-            
-            if isSinglePanelMode {
-                // when running in single panel mode
-                // we do not need to apply any constraints to any
-                // panel because there is only one panel and it takes
-                // up the entirity of the screen
-            } else {
-                // Configure min width
-                applyMinWidthConstraint(for: aNewPanel, using: indexedPanel)
-                
-                // configure max width
-                applyMaxWidthConstraint(for: aNewPanel, using: indexedPanel)
-                
-                // configure width
-                applyPreferredWidthConstraint(for: aNewPanel, using: indexedPanel)
-                
-                // attach its accompanying view divider
-                /*
-                if indexedPanel.index != 0, configuration.allowsUIPanelSizeAdjustment {
-                    createPanelDivider(associatedPanel: aNewPanel, for: indexedPanel)
-                }
-                */
-            }
-        }
-        return aNewPanel
     }
     
     func applyMinWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
@@ -128,7 +90,7 @@ extension PanelView {
         if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
             effectiveWidthConstantForPanel = existingWidthConstraint.constant
         } else if let savedWidthFraction = pendingWidthFraction[indexedPanel] {
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
             } else {
                 effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
@@ -152,17 +114,7 @@ extension PanelView {
     }
     
     func activatePanelLayoutConstraintsIfNecessary(for indexedPanel: PanelIndex) {
-        if let aConstraint = panelMaxWidthMappings[indexedPanel] {
-            if aConstraint.isActive {
-                // nothing to do - max constraint is already active
-            } else {
-                if let correspondingView = panelMappings[indexedPanel] {
-                    applyMaxWidthConstraint(for: correspondingView, using: indexedPanel)
-                } else {
-                    print("PanelView - there is no corresponding panel view for the index: \(indexedPanel.index)")
-                }
-            }
-        } else {
+        func applyMaxWidth() {
             if let correspondingView = panelMappings[indexedPanel] {
                 applyMaxWidthConstraint(for: correspondingView, using: indexedPanel)
             } else {
@@ -170,58 +122,112 @@ extension PanelView {
             }
         }
         
-        if let aConstraint = panelMinWidthMappings[indexedPanel] {
-            if aConstraint.isActive {
-                // nothing to do - min constraint is already active
+        func applyMinWidth() {
+            if let correspondingView = panelMappings[indexedPanel] {
+                applyMinWidthConstraint(for: correspondingView, using: indexedPanel)
             } else {
-                if let correspondingView = panelMappings[indexedPanel] {
-                    applyMinWidthConstraint(for: correspondingView, using: indexedPanel)
-                } else {
-                    print("PanelView - there is no corresponding panel view for the index: \(indexedPanel.index)")
-                }
+                print("PanelView - there is no corresponding panel view for the index: \(indexedPanel.index)")
             }
         }
+        
+        func applyPreferredWidth() {
+            if let correspondingView = panelMappings[indexedPanel] {
+                applyPreferredWidthConstraint(for: correspondingView, using: indexedPanel)
+            } else {
+                print("PanelView - there is no corresponding panel view for the index: \(indexedPanel.index)")
+            }
+        }
+        
+        if let aConstraint = panelMinWidthMappings[indexedPanel] {
+            if aConstraint.isActive {
+                if aConstraint.firstAttribute == .width && configuration.orientation == .vertical {
+                    // this constraint is for the width but we are in the vertical mode
+                    // we need to deactive this constraint and re-apply
+                    aConstraint.isActive = false
+                    applyMinWidth()
+                } else if aConstraint.firstAttribute == .height && configuration.orientation == .horizontal {
+                    // this constraint is for the height but we are in the horizontal mode
+                    // we need to deactive this constraint and re-apply
+                    aConstraint.isActive = false
+                    applyMinWidth()
+                } else {
+                    // nothing to do - max constraint is already active
+                }
+            } else {
+                applyMinWidth()
+            }
+        }
+        
+        if let aConstraint = panelMaxWidthMappings[indexedPanel] {
+            if aConstraint.isActive {
+                if aConstraint.firstAttribute == .width && configuration.orientation == .vertical {
+                    // this constraint is for the width but we are in the vertical mode
+                    // we need to deactive this constraint and re-apply
+                    aConstraint.isActive = false
+                    applyMaxWidth()
+                } else if aConstraint.firstAttribute == .height && configuration.orientation == .horizontal {
+                    // this constraint is for the height but we are in the horizontal mode
+                    // we need to deactive this constraint and re-apply
+                    aConstraint.isActive = false
+                    applyMaxWidth()
+                } else {
+                    // nothing to do - max constraint is already active
+                }
+            } else {
+                applyMaxWidth()
+            }
+        }
+        
         
         if let aConstraint = panelWidthMappings[indexedPanel] {
             if aConstraint.isActive {
-                // nothing to do - width constraint is already active
-            } else {
-                if let correspondingView = panelMappings[indexedPanel] {
-                    applyPreferredWidthConstraint(for: correspondingView, using: indexedPanel)
+                if aConstraint.firstAttribute == .width && configuration.orientation == .vertical {
+                    // this constraint is for the width but we are in the vertical mode
+                    // we need to deactive this constraint and re-apply
+                    aConstraint.isActive = false
+                    applyPreferredWidth()
+                } else if aConstraint.firstAttribute == .height && configuration.orientation == .horizontal {
+                    // this constraint is for the height but we are in the horizontal mode
+                    // we need to deactive this constraint and re-apply
+                    aConstraint.isActive = false
+                    applyPreferredWidth()
                 } else {
-                    print("PanelView - there is no corresponding panel view for the index: \(indexedPanel.index)")
+                    // nothing to do - max constraint is already active
                 }
+            } else {
+                applyPreferredWidth()
             }
         }
-        
-        /*
-        if doWeNeedToRecreatePanel {
-            createPanel(for: indexedPanel)
-        }
-        */
     }
     
     func deactivatePanelLayoutConstraints(for indexedPanel: PanelIndex) {
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
-            // pendingMaximumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
+        // deactivating minimum width constraint causes navigation bar 
+        // layout errors in horizontal mode - we will keep the min widht constraint
         /*
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
             pendingMinimumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            aConstraint.constant = 0
-            panelMinWidthMappings.removeValue(forKey: indexedPanel)
         }
         */
         
         if let aConstraint = panelWidthMappings[indexedPanel] {
             aConstraint.isActive = false
-            // don't remove this mapping from the backing dictionary
-            // in case this constraint gets activated again
-            //panelWidthMappings.removeValue(forKey: indexedPanel)
+        }
+    }
+    
+    /// when the PanelView switches from horizontal to vertical, the min width constraint
+    /// gets re-created as a min-height constraint
+    func deactivateMinWidthConstraintAndReapply(for indexedPanel: PanelIndex) {
+        if let aConstraint = panelMinWidthMappings[indexedPanel] {
+            aConstraint.isActive = false
+        }
+        
+        if let associatedPanel = panelMappings[indexedPanel] {
+            applyMinWidthConstraint(for: associatedPanel, using: indexedPanel)
         }
     }
 }

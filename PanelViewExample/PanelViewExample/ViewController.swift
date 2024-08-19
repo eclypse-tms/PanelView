@@ -19,8 +19,8 @@ class ViewController: UIViewController {
     @IBOutlet private var showCenterPanel: UISwitch!
     @IBOutlet private var useComplexViews: UISwitch!
     @IBOutlet private var singlePanelMode: UISwitch!
-    @IBOutlet private var changeOrientationSegments: UISegmentedControl!
     @IBOutlet private var showEmptyView: UISwitch!
+    @IBOutlet private var changeOrientationSegments: UISegmentedControl!
     
     private var intToLayoutConverter: IntToLayoutConverter!
     
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view.
         intToLayoutConverter = IntToLayoutConverter()
         
-        
+        initialSwitchStates()
         addPanelView()
         // configureBindings()
         
@@ -45,31 +45,38 @@ class ViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setToolbarHidden(true, animated: false)
     }
+    
+    private func initialSwitchStates() {
+        showCenterPanel.isOn = true
+        useComplexViews.isOn = false
+        singlePanelMode.isOn = false
+        showEmptyView.isOn = false
+    }
 
     private func addPanelView() {
         panelView = PanelView()
         panelView.delegate = self
         
         var customConfig = PanelViewConfiguration()
-        customConfig.numberOfPanelsToPrime = 5
         customConfig.orientation = .horizontal
         customConfig.allowsUIPanelSizeAdjustment = true
         customConfig.interPanelSpacing = 1
         customConfig.panelMode = .multi
-        customConfig.autoReleaseViewControllers = true
-        customConfig.emptyViewVerticalAdjustment = 0.6666
+        customConfig.autoReleaseViews = true
+        customConfig.panelTransitionDuration = 1
+        customConfig.numberOfPanelsOnEachSide = 5
         customConfig.emptyStateView = configureEmptyView()
         
         panelView.configuration = customConfig
         
         
-        for index in -panelView.configuration.numberOfPanelsToPrime...panelView.configuration.numberOfPanelsToPrime {
+        for index in -panelView.configuration.numberOfPanelsOnEachSide...panelView.configuration.numberOfPanelsOnEachSide {
             if index == 0 {
                 continue
             }
             let onTheFlyPanelIndex = PanelIndex(index: index)
             panelView.minimumWidth(300, for: onTheFlyPanelIndex)
-            panelView.maximumWidth(900, for: onTheFlyPanelIndex)
+            panelView.maximumWidth(750, for: onTheFlyPanelIndex)
             panelView.preferredWidthFraction(0.25, at: index)
         }
         

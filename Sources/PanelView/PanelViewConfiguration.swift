@@ -38,13 +38,12 @@ public struct PanelViewConfiguration {
     /// The space in the between the panels.
     public var interPanelSpacing: CGFloat
     
-    /// Number of panels on each side that are created and added to the view hiearchy.
-    /// The default value is 4. This means 4 panels on each side of the main panel
-    /// for a total of 9 panels are added to the view hierarchy. Priming panels
-    /// before hand helps with animations and transitions to work correctly. If you know
-    /// that you will need more than 9 panels adjust this number accordingly otherwise
-    /// leave it as-is.
-    public var numberOfPanelsToPrime: Int
+    /// Controls the number of panels on each side of the central panel that are created and added to the view hiearchy.
+    ///
+    /// The default value is 3. This means that there are 3 panels on the left and 3 panels
+    /// on the right of the central panel for a total of 7 panels in the view hierarchy.
+    /// Creating panels beforehand helps with the animations and the transitions.
+    public var numberOfPanelsOnEachSide: Int
     
     /// the animation duration when inserting and removing panels from the view
     public var panelTransitionDuration: Double
@@ -52,14 +51,14 @@ public struct PanelViewConfiguration {
     /// determines whether the panels heights or widths can be changed in the UI
     public var allowsUIPanelSizeAdjustment: Bool
     
-    /// controls whether to automatically release the view controllers when a panel is hidden
+    /// controls whether to automatically release the ViewController/SwiftUI View when a panel is hidden
     ///
-    /// This property is by default false. This means that view controller will be kept in memory
-    /// when its associated panel is hidden from view. This allows you to re-use the view controller
+    /// This property is by default false. This means that ViewController/SwiftUI View will be kept in memory
+    /// when its associated panel is hidden from view. This allows you to re-use the View
     /// when the panel is shown again without having to worry about preserving its state.
-    /// On the other hand if you are not planning on re-using the same view controller when the panels are
-    /// hidden, set this property to true to automatically reclaim the memory occupied by the view controller.
-    public var autoReleaseViewControllers: Bool
+    /// On the other hand if you are not planning on re-using the same View when the panels are
+    /// hidden, set this property to true to automatically reclaim the memory.
+    public var autoReleaseViews: Bool
     
     /// Determines whether to run PanelView in single or multi panel mode.
     /// When in single panel mode, any panel that you show will take up the entire available screen and
@@ -74,12 +73,12 @@ public extension PanelViewConfiguration {
         self.orientation = .horizontal
         self.emptyStateView = nil
         self.panelDividerColor = UIColor.opaqueSeparator
-        self.numberOfPanelsToPrime = 4
+        self.numberOfPanelsOnEachSide = 3
         self.panelTransitionDuration = 0.333333
         self.allowsUIPanelSizeAdjustment = true
         self.interPanelSpacing = 1.0
         self.panelDividerHoverColor = nil
-        self.autoReleaseViewControllers = false
+        self.autoReleaseViews = false
         self.panelMode = .multi
         self.emptyViewVerticalAdjustment = 0
     }

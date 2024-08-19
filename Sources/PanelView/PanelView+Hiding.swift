@@ -15,7 +15,7 @@ public extension PanelView {
     ///   - releaseViewController: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
     ///   - completion: notifies the called that hiding is complete.
     func hidePanel(containing viewController: UIViewController, animated: Bool = true, releaseViewController: Trilean = .default, completion: (() -> Void)? = nil) {
-        let panelToHide: PanelIndex? = presents(viewController: viewController)
+        let panelToHide: PanelIndex? = index(of: viewController)
         
         if let discoveredPanelToHide = panelToHide {
             hide(panel: discoveredPanelToHide, animated: animated, completion: completion)
@@ -41,7 +41,12 @@ public extension PanelView {
     ///   - completion: notifies the called that hiding is complete.
     func hide(panel: PanelIndex, animated: Bool = true, releaseViewController: Trilean = .default, completion: (() -> Void)? = nil) {
         func hideAppropriatePanel() {
-            panelMappings[panel]?.isHidden = true
+            if let panelToHide = panelMappings[panel] {
+                if !panelToHide.isHidden {
+                    panelToHide.layer.removeAllAnimations()
+                    panelToHide.isHidden = true
+                }
+            }
             
             hideViewDivider(associatedPanel: panel)
             
@@ -51,12 +56,14 @@ public extension PanelView {
         func _performPanelHiding(panel: PanelIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
             if panel.index != 0, animated {
                 // we shouldn't animate hiding of the main panel
-                UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
+                let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
                     hideAppropriatePanel()
-                }, completion: { _ in
+                })
+                animations.addCompletion({ _ in
                     self.mainStackView.layoutIfNeeded()
                     hidingCompleted?()
                 })
+                animations.startAnimation()
             } else {
                 hideAppropriatePanel()
                 self.mainStackView.layoutIfNeeded()
@@ -79,7 +86,7 @@ public extension PanelView {
             let shouldViewControllerBeReleasedFromMemory: Bool
             switch releaseViewController {
             case .default:
-                shouldViewControllerBeReleasedFromMemory = strongSelf.configuration.autoReleaseViewControllers
+                shouldViewControllerBeReleasedFromMemory = strongSelf.configuration.autoReleaseViews
             case .true:
                 shouldViewControllerBeReleasedFromMemory = true
             case .false:
@@ -114,7 +121,9 @@ public extension PanelView {
         
         // hide everything
         panelMappings.forEach { (eachPanelIndex, panel) in
-            panel.isHidden = true
+            if !panel.isHidden {
+                panel.isHidden = true
+            }
             hideViewDivider(associatedPanel: eachPanelIndex)
         }
         
