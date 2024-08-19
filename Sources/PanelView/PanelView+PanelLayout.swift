@@ -18,7 +18,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttribute: NSLayoutConstraint.Attribute {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return .width
         } else {
             return .height
@@ -27,7 +27,7 @@ extension PanelView {
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
     private var layoutAttributeIdentifier: String {
-        if mainStackView.axis == .horizontal {
+        if configuration.orientation == .horizontal {
             return "width"
         } else {
             return "height"
@@ -128,7 +128,7 @@ extension PanelView {
         if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
             effectiveWidthConstantForPanel = existingWidthConstraint.constant
         } else if let savedWidthFraction = pendingWidthFraction[indexedPanel] {
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 effectiveWidthConstantForPanel = view.frame.width * savedWidthFraction
             } else {
                 effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
@@ -208,6 +208,7 @@ extension PanelView {
             // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
+        // deactivating min panel constraint
         /*
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
             pendingMinimumWidth[indexedPanel] = aConstraint.constant

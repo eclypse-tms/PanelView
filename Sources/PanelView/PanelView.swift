@@ -12,6 +12,11 @@ import SwiftUI
 public class PanelView: UIViewController, ResizablePanel {
     var mainStackView: UIStackView!
     
+    var mainStackViewLeadingConstraint: NSLayoutConstraint!
+    var mainStackViewTopConstraint: NSLayoutConstraint!
+    var mainStackViewTrailingConstraint: NSLayoutConstraint!
+    var mainStackViewBottomConstraint: NSLayoutConstraint!
+    
     var _emptyStateBackgroundView: UIView?
     var _emptyViewContainerStack: UIStackView?
     
@@ -148,7 +153,7 @@ public class PanelView: UIViewController, ResizablePanel {
     private func configureInitialPanels() {
         for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
             let onTheFlyPanelIndex = PanelIndex(index: index)
-            let newlyCreatedPanel = createPanel(for: onTheFlyPanelIndex)
+            createPanel(for: onTheFlyPanelIndex)
             //mainStackView.addArrangedSubview(newlyCreatedPanel)
             //newlyCreatedPanel.isHidden = true
         }
@@ -176,16 +181,27 @@ public class PanelView: UIViewController, ResizablePanel {
             primaryStackView.axis = .vertical
         }
         
-        primaryStackView.spacing = configuration.interPanelSpacing
+        if configuration.panelMode == .single {
+            primaryStackView.spacing = 0 // ignore inter panel spacing in single mode
+        } else {
+            primaryStackView.spacing = configuration.interPanelSpacing
+        }
+        
         primaryStackView.backgroundColor = .clear
         primaryStackView.translatesAutoresizingMaskIntoConstraints = false
         
+        mainStackViewLeadingConstraint = primaryStackView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor)
+        mainStackViewTopConstraint = primaryStackView.topAnchor.constraint(equalTo: self.view.topAnchor)
+        
+        mainStackViewTrailingConstraint = self.view.trailingAnchor.constraint(equalTo: primaryStackView.trailingAnchor)
+        mainStackViewBottomConstraint = self.view.bottomAnchor.constraint(equalTo: primaryStackView.bottomAnchor)
+        
         self.view.addSubview(primaryStackView)
         NSLayoutConstraint.activate([
-            primaryStackView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            primaryStackView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-            primaryStackView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            primaryStackView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            mainStackViewLeadingConstraint,
+            mainStackViewTopConstraint,
+            mainStackViewTrailingConstraint,
+            mainStackViewBottomConstraint,
         ])
         mainStackView = primaryStackView
     }
@@ -293,7 +309,7 @@ public class PanelView: UIViewController, ResizablePanel {
                     hoveredSeparator.backgroundColor = highlightColor
                 })
             }
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 NSCursor.resizeLeftRight.set()
             } else {
                 NSCursor.resizeUpDown.set()
@@ -346,7 +362,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 // get first panel's current frame and add the translation
                 
                 let proposedWidthOrHeight: CGFloat
-                if mainStackView.axis == .horizontal {
+                if configuration.orientation == .horizontal {
                     if resizedPanelIndex.index < 0 {
                         proposedWidthOrHeight = originalFrame.width + appliedTranslation.x
                     } else {
@@ -364,7 +380,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 if proposedWidthOrHeight < minWidthConstraint.constant {
                     finalPanelWidth = minWidthConstraint.constant
                     #if targetEnvironment(macCatalyst)
-                    if mainStackView.axis == .horizontal {
+                    if configuration.orientation == .horizontal {
                         NSCursor.resizeRight.set()
                     } else {
                         NSCursor.resizeUp.set()
@@ -374,7 +390,7 @@ public class PanelView: UIViewController, ResizablePanel {
                 } else if proposedWidthOrHeight > maxWidthConstraint.constant {
                     finalPanelWidth = maxWidthConstraint.constant
                     #if targetEnvironment(macCatalyst)
-                    if mainStackView.axis == .horizontal {
+                    if configuration.orientation == .horizontal {
                         NSCursor.resizeLeft.set()
                     } else {
                         NSCursor.resizeDown.set()
@@ -384,7 +400,7 @@ public class PanelView: UIViewController, ResizablePanel {
                     // it is within the min and max
                     finalPanelWidth = proposedWidthOrHeight
                     #if targetEnvironment(macCatalyst)
-                    if mainStackView.axis == .horizontal {
+                    if configuration.orientation == .horizontal {
                         NSCursor.resizeLeftRight.set()
                     } else {
                         NSCursor.resizeUpDown.set()

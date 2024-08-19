@@ -23,7 +23,7 @@ extension PanelView {
             
             mainStackView.axis = newConfig.orientation.axis
             
-            mainStackView.layoutIfNeeded()
+            // mainStackView.layoutIfNeeded()
             
             panelMappings.forEach { (indexedPanel, existingPanel) in
                 if indexedPanel.index != 0 {
@@ -43,7 +43,7 @@ extension PanelView {
             // re-create panel dividers if in multi-panel mode
             if !isSinglePanelMode {
                 visiblePanels.forEach { eachVisiblePanelIndex in
-                    if let existingPanel = panelMappings[eachVisiblePanelIndex] {
+                    if panelMappings[eachVisiblePanelIndex] != nil {
                         if eachVisiblePanelIndex.index != 0, newConfig.allowsUIPanelSizeAdjustment {
                             createPanelDivider(for: eachVisiblePanelIndex)
                         }
@@ -54,6 +54,9 @@ extension PanelView {
         
         if oldConfig.panelMode != newConfig.panelMode {
             if newConfig.panelMode == .single {
+                // collapse spacing
+                mainStackView.spacing = 0
+                
                 // when running in single panel mode, we have to disable constraints
                 // for all the panels as well as remove all panel dividers since
                 // we are only showing one panel at a time
@@ -77,6 +80,9 @@ extension PanelView {
                     // this may be because we are only showing the empty view
                 }
             } else {
+                // restore spacing
+                mainStackView.spacing = configuration.interPanelSpacing
+                
                 // when switched to multi panel mode, we need to show the center panel
                 show(index: 0, animated: false)
                 panelMappings.forEach { (indexedPanel, _) in

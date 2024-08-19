@@ -118,7 +118,7 @@ extension PanelView: PanelViewConstraints {
         }
         
         if isAttachedToWindow, let constraintForPanel = panelWidthMappings[panel] {
-            if mainStackView.axis == .horizontal {
+            if configuration.orientation == .horizontal {
                 constraintForPanel.constant = view.frame.width * sanitizedFraction
             } else {
                 constraintForPanel.constant = view.frame.height * sanitizedFraction
