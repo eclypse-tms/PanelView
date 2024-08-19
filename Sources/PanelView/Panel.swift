@@ -1,5 +1,5 @@
 //
-//  PanelIndex.swift
+//  Panel.swift
 //
 //
 //  Created by eclypse on 7/12/24.
@@ -20,11 +20,11 @@ import Foundation
 /// creating your own panels so that you can show or hide panels with names
 /// instead of indices.
 ///
-/// In order to provide your own names for panels, you extend PanelIndex
+/// In order to provide your own names for panels, you extend Panel
 /// as in this example:
 ///     
-///     public static var secondary: PanelIndex {
-///       return PanelIndex(index: -2, tag: "secondary")
+///     public static var secondary: Panel {
+///       return Panel(index: -2, tag: "secondary")
 ///     }
 ///
 /// Then you refer to the panels in your code as below:
@@ -33,7 +33,7 @@ import Foundation
 ///     ...
 ///     panelView.hide(panel: .secondary)
 ///
-open class PanelIndex: Hashable, Comparable, CustomDebugStringConvertible {
+open class Panel: Hashable, Comparable, CustomDebugStringConvertible {
     /// the tag is used to identify this panel. The tag is optional and
     /// only used for debugging purposes.
     ///
@@ -49,11 +49,11 @@ open class PanelIndex: Hashable, Comparable, CustomDebugStringConvertible {
     }
     
     
-    public static func == (lhs: PanelIndex, rhs: PanelIndex) -> Bool {
+    public static func == (lhs: Panel, rhs: Panel) -> Bool {
         return lhs.index == rhs.index
     }
     
-    public static func < (lhs: PanelIndex, rhs: PanelIndex) -> Bool {
+    public static func < (lhs: Panel, rhs: Panel) -> Bool {
         return lhs.index < rhs.index
     }
     

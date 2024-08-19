@@ -10,7 +10,7 @@ import Foundation
 extension PanelView {
     /// expands stack view to make space for the incoming panel (panel that is about to be shown).
     /// only needed in single panel mode.
-    func expandStackView(panelIndexToBeShown: PanelIndex) {
+    func expandStackView(panelIndexToBeShown: Panel) {
         if self.isSinglePanelMode {
             if let visiblePanel = currentlyVisiblePanelIndex {
                 if panelIndexToBeShown.index < visiblePanel.index {

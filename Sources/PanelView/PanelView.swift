@@ -21,29 +21,29 @@ public class PanelView: UIViewController, ResizablePanel {
     var _emptyViewContainerStack: UIStackView?
     
     /// maps an index to a UIView
-    var panelMappings = [PanelIndex: UIView]()
+    var panelMappings = [Panel: UIView]()
     
     
-    var panelWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    var panelMinWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    var panelMaxWidthMappings = [PanelIndex: NSLayoutConstraint]()
-    var panelCenterMappings = [PanelIndex: CGPoint]()
+    var panelWidthMappings = [Panel: NSLayoutConstraint]()
+    var panelMinWidthMappings = [Panel: NSLayoutConstraint]()
+    var panelMaxWidthMappings = [Panel: NSLayoutConstraint]()
+    var panelCenterMappings = [Panel: CGPoint]()
     
-    var pendingViewControllers = [PanelIndex: UIViewController]()
-    var pendingMinimumWidth = [PanelIndex: CGFloat]()
-    var pendingMaximumWidth = [PanelIndex: CGFloat]()
-    var pendingWidthFraction = [PanelIndex: CGFloat]()
-    var originalFrameMappings = [PanelIndex: CGRect]()
+    var pendingViewControllers = [Panel: UIViewController]()
+    var pendingMinimumWidth = [Panel: CGFloat]()
+    var pendingMaximumWidth = [Panel: CGFloat]()
+    var pendingWidthFraction = [Panel: CGFloat]()
+    var originalFrameMappings = [Panel: CGRect]()
     
-    var swiftUIViewMappings = NSMapTable<PanelIndex, SwiftUIViewWrapper>(valueOptions: .weakMemory)
+    var swiftUIViewMappings = NSMapTable<Panel, SwiftUIViewWrapper>(valueOptions: .weakMemory)
     
     /// maps panels to its accompanying dividers
-    var dividerMappings = [PanelIndex: UIView]()
+    var dividerMappings = [Panel: UIView]()
     
     
-    private var hoverGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
-    private var dragGestureMappings = [PanelIndex: UIHoverGestureRecognizer]()
-    var dividerToPanelMappings = [UIView: PanelIndex]()
+    private var hoverGestureMappings = [Panel: UIHoverGestureRecognizer]()
+    private var dragGestureMappings = [Panel: UIHoverGestureRecognizer]()
+    var dividerToPanelMappings = [UIView: Panel]()
     
     var panelDividerWidth: CGFloat {
         return configuration.interPanelSpacing + 2
@@ -75,7 +75,7 @@ public class PanelView: UIViewController, ResizablePanel {
     public private (set) var isAttachedToWindow = false
     
     /// children navigation controllers this panelview manages
-    public var viewControllers = [PanelIndex: UINavigationController]()
+    public var viewControllers = [Panel: UINavigationController]()
     
     /// assign a delegate to get notified of events in PanelViewDelegate
     public weak var delegate: PanelViewDelegate?
@@ -152,7 +152,7 @@ public class PanelView: UIViewController, ResizablePanel {
     
     private func configureInitialPanels() {
         for index in -configuration.numberOfPanelsOnEachSide...configuration.numberOfPanelsOnEachSide {
-            let onTheFlyPanelIndex = PanelIndex(index: index)
+            let onTheFlyPanelIndex = Panel(index: index)
             createPanel(for: onTheFlyPanelIndex)
         }
     }
@@ -160,7 +160,7 @@ public class PanelView: UIViewController, ResizablePanel {
     /// some min and max constraints for the main panel prevents UINavigationBar from 
     /// complaining that there is something wrong with the autolayout (Unsatisfiable constraint error)
     open func configureConstraintsForMainPanel() {
-        let onTheFlyIndex = PanelIndex(index: 0)
+        let onTheFlyIndex = Panel(index: 0)
         if let centerPanel = panelMappings[onTheFlyIndex] {
             NSLayoutConstraint.activate([
                 centerPanel.widthAnchor.constraint(greaterThanOrEqualToConstant: 100),
@@ -260,7 +260,7 @@ public class PanelView: UIViewController, ResizablePanel {
     }
     
     @discardableResult
-    func add(childNavController: UINavigationController, on panel: PanelIndex) -> UIView {
+    func add(childNavController: UINavigationController, on panel: Panel) -> UIView {
         if let currentPanel = childNavController.parent?.view {
             //if the child already has a parent, it won't add anything
             return currentPanel

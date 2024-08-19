@@ -129,7 +129,7 @@ override func viewDidLoad() {
 
   // make the PanelView child of this ViewController
   // and take up the entire available space
-  addFullScreen(childViewController: panelView)
+  addFullScreen(childViewController: panelView) // a convenience function provided by PanelView
 }
 ```
 
@@ -203,18 +203,38 @@ panelView.configuration = config
 *Note: Central panel cannot be sized and always takes up the available space after other panels are laid out.*
 
 ## Orientation
-Panels can be laid out horizontally or vertically. By default panels are laid out side-by-side like UISplitViewController. If you want to change this behavior, set the orientation to vertical in `PanelViewConfiguration`.
+Panels can be laid out horizontally or vertically. By default panels are laid out horizontally/side-by-side like UISplitViewController. If you want to change this behavior, set the orientation to vertical in `PanelViewConfiguration`.
+```
+// initiates a configuration object with default settings
+var config = PanelViewConfiguration()
+config.orientation = .horizontal
 
+let panelView = PanelView()
+panelView.configuration = config
+
+```
+
+You can also change the orientation of the PanelView after it is displayed:
+```
+panelView.configuration.orientation = .vertical
+```
 
 
 ## Hiding a Panel
 You can hide a panel 3 different ways: 
-1. By its index
 1. By its name
+1. By its index
 1. By the view controller that it contains
 ```
 // hide the panel by its given name
 panelView.hide(panel: .fileExplorer)
+
+// hide the panel by its index
+panelView.hide(index: 2)
+
+// hide the panel by its index
+panelView.hide(index: 2)
+
 ```
 
 You may force the PanelView to release the view controllers upon hiding if you don't need 
@@ -224,11 +244,11 @@ to use them again.
 panelView.hide(panel: .fileExplorer, releaseViewController: .true)
 ```
 
-If releasing the view controllers when panels are hidden is a common pattern in your application, you may set it to auto-release in the configuration object.
+If releasing the ViewControllers or SwiftUI views when panels are hidden is a common pattern in your application, you may set it to auto-release in the configuration object.
 
 ```
 var config = PanelViewConfiguration()
-config.autoReleaseViewControllers = true
+config.autoReleaseViews = true
 
 let panelView = PanelView()
 panelView.configuration = config

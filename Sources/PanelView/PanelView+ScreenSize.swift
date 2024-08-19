@@ -19,7 +19,7 @@ public protocol ScreenAdaptation {
     /// If you are using a single panel in an horizontally compact environment,
     /// you can use this information to see if panel view is presenting multiple or
     /// single panels.
-    var visiblePanels: [PanelIndex] { get }
+    var visiblePanels: [Panel] { get }
     
     /// takes the content from all the visible panels and puts them in the center panel in a navigation hiearachy.
     ///

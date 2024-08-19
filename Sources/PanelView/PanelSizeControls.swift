@@ -9,14 +9,14 @@ import UIKit
 
 public protocol PanelSizeControls {
     /// makes panel resizable within the previously provided min and max values.
-    func enableResizing(for panel: PanelIndex)
+    func enableResizing(for panel: Panel)
     
     /// fixes panel's current size and stops users from being able to resize.
-    func disableResizing(for panel: PanelIndex)
+    func disableResizing(for panel: Panel)
 }
 
 extension PanelView: PanelSizeControls {
-    public func enableResizing(for panel: PanelIndex) {
+    public func enableResizing(for panel: Panel) {
         if let viewDivider = dividerMappings[panel] {
             // add hover gesture
             let viewResizerHoverGesture = UIHoverGestureRecognizer(target: self, action: #selector(didHoverOnSeparator(_:)))
@@ -31,7 +31,7 @@ extension PanelView: PanelSizeControls {
         }
     }
     
-    public func disableResizing(for panel: PanelIndex) {
+    public func disableResizing(for panel: Panel) {
         if let associatedDivider = dividerMappings[panel] {
             var gesturesToRemove = [UIGestureRecognizer]()
             associatedDivider.gestureRecognizers?.forEach({ eachGesture in

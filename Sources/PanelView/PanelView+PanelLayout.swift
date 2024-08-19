@@ -38,7 +38,7 @@ extension PanelView {
         mainStackView.layoutIfNeeded()
     }
     
-    func applyMinWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+    func applyMinWidthConstraint(for aNewPanel: UIView, using indexedPanel: Panel) {
         var effectiveMinWidthConstantForPanel: CGFloat = defaultPanelMinWidth
         if let existingMinWidthConstraint = panelMinWidthMappings[indexedPanel] {
             effectiveMinWidthConstantForPanel = existingMinWidthConstraint.constant
@@ -61,7 +61,7 @@ extension PanelView {
         panelMinWidthMappings[indexedPanel] = minWidthConstraint
     }
     
-    func applyMaxWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+    func applyMaxWidthConstraint(for aNewPanel: UIView, using indexedPanel: Panel) {
         var effectiveMaxWidthConstantForPanel: CGFloat = defaultPanelMaxWidth
         if let existingMaxWidthConstraint = panelMaxWidthMappings[indexedPanel] {
             effectiveMaxWidthConstantForPanel = existingMaxWidthConstraint.constant
@@ -84,7 +84,7 @@ extension PanelView {
         panelMaxWidthMappings[indexedPanel] = maxWidthConstraint
     }
     
-    func applyPreferredWidthConstraint(for aNewPanel: UIView, using indexedPanel: PanelIndex) {
+    func applyPreferredWidthConstraint(for aNewPanel: UIView, using indexedPanel: Panel) {
         var effectiveWidthConstantForPanel: CGFloat = 475
         
         if let existingWidthConstraint = panelWidthMappings[indexedPanel] {
@@ -113,7 +113,7 @@ extension PanelView {
         panelWidthMappings[indexedPanel] = widthConstraint
     }
     
-    func activatePanelLayoutConstraintsIfNecessary(for indexedPanel: PanelIndex) {
+    func activatePanelLayoutConstraintsIfNecessary(for indexedPanel: Panel) {
         func applyMaxWidth() {
             if let correspondingView = panelMappings[indexedPanel] {
                 applyMaxWidthConstraint(for: correspondingView, using: indexedPanel)
@@ -200,7 +200,7 @@ extension PanelView {
         }
     }
     
-    func deactivatePanelLayoutConstraints(for indexedPanel: PanelIndex) {
+    func deactivatePanelLayoutConstraints(for indexedPanel: Panel) {
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
             aConstraint.isActive = false
         }
@@ -221,7 +221,7 @@ extension PanelView {
     
     /// when the PanelView switches from horizontal to vertical, the min width constraint
     /// gets re-created as a min-height constraint
-    func deactivateMinWidthConstraintAndReapply(for indexedPanel: PanelIndex) {
+    func deactivateMinWidthConstraintAndReapply(for indexedPanel: Panel) {
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
             aConstraint.isActive = false
         }

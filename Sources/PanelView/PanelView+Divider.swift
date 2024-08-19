@@ -8,7 +8,7 @@
 import UIKit
 
 extension PanelView {
-    func createPanelDivider(for indexedPanel: PanelIndex) {
+    func createPanelDivider(for indexedPanel: Panel) {
         // we cannot create a panel divider for central panel
         guard indexedPanel.index != 0 else { return }
         
@@ -91,7 +91,7 @@ extension PanelView {
         }
     }
     
-    func removePanelDivider(for indexedPanel: PanelIndex) {
+    func removePanelDivider(for indexedPanel: Panel) {
         if let viewDivider = dividerMappings[indexedPanel] {
             viewDivider.removeFromSuperview()
             dividerToPanelMappings.removeValue(forKey: viewDivider)
