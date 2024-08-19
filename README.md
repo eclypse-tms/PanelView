@@ -150,7 +150,8 @@ let vcCentral = CentralViewController()
 panelView.show(viewController: vcCentral, at: 0)
 ```
 
-You can also refer to panels by their names: **the names you assign to them.**
+## Naming Panels
+You may refer to panels by their names: **the names you assign to them.**
 ```
 // define a custom panel to refer to it by its name
 extension Panel {
@@ -171,6 +172,92 @@ panelView.show(viewController: vcCentral, for: .main)
 
 let feVC = FileExplorerViewController()
 panelView.show(viewController: feVC, for: .fileExplorer)
+```
+
+## Showing a Panel
+You can display a panel multiple ways: 
+1. Displays the given view controller in the specified panel. Optionally specify animated and completion blocks.
+```
+panelView.show(viewController: myViewController, for: .fileExplorer, animated: true, completion: {
+  // do something afterwards
+})
+```
+
+
+2. Shows a panel that was previously hidden without setting its content again.
+```
+panelView.show(panel: .fileExplorer)
+```
+
+
+3. Shows a panel by its index without setting its content again.
+```
+panelView.show(index: 2)
+```
+
+
+4. Displays a navigation stack for the named panel.
+```
+panelView.show(navigationStack: [vc1, vc2], for: .fileExplorer)
+```
+
+#### Optional Parameters
+All of the functions accept two optional parameters.
+* animated: whether to animate the transition or not. Default is true.
+* completion: get notified when the panel finishes displaying itself. 
+
+## Hiding a Panel
+You can hide a panel 3 different ways: 
+1. By its name
+1. By its index
+1. By the view controller that it contains
+```
+// hide the panel by its given name
+panelView.hide(panel: .fileExplorer)
+
+// hide the panel by its index
+panelView.hide(index: 2)
+
+// hide the panel based on the specified view controller
+panelView.hide(containing: myViewController)
+```
+
+#### Optional Parameters
+All of the functions accept two optional parameters.
+* animated: whether to animate the transition or not. Default is true.
+* releaseView: whether to automatically release the contents from memory upon hiding the panel. see Memory Management section.
+* completion: get notified when the panel finishes displaying itself. 
+
+
+## Memory Management
+You may force the PanelView to release the views upon hiding if you don't need 
+to use them again.
+```
+// hide the panel and release the associated view in it.
+panelView.hide(panel: .fileExplorer, releaseView: .true)
+```
+
+Alternatively you may force it to keep the view in memory:
+```
+// hide the panel and keep the associated view in it. may be useful
+// if you know you want to show the panel again.
+panelView.hide(panel: .fileExplorer, releaseView: .false)
+```
+
+*Note: If you don't specify this optional parameter, the views will be kept in memory after being hidden.*
+
+If you want to automatically reclaim the memory after hiding a panel then set it to auto-release in the configuration object.
+
+```
+var config = PanelViewConfiguration()
+config.autoReleaseViews = true
+
+let panelView = PanelView()
+panelView.configuration = config
+
+...
+// when the panel is hidden it will be released from the memory
+panelView.hide(panel: .fileExplorer)
 ```
 
 ## Configuring panel size
@@ -197,21 +284,19 @@ config.allowsUIPanelSizeAdjustment = false
 
 let panelView = PanelView()
 panelView.configuration = config
-
 ```
 
 *Note: Central panel cannot be sized and always takes up the available space after other panels are laid out.*
 
 ## Orientation
-Panels can be laid out horizontally or vertically. By default panels are laid out horizontally/side-by-side like UISplitViewController. If you want to change this behavior, set the orientation to vertical in `PanelViewConfiguration`.
+Panels can be laid out horizontally or vertically. By default panels are laid out horizontally (side-by-side) as in UISplitViewController. If you want to change this behavior, set the orientation to vertical in `PanelViewConfiguration`.
 ```
-// initiates a configuration object with default settings
+// Set the initial orientation of the PanelView
 var config = PanelViewConfiguration()
 config.orientation = .horizontal
 
 let panelView = PanelView()
 panelView.configuration = config
-
 ```
 
 You can also change the orientation of the PanelView after it is displayed:
@@ -220,52 +305,19 @@ panelView.configuration.orientation = .vertical
 ```
 
 
-## Hiding a Panel
-You can hide a panel 3 different ways: 
-1. By its name
-1. By its index
-1. By the view controller that it contains
-```
-// hide the panel by its given name
-panelView.hide(panel: .fileExplorer)
+## Checking for Panel Visibility
 
-// hide the panel by its index
-panelView.hide(index: 2)
-
-// hide the panel by its index
-panelView.hide(index: 2)
-
-```
-
-You may force the PanelView to release the view controllers upon hiding if you don't need 
-to use them again.
-```
-// hide the panel by its given name
-panelView.hide(panel: .fileExplorer, releaseViewController: .true)
-```
-
-If releasing the ViewControllers or SwiftUI views when panels are hidden is a common pattern in your application, you may set it to auto-release in the configuration object.
-
-```
-var config = PanelViewConfiguration()
-config.autoReleaseViews = true
-
-let panelView = PanelView()
-panelView.configuration = config
-
-...
-// hide the panel as usual 
-// but you don't have to specify releaseViewController argument
-panelView.hide(panel: .fileExplorer)
-```
-
-#### Panel Visibility
+There are several mechanisms to test whether a panel is visible or not.
 
 `func isVisible(panel:)` -> allows you to check whether any panel is visible or not. 
 
 `var visiblePanels` ->  returns all currently visible panels sorted in ascending fashion.
 
-`func presents(viewController:)` -> checks whether the provided viewController is currently being presented in one of the panels	
+`func index(of:)` -> checks whether the provided viewController is currently being presented in one of the panels	
+
+`func topViewController(for:)` -> returns the visible view controller on that panel
+
+`var currentlyVisiblePanel` -> in single panel mode returns the currently displayed panel
 
 ## Reacting to Screen Size Changes
 Become the delegate to recieve screen size change events.
@@ -333,7 +385,7 @@ Each panel is visually separated by panel dividers. Dividers also allow panels t
 
 `PanelViewConfiguration.panelDividerColor` -> controls the divider color
 
-`PanelViewConfiguration.panelDividerHoverColor ` -> controls the hover color
+`PanelViewConfiguration.panelDividerHoverColor ` -> controls the hover color. only applicable to macOS.
 
 `PanelViewConfiguration.interPanelSpacing` -> the width or height of the panel dividers
 

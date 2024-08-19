@@ -12,7 +12,7 @@ extension PanelView {
     /// only needed in single panel mode.
     func expandStackView(panelIndexToBeShown: Panel) {
         if self.isSinglePanelMode {
-            if let visiblePanel = currentlyVisiblePanelIndex {
+            if let visiblePanel = currentlyVisiblePanel {
                 if panelIndexToBeShown.index < visiblePanel.index {
                     // panel we are about to show is on the left hand side or the top side (depending on the orientation)
                     if configuration.orientation == .horizontal {
