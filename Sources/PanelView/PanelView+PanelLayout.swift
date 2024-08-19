@@ -26,7 +26,7 @@ extension PanelView {
     }
     
     /// layout dimension attribute that is used to size the panels widthwise or heightwise
-    private var layoutAttributeIdentifier: String {
+    var layoutAttributeIdentifier: String {
         if configuration.orientation == .horizontal {
             return "width"
         } else {
@@ -203,26 +203,19 @@ extension PanelView {
     
     func deactivatePanelLayoutConstraints(for indexedPanel: PanelIndex) {
         if let aConstraint = panelMaxWidthMappings[indexedPanel] {
-            // pendingMaximumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            // panelMaxWidthMappings.removeValue(forKey: indexedPanel)
         }
         
-        // deactivating min panel constraint
+        // deactivating minimum width constraint causes navigation bar layout errors
         /*
         if let aConstraint = panelMinWidthMappings[indexedPanel] {
             pendingMinimumWidth[indexedPanel] = aConstraint.constant
             aConstraint.isActive = false
-            aConstraint.constant = 0
-            panelMinWidthMappings.removeValue(forKey: indexedPanel)
         }
         */
         
         if let aConstraint = panelWidthMappings[indexedPanel] {
             aConstraint.isActive = false
-            // don't remove this mapping from the backing dictionary
-            // in case this constraint gets activated again
-            //panelWidthMappings.removeValue(forKey: indexedPanel)
         }
     }
 }

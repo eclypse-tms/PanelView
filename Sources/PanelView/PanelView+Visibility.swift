@@ -24,7 +24,14 @@ public extension PanelView {
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(panel: PanelIndex, animated: Bool = true, completion: (() -> Void)? = nil) {
-        var tempEqualWidthsConstraint: NSLayoutConstraint?
+        // this variable holds a temporary equal widths or equal heights constraint
+        // during animations in single panel mode. When the animation is over, this
+        // constraint gets deactivated.
+        var temporaryEqualDimensionsConstraint: NSLayoutConstraint?
+        
+        // this variable only gets filled during single panel mode
+        // it remembers to panel that needs to be hidden after another panel is
+        // completely shown. this variable is only not-nil during the animation 
         var panelToHide: UIView?
         
         func preAnimationBlock(panelToShow: UIView) {
@@ -36,11 +43,17 @@ public extension PanelView {
                     let currentlyVisiblePanel = currentlyVisiblePanelAndItsIndex.1
                     panelToHide = currentlyVisiblePanel
                     
-                    tempEqualWidthsConstraint = currentlyVisiblePanel.widthAnchor.constraint(equalTo: panelToShow.widthAnchor)
-                    tempEqualWidthsConstraint?.identifier = "panel: \(panel.index) width = panel :\(currentlyVisiblePanelIndex.index) width"
-                    tempEqualWidthsConstraint?.isActive = true
+                    if configuration.orientation == .horizontal {
+                        temporaryEqualDimensionsConstraint = currentlyVisiblePanel.widthAnchor.constraint(equalTo: panelToShow.widthAnchor)
+                    } else {
+                        temporaryEqualDimensionsConstraint = currentlyVisiblePanel.heightAnchor.constraint(equalTo: panelToShow.heightAnchor)
+                    }
+                    temporaryEqualDimensionsConstraint?.identifier = "panel: \(panel.index) \(layoutAttributeIdentifier) = panel :\(currentlyVisiblePanelIndex.index) width"
+                    temporaryEqualDimensionsConstraint?.isActive = true
                 }
                 panelToShow.isHidden = false
+                
+                self.view.layoutIfNeeded()
             } else {
                 // no need to do anything when in multi-panel mode
             }
@@ -63,9 +76,10 @@ public extension PanelView {
                 // when running in single panel mode,
                 // all dividers are ignored - so we don't have to re-establish the divider constraints
                 
-                tempEqualWidthsConstraint?.isActive = false
+                temporaryEqualDimensionsConstraint?.isActive = false
                 panelToHide?.isHidden = true
                 restoreStackViewBackToItsOriginalSize()
+                self.view.layoutIfNeeded()
             } else {
                 // no need to do anything when in multi-panel mode
             }
@@ -87,7 +101,7 @@ public extension PanelView {
         
         preAnimationBlock(panelToShow: aPanelToShow)
         
-        self.view.layoutIfNeeded()
+        
         
         if isSinglePanelMode {
             // in single panel mode, all panels are animatable
