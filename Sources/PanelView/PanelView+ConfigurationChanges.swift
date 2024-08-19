@@ -74,7 +74,7 @@ extension PanelView {
                         // hide everything but the last indexed panel
                         if eachPanelIndex != panelWithTheHighestIndex {
                             // hide but do not release the view controller from the view
-                            hide(panel: eachPanelIndex, animated: false, releaseViewController: .false)
+                            hide(panel: eachPanelIndex, animated: false, releaseView: .false)
                         }
                     }
                 } else {

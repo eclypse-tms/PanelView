@@ -9,7 +9,7 @@ import UIKit
 
 extension PanelView {
     @discardableResult
-    func createPanel(for indexedPanel: PanelIndex) -> UIView {
+    func createPanel(for indexedPanel: Panel) -> UIView {
         let aNewPanel = UIView()
         aNewPanel.translatesAutoresizingMaskIntoConstraints = false
         aNewPanel.tag = indexedPanel.index

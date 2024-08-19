@@ -12,10 +12,10 @@ public extension PanelView {
     /// - Parameters:
     ///   - viewController: the panel that contains the given view controller
     ///   - animated: whether to animate the hiding transition. default value is true.
-    ///   - releaseViewController: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
+    ///   - releaseView: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
     ///   - completion: notifies the called that hiding is complete.
-    func hidePanel(containing viewController: UIViewController, animated: Bool = true, releaseViewController: Trilean = .default, completion: (() -> Void)? = nil) {
-        let panelToHide: PanelIndex? = index(of: viewController)
+    func hide(containing viewController: UIViewController, animated: Bool = true, releaseView: Trilean = .default, completion: (() -> Void)? = nil) {
+        let panelToHide: Panel? = index(of: viewController)
         
         if let discoveredPanelToHide = panelToHide {
             hide(panel: discoveredPanelToHide, animated: animated, completion: completion)
@@ -26,10 +26,10 @@ public extension PanelView {
     /// - Parameters:
     ///   - index: the index of the panel to hide.
     ///   - animated: whether to animate the hiding transition. default value is true.
-    ///   - releaseViewController: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
+    ///   - releaseView: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
     ///   - completion: notifies the called that hiding is complete.
-    func hide(index: Int, animated: Bool = true, releaseViewController: Trilean = .default, completion: (() -> Void)? = nil) {
-        let onTheFlyIndex = PanelIndex(index: index)
+    func hide(index: Int, animated: Bool = true, releaseView: Trilean = .default, completion: (() -> Void)? = nil) {
+        let onTheFlyIndex = Panel(index: index)
         hide(panel: onTheFlyIndex, animated: animated, completion: completion)
     }
     
@@ -37,9 +37,9 @@ public extension PanelView {
     /// - Parameters:
     ///   - panel: the panel that contains the given view controller
     ///   - animated: whether to animate the hiding transition. default value is true.
-    ///   - releaseViewController: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
+    ///   - releaseView: whether to release the view controller upon hiding. when not specified uses the value in PanelViewConfiguration.
     ///   - completion: notifies the called that hiding is complete.
-    func hide(panel: PanelIndex, animated: Bool = true, releaseViewController: Trilean = .default, completion: (() -> Void)? = nil) {
+    func hide(panel: Panel, animated: Bool = true, releaseView: Trilean = .default, completion: (() -> Void)? = nil) {
         func hideAppropriatePanel() {
             if let panelToHide = panelMappings[panel] {
                 if !panelToHide.isHidden {
@@ -53,7 +53,7 @@ public extension PanelView {
             displayEmptyStateIfNecessary()
         }
         
-        func _performPanelHiding(panel: PanelIndex, animated: Bool, hidingCompleted: (() -> Void)?) {
+        func _performPanelHiding(panel: Panel, animated: Bool, hidingCompleted: (() -> Void)?) {
             if panel.index != 0, animated {
                 // we shouldn't animate hiding of the main panel
                 let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
@@ -84,7 +84,7 @@ public extension PanelView {
         _performPanelHiding(panel: panel, animated: animated, hidingCompleted: { [weak self] in
             guard let strongSelf = self else { return }
             let shouldViewControllerBeReleasedFromMemory: Bool
-            switch releaseViewController {
+            switch releaseView {
             case .default:
                 shouldViewControllerBeReleasedFromMemory = strongSelf.configuration.autoReleaseViews
             case .true:
@@ -130,7 +130,7 @@ public extension PanelView {
         displayEmptyStateIfNecessary()
     }
     
-    private func hideViewDivider(associatedPanel: PanelIndex) {
+    private func hideViewDivider(associatedPanel: Panel) {
         if let associatedResizer = dividerMappings[associatedPanel] {
             let uniqueConstraintIdentifier = "\(_dividerConstraintIdentifier)\(associatedResizer.tag)"
             if let constraintThatNeedToAltered = self.view.constraints.first(where: { $0.identifier == uniqueConstraintIdentifier }) {
