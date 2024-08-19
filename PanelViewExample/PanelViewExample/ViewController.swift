@@ -62,7 +62,7 @@ class ViewController: UIViewController {
         customConfig.allowsUIPanelSizeAdjustment = true
         customConfig.interPanelSpacing = 1
         customConfig.panelMode = .multi
-        customConfig.autoReleaseViewControllers = true
+        customConfig.autoReleaseViews = true
         customConfig.panelTransitionDuration = 1
         customConfig.numberOfPanelsOnEachSide = 5
         customConfig.emptyStateView = configureEmptyView()

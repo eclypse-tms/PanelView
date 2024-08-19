@@ -86,7 +86,7 @@ public extension PanelView {
             let shouldViewControllerBeReleasedFromMemory: Bool
             switch releaseViewController {
             case .default:
-                shouldViewControllerBeReleasedFromMemory = strongSelf.configuration.autoReleaseViewControllers
+                shouldViewControllerBeReleasedFromMemory = strongSelf.configuration.autoReleaseViews
             case .true:
                 shouldViewControllerBeReleasedFromMemory = true
             case .false:
