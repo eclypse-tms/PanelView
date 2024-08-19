@@ -2,13 +2,14 @@
 //  PanelView+SinglePanelMode.swift
 //
 //
-//  Created by Nessa Kucuk, Turker on 8/17/24.
+//  Created by eclypse on 8/17/24.
 //
 
 import Foundation
 
 extension PanelView {
-    /// expands stack view to make space for the incoming panel (panel that is about to be shown)
+    /// expands stack view to make space for the incoming panel (panel that is about to be shown).
+    /// only needed in single panel mode.
     func expandStackView(panelIndexToBeShown: PanelIndex) {
         if self.isSinglePanelMode {
             if let visiblePanel = currentlyVisiblePanelIndex {
@@ -39,30 +40,34 @@ extension PanelView {
         }
     }
     
+    /// slides the stackview only its horizontal or vertical axis depending on the orientation
+    /// of the panel. only needed in single panel mode.
     func slideStackView() {
         if mainStackViewLeadingConstraint.constant != 0 {
             let currentConstantValue = mainStackViewLeadingConstraint.constant
             mainStackViewTrailingConstraint.constant = currentConstantValue
             mainStackViewLeadingConstraint.constant = 0
-            print("leading constraint changed to 0 from: \(currentConstantValue)")
+            // print("leading constraint changed to 0 from: \(currentConstantValue)")
         } else if mainStackViewTrailingConstraint.constant != 0 {
             let currentConstantValue = mainStackViewTrailingConstraint.constant
             mainStackViewLeadingConstraint.constant = currentConstantValue
             mainStackViewTrailingConstraint.constant = 0
-            print("trailing constraint changed to 0 from: \(currentConstantValue)")
+            // print("trailing constraint changed to 0 from: \(currentConstantValue)")
         } else if mainStackViewTopConstraint.constant != 0 {
             let currentConstantValue = mainStackViewTopConstraint.constant
             mainStackViewBottomConstraint.constant = currentConstantValue
             mainStackViewTopConstraint.constant = 0
-            print("top constraint changed to 0 from: \(currentConstantValue)")
+            // print("top constraint changed to 0 from: \(currentConstantValue)")
         } else if mainStackViewBottomConstraint.constant != 0 {
             let currentConstantValue = mainStackViewBottomConstraint.constant
             mainStackViewTopConstraint.constant = currentConstantValue
             mainStackViewBottomConstraint.constant = 0
-            print("bottom constraint changed to 0 from: \(currentConstantValue)")
+            // print("bottom constraint changed to 0 from: \(currentConstantValue)")
         }
     }
     
+    /// restores the stackview to its original size after panel change animations are completed.
+    /// only needed in single panel mode.
     func restoreStackViewBackToItsOriginalSize() {
         mainStackViewLeadingConstraint.constant = 0
         mainStackViewTopConstraint.constant = 0

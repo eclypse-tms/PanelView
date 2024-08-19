@@ -85,7 +85,12 @@ public extension PanelView {
             }
         }
         
-        let aPanelToShow = panelMappings[panel] ?? createPanel(for: panel)
+        let aPanelToShow: UIView
+        if let associatedPanel = panelMappings[panel] {
+            aPanelToShow = associatedPanel
+        } else {
+            aPanelToShow = createPanel(for: panel)
+        }
         
         // in order for animations to run correctly for the stackview, we need to first remove the panel
         // from the superview and then re-insert it at the correct index
@@ -102,11 +107,9 @@ public extension PanelView {
         preAnimationBlock(panelToShow: aPanelToShow)
         
         
-        
         if isSinglePanelMode {
             // in single panel mode, all panels are animatable
             if animated {
-                
                 let animations = UIViewPropertyAnimator(duration: configuration.panelTransitionDuration, curve: .easeInOut, animations: {
                     animatableBlock(panelToShow: aPanelToShow)
                     self.view.layoutIfNeeded()
@@ -116,16 +119,6 @@ public extension PanelView {
                     completion?()
                 })
                 animations.startAnimation()
-                 
-                /*
-                UIView.animate(withDuration: configuration.panelTransitionDuration, animations: {
-                    animatableBlock(panelToShow: aPanelToShow)
-                    self.view.layoutIfNeeded()
-                }, completion: { _ in
-                    postAnimationBlock(panelToShow: aPanelToShow)
-                    completion?()
-                })
-                 */
             } else {
                 self.view.layoutIfNeeded()
                 animatableBlock(panelToShow: aPanelToShow)

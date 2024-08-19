@@ -151,11 +151,9 @@ public class PanelView: UIViewController, ResizablePanel {
     }
     
     private func configureInitialPanels() {
-        for index in -configuration.numberOfPanelsToPrime...configuration.numberOfPanelsToPrime {
+        for index in -configuration.numberOfPanelsOnEachSide...configuration.numberOfPanelsOnEachSide {
             let onTheFlyPanelIndex = PanelIndex(index: index)
             createPanel(for: onTheFlyPanelIndex)
-            //mainStackView.addArrangedSubview(newlyCreatedPanel)
-            //newlyCreatedPanel.isHidden = true
         }
     }
     

@@ -16,6 +16,7 @@ extension PanelView {
                 if indexedPanel.index != 0 {
                     // center panel doesn't have any dividers or layout constraints
                     deactivatePanelLayoutConstraints(for: indexedPanel)
+                    deactivateMinWidthConstraintAndReapply(for: indexedPanel)
                     removePanelDivider(for: indexedPanel)
                 }
             }
