@@ -19,7 +19,13 @@ extension PanelView: PanelSizeControls {
     public func enableResizing(for panel: Panel) {
         if let viewDivider = dividerMappings[panel] {
             // add hover gesture
-            let viewResizerHoverGesture = UIHoverGestureRecognizer(target: self, action: #selector(didHoverOnSeparator(_:)))
+            let viewResizerHoverGesture: UIHoverGestureRecognizer
+            if let validCoordinator = swiftUICoordinator {
+                viewResizerHoverGesture = UIHoverGestureRecognizer(target: validCoordinator, action: #selector(PanelViewSwiftUICoordinator.didHoverOnSeparator(_:)))
+            } else {
+                viewResizerHoverGesture = UIHoverGestureRecognizer(target: self, action: #selector(didHoverOnSeparator(_:)))
+            }
+            
             viewResizerHoverGesture.name = "hover_on_divider"
             viewDivider.addGestureRecognizer(viewResizerHoverGesture)
             

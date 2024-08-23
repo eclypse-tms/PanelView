@@ -23,6 +23,8 @@ public class PanelView: UIViewController, ResizablePanel {
     /// maps an index to a UIView
     var panelMappings = [Panel: UIView]()
     
+    /// when running in a swiftui app, this will be non-nil
+    var swiftUICoordinator: PanelViewSwiftUICoordinator?
     
     var panelWidthMappings = [Panel: NSLayoutConstraint]()
     var panelMinWidthMappings = [Panel: NSLayoutConstraint]()
