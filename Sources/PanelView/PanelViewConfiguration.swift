@@ -68,6 +68,12 @@ public struct PanelViewConfiguration {
     ///
     /// This mode may be useful when running the PanelView in compact screen sizes.
     public var panelMode: PanelMode
+    
+    /// When this value is set to true, all navigation bars are hidden right away.
+    ///
+    /// If you want to display a Navigation Bar for a panel, you can do so by accessing the
+    /// PanelView.viewControllers property.
+    public var hideAllNavigationBars: Bool
 }
 
 public extension PanelViewConfiguration {
@@ -83,5 +89,6 @@ public extension PanelViewConfiguration {
         self.autoReleaseViews = false
         self.panelMode = .multi
         self.emptyViewVerticalAdjustment = 0
+        self.hideAllNavigationBars = false
     }
 }

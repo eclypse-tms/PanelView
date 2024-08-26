@@ -62,7 +62,6 @@ public extension PanelView {
         func animatableBlock(panelToShow: UIView) {
             if isSinglePanelMode {
                 slideStackView()
-                
             } else {
                 // we are running in multi-panel mode,
                 // all we have to do is to show the panel
@@ -171,7 +170,10 @@ public extension PanelView {
     ///   - for: the name of the panel to show this view controller.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
-    func show(viewController: UIViewController, for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
+    func show(viewController: UIViewController, 
+              for panel: Panel,
+              animated: Bool = true,
+              completion: (() -> Void)? = nil) {
         if isAttachedToWindow {
             if let previousVC = viewControllers[panel] {
                 previousVC.removeSelfFromParent()

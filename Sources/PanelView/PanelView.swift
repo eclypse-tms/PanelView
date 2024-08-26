@@ -293,6 +293,10 @@ public class PanelView: UIViewController, ResizablePanel {
         
         childNavController.didMove(toParent: self)
         
+        if configuration.hideAllNavigationBars {
+            childNavController.setNavigationBarHidden(true, animated: false)
+        }
+        
         return parentView
     }
     

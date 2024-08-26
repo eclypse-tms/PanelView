@@ -10,33 +10,45 @@ import PanelView
 
 struct SimpleView: View {
     
-    let panel: Panel
+    let panelId: String
+    let selectedBackgroundColor: Color?
     
-    init(index: Int) {
-        let onTheFlyPanel = Panel(index: index)
-        self.panel = onTheFlyPanel
-    }
-    
-    init(panel: Panel) {
-        self.panel = panel
+    init(panelId: String, backgroundColor: Color? = nil) {
+        self.panelId = panelId
+        self.selectedBackgroundColor = backgroundColor
     }
     
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(style: .init(lineWidth: 1))
-                .frame(width: 90, height: 90)
+        VStack {
+            Spacer()
+                .frame(maxWidth: .greatestFiniteMagnitude, 
+                       maxHeight: .greatestFiniteMagnitude)
             
             VStack(spacing: 4) {
                 Text("Panel")
                     .font(.title)
-                Text("\(panel.index)")
+                Text(panelId)
                     .font(.title2)
             }
+            .background(
+                RoundedRectangle(
+                    cornerRadius: 12,
+                    style: .continuous
+                )
+                .stroke(style: .init(lineWidth: 1))
+                .frame(width: 90, height: 90)
+            )
+            
+            Spacer()
+                .frame(maxWidth: .greatestFiniteMagnitude,
+                       maxHeight: .greatestFiniteMagnitude)
         }
+        .background(selectedBackgroundColor)
     }
 }
 
 #Preview {
-    SimpleView(index: -3)
+    SimpleView(panelId: "-3",
+               backgroundColor: .yellow)
+    .ignoresSafeArea()
 }

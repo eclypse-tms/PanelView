@@ -24,18 +24,22 @@ struct ContentView: View {
     var body: some View {
         let panelBackground = dayOrNightMode == .light ? Color.white : Color.black
         
+
         ZStack {
             panelView
+                .show(centralPanel: SimpleView(panelId: "center", backgroundColor: .blue))
             VStack {
                 Spacer()
                 HStack(alignment: .bottom, spacing: 8) {
                     VStack(spacing: 4, content: {
                         Text("Left Panels")
                         MultiSelectButton(buttonTitles: ["-5", "-4", "-3", "-2", "-1"], actions: { buttonInfo in
+                            let panelIndex = Int(buttonInfo.title)!
+                            
                             if buttonInfo.state == .selected {
-                                self.panelView.show(SimpleView(index: buttonInfo.index), at: buttonInfo.index)
+                                self.panelView.show(SimpleView(panelId: buttonInfo.title), at: panelIndex)
                             } else {
-                                self.panelView.hide(index: buttonInfo.index)
+                                self.panelView.hide(index: panelIndex)
                             }
                         })
                     })
@@ -60,7 +64,7 @@ struct ContentView: View {
                             Text("Center panel")
                             MultiSelectButton(buttonTitles: ["0"], initialSelections: [0], actions: { buttonInfo in
                                 if buttonInfo.state == .selected {
-                                    panelView.show(SimpleView(index: 0), at: 0)
+                                    panelView.show(SimpleView(panelId: "center"), at: 0)
                                 } else {
                                     panelView.hide(index: 0)
                                 }
@@ -78,7 +82,13 @@ struct ContentView: View {
                     VStack(spacing: 4, content: {
                         Text("Right Panels")
                         MultiSelectButton(buttonTitles: ["1", "2", "3", "4", "5"], actions: { buttonInfo in
+                            let panelIndex = Int(buttonInfo.title)!
                             
+                            if buttonInfo.state == .selected {
+                                self.panelView.show(SimpleView(panelId: buttonInfo.title), at: panelIndex)
+                            } else {
+                                self.panelView.hide(index: panelIndex)
+                            }
                         })
                         
                     })
@@ -89,12 +99,12 @@ struct ContentView: View {
                 }
             }
             .padding(20)
-            
+            .ignoresSafeArea()
         }
     }
 }
 
 #Preview {
     ContentView()
-        .padding(.zero)
+        .ignoresSafeArea()
 }

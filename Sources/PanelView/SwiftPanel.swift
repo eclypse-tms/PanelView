@@ -14,9 +14,16 @@ public struct SwiftPanel: UIViewRepresentable {
     public var configuration: PanelViewConfiguration = .init()
     let panelView: PanelView
     
-    public init(configuration: PanelViewConfiguration) {
-        self.configuration = configuration
+    public init(configuration: PanelViewConfiguration, initialPanel: (any View)? = nil) {
+        // by default all navigation bars are hidden for SwiftUI views
+        var providedConfiguration = configuration
+        providedConfiguration.hideAllNavigationBars = true
+        
+        self.configuration = providedConfiguration
         self.panelView = PanelView()
+        if let validInitialView = initialPanel {
+            self.panelView.show(swiftUIView: validInitialView, at: 0)
+        }
     }
     
     public func makeUIView(context: Context) -> UIView {
@@ -39,6 +46,11 @@ public struct SwiftPanel: UIViewRepresentable {
 }
 
 public extension SwiftPanel {
+    func show(centralPanel: some View, completion: (() -> Void)? = nil) -> some View {
+        panelView.show(swiftUIView: centralPanel, at: 0, animated: false, completion: completion)
+        return self
+    }
+    
     /// Displays a SwiftUI view at the specified index. If there was another view already associated
     /// with that panel, this action replaces the existing view.
     /// - Parameters:

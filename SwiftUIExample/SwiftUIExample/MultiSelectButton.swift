@@ -13,8 +13,9 @@ struct MultiSelectButton: View {
     private let buttonTitles: [String]
     private let actions: (ButtonInfo) -> Void
     
+    
     init(buttonTitles: [String],
-         initialSelections: [Int] = [], // nothing is selected
+         initialSelections: [Int] = [], // nothing is selected by default
          actions: @escaping (ButtonInfo) -> Void) {
         self.buttonTitles = buttonTitles
         self.actions = actions
@@ -27,7 +28,7 @@ struct MultiSelectButton: View {
         
         HStack(spacing: 2) {
             ForEach(numberOfButtons, id: \.self, content: { index in
-                let buttonTitle = "\(index)"
+                let buttonTitle = "\(buttonTitles[index])"
                 Button(action: {
                     if selectedButtons.contains(index) {
                         selectedButtons.remove(index)
