@@ -24,15 +24,15 @@ internal final class SwiftUIViewWrapper: View {
 
 public extension PanelView {
     /// pass any SwiftUI view to display at one of the panels
-    func show(swiftUIView: some View, at index: Int, animated: Bool = true) {
+    func show(swiftUIView: some View, at index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
         let onTheFlyPanel = Panel(index: index)
-        show(swiftUIView: swiftUIView, for: onTheFlyPanel, animated: animated)
+        show(swiftUIView: swiftUIView, for: onTheFlyPanel, animated: animated, completion: completion)
     }
     
-    func show(swiftUIView: some View, for panel: Panel, animated: Bool = true) {
+    func show(swiftUIView: some View, for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {
         let hostingController = UIHostingController(rootView: swiftUIView)
         swiftUIViewMappings.setObject(SwiftUIViewWrapper(swiftUIView), forKey: panel)
-        show(viewController: hostingController, for: panel, animated: animated)
+        show(viewController: hostingController, for: panel, animated: animated, completion: completion)
     }
     
     /// checks whether the provided SwiftUI view is currently being presented in one of the panels
@@ -51,44 +51,5 @@ public extension PanelView {
             }
         }
         return panelThatContainsSwiftUI
-    }
-}
-
-public struct PanelView2: UIViewRepresentable {
-    public typealias UIViewType = UIView
-    public typealias Coordinator = PanelViewSwiftUICoordinator
-        
-    public var configuration: PanelViewConfiguration = .init()
-    let panelView: PanelView
-    
-    public init(configuration: PanelViewConfiguration) {
-        self.configuration = configuration
-        self.panelView = PanelView()
-    }
-    
-    public func makeUIView(context: Context) -> UIView {
-        
-        panelView.swiftUICoordinator = context.coordinator
-        panelView.configuration = self.configuration
-        
-        context.coordinator.panelView = panelView
-        
-        let mainVC = UIViewController()
-        mainVC.view.backgroundColor = .blue
-        panelView.show(viewController: mainVC, at: 0, animated: false)
-        
-        let inspectorVC = UIViewController()
-        inspectorVC.view.backgroundColor = .orange
-        panelView.show(viewController: inspectorVC, at: 1, animated: false)
-        
-        return panelView.view
-    }
-    
-    public func updateUIView(_ uiView: UIView, context: Context) {
-        
-    }
-    
-    public func makeCoordinator() -> PanelViewSwiftUICoordinator {
-        return PanelViewSwiftUICoordinator()
     }
 }

@@ -58,6 +58,8 @@ public struct PanelViewConfiguration {
     /// when the panel is shown again without having to worry about preserving its state.
     /// On the other hand if you are not planning on re-using the same View when the panels are
     /// hidden, set this property to true to automatically reclaim the memory.
+    ///
+    /// - Note: This value is ignored when running in SwiftUI views
     public var autoReleaseViews: Bool
     
     /// Determines whether to run PanelView in single or multi panel mode.

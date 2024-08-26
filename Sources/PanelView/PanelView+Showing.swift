@@ -156,7 +156,7 @@ public extension PanelView {
     /// with that panel, this action replaces the existing view controller.
     /// - Parameters:
     ///   - viewController: a view controller to show.
-    ///   - index: negative indices appear on the left side of the screen. positive indices appear on the right side.
+    ///   - at: index. negative indices appear on the left side of the screen. positive indices appear on the right side.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(viewController: UIViewController, at index: Int, animated: Bool = true, completion: (() -> Void)? = nil) {
@@ -168,7 +168,7 @@ public extension PanelView {
     /// with that panel, this action replaces the existing view controller.
     /// - Parameters:
     ///   - viewController: a view controller to show.
-    ///   - panel: the name of the panel to show this view controller.
+    ///   - for: the name of the panel to show this view controller.
     ///   - animated: whether to animate the transition. the default it true.
     ///   - completion: receive a callback when the panel is fully displayed.
     func show(viewController: UIViewController, for panel: Panel, animated: Bool = true, completion: (() -> Void)? = nil) {

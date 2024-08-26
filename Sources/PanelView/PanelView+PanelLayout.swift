@@ -45,7 +45,7 @@ extension PanelView {
         } else if let pendingMinWidthConstraint = pendingMinimumWidth[indexedPanel] {
             effectiveMinWidthConstantForPanel = pendingMinWidthConstraint
         } else {
-            print("PanelView - we couldn't find minimum width constraint for panel: \(indexedPanel.index). applying default values.")
+            // print("PanelView - we couldn't find minimum width constraint for panel: \(indexedPanel.index). applying default values.")
         }
         
         let minWidthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -68,7 +68,7 @@ extension PanelView {
         } else if let pendingMaxWidthConstraint = pendingMaximumWidth[indexedPanel] {
             effectiveMaxWidthConstantForPanel = pendingMaxWidthConstraint
         } else {
-            print("PanelView - we couldn't find maximum width constraint for panel: \(indexedPanel.index). applying default values.")
+            // print("PanelView - we couldn't find maximum width constraint for panel: \(indexedPanel.index). applying default values.")
         }
         
         let maxWidthConstraint = NSLayoutConstraint(item: aNewPanel,
@@ -96,7 +96,7 @@ extension PanelView {
                 effectiveWidthConstantForPanel = view.frame.height * savedWidthFraction
             }
         } else {
-            print("PanelView - we couldn't find width constraint for panel: \(indexedPanel.index). applying default values.")
+            // print("PanelView - we couldn't find width constraint for panel: \(indexedPanel.index). applying default values.")
         }
         
         let widthConstraint = NSLayoutConstraint(item: aNewPanel,

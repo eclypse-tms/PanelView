@@ -12,6 +12,12 @@
 		B16540B32C78317A001853D1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16540B22C78317A001853D1 /* ContentView.swift */; };
 		B16540B52C78317C001853D1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B16540B42C78317C001853D1 /* Assets.xcassets */; };
 		B16540B82C78317C001853D1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B16540B72C78317C001853D1 /* Preview Assets.xcassets */; };
+		B1B579752C7A4B120044887B /* SimpleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B579742C7A4B120044887B /* SimpleView.swift */; };
+		B1B579772C7AA81D0044887B /* GridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B579762C7AA81C0044887B /* GridView.swift */; };
+		B1B5797D2C7B828B0044887B /* LoremIpsum in Frameworks */ = {isa = PBXBuildFile; productRef = B1B5797C2C7B828B0044887B /* LoremIpsum */; };
+		B1B5797F2C7B82BF0044887B /* MultiSelectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B5797E2C7B82BF0044887B /* MultiSelectButton.swift */; };
+		B1B579812C7C259E0044887B /* ButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B579802C7C259E0044887B /* ButtonState.swift */; };
+		B1B579852C7C27480044887B /* ButtonInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B579842C7C27480044887B /* ButtonInfo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +27,11 @@
 		B16540B22C78317A001853D1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B16540B42C78317C001853D1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B16540B72C78317C001853D1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		B1B579742C7A4B120044887B /* SimpleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleView.swift; sourceTree = "<group>"; };
+		B1B579762C7AA81C0044887B /* GridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridView.swift; sourceTree = "<group>"; };
+		B1B5797E2C7B82BF0044887B /* MultiSelectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSelectButton.swift; sourceTree = "<group>"; };
+		B1B579802C7C259E0044887B /* ButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonState.swift; sourceTree = "<group>"; };
+		B1B579842C7C27480044887B /* ButtonInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +40,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1481F762C78352B0054E4D2 /* PanelView in Frameworks */,
+				B1B5797D2C7B828B0044887B /* LoremIpsum in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,9 +66,14 @@
 		B16540AF2C783179001853D1 /* SwiftUIExample */ = {
 			isa = PBXGroup;
 			children = (
+				B1B579842C7C27480044887B /* ButtonInfo.swift */,
 				B10F1BF42C7831CE003AFE14 /* SwiftUIExample.entitlements */,
 				B16540B02C78317A001853D1 /* SwiftUIExampleApp.swift */,
 				B16540B22C78317A001853D1 /* ContentView.swift */,
+				B1B579742C7A4B120044887B /* SimpleView.swift */,
+				B1B579762C7AA81C0044887B /* GridView.swift */,
+				B1B5797E2C7B82BF0044887B /* MultiSelectButton.swift */,
+				B1B579802C7C259E0044887B /* ButtonState.swift */,
 				B16540B42C78317C001853D1 /* Assets.xcassets */,
 				B16540B62C78317C001853D1 /* Preview Content */,
 			);
@@ -89,6 +106,7 @@
 			name = SwiftUIExample;
 			packageProductDependencies = (
 				B1481F752C78352B0054E4D2 /* PanelView */,
+				B1B5797C2C7B828B0044887B /* LoremIpsum */,
 			);
 			productName = SwiftUIExample;
 			productReference = B16540AD2C783179001853D1 /* SwiftUIExample.app */;
@@ -120,6 +138,7 @@
 			mainGroup = B16540A42C783179001853D1;
 			packageReferences = (
 				B1481F742C78352B0054E4D2 /* XCLocalSwiftPackageReference ".." */,
+				B1B5797B2C7B828B0044887B /* XCRemoteSwiftPackageReference "LoremIpsum" */,
 			);
 			productRefGroup = B16540AE2C783179001853D1 /* Products */;
 			projectDirPath = "";
@@ -147,8 +166,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1B5797F2C7B82BF0044887B /* MultiSelectButton.swift in Sources */,
 				B16540B32C78317A001853D1 /* ContentView.swift in Sources */,
+				B1B579852C7C27480044887B /* ButtonInfo.swift in Sources */,
+				B1B579752C7A4B120044887B /* SimpleView.swift in Sources */,
+				B1B579772C7AA81D0044887B /* GridView.swift in Sources */,
 				B16540B12C78317A001853D1 /* SwiftUIExampleApp.swift in Sources */,
+				B1B579812C7C259E0044887B /* ButtonState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,10 +398,26 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		B1B5797B2C7B828B0044887B /* XCRemoteSwiftPackageReference "LoremIpsum" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukaskubanek/LoremIpsum";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		B1481F752C78352B0054E4D2 /* PanelView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PanelView;
+		};
+		B1B5797C2C7B828B0044887B /* LoremIpsum */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1B5797B2C7B828B0044887B /* XCRemoteSwiftPackageReference "LoremIpsum" */;
+			productName = LoremIpsum;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
